@@ -1,0 +1,145 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: McaCutlistCreateContract unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #McaCutlistCreateContract
+    PROPERTIES
+      Name                #McaCutlistCreateContract
+      Extends             #SysOperationDataContractBase
+      Origin              #{3F7E4B2F-754A-42C7-AE56-1E6147006618}
+    ENDPROPERTIES
+    
+    METHODS
+      SOURCE #classDeclaration
+        #/// <summary>
+        #///     Contract class for the cutlist creation reoccuring batch job
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #[
+        #    DataContractAttribute,
+        #    SysOperationGroupAttribute("@SYS8577", "@SYS8577", "1")
+        #]
+        #class McaCutlistCreateContract extends SysOperationDataContractBase
+        #{
+        #    str             packedQuery; //A passed in custom query
+        #    McaAssignPrefix assignPrefix;
+        #    RecId           salesLineRecId;
+        #}
+      ENDSOURCE
+      SOURCE #getQuery
+        #/// <summary>
+        #///    Returns an initialized query object based on the query that is returned from the
+        #///    <c>packedQuery</c> method.
+        #/// </summary>
+        #/// <returns>
+        #///    A <c>Query</c> object.
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #public Query getQuery()
+        #{
+        #    return new Query(SysOperationHelper::base64Decode(packedQuery));
+        #}
+      ENDSOURCE
+      SOURCE #parmAssignPrefix
+        #/// <summary>
+        #///     Sets the <c>McaAssignPrefix</c> variable
+        #/// </summary>
+        #/// <param name="_assignPrefix">
+        #///     a <c>McaAssignPrefix</c> parameter
+        #/// </param>
+        #/// <returns>
+        #///     <c>McaAssignPrefix</c> variable
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 07/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #//[DataMemberAttribute]
+        #public McaAssignPrefix parmAssignPrefix(McaAssignPrefix _assignPrefix = assignPrefix)
+        #{
+        #    assignPrefix = _assignPrefix;
+        #    return assignPrefix;
+        #}
+      ENDSOURCE
+      SOURCE #parmQuery
+        #/// <summary>
+        #///     Sets the packedQuery variable
+        #/// </summary>
+        #/// <param name="_packedQuery">
+        #///     a packed query
+        #/// </param>
+        #/// <returns>
+        #///     packedQuery variable
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #[DataMemberAttribute, AifQueryTypeAttribute('_packedQuery', querystr(McaCutlistCreateQuery))]
+        #public str parmQuery(str _packedQuery = packedQuery)
+        #{
+        #    packedQuery = _packedQuery;
+        #    return packedQuery;
+        #}
+      ENDSOURCE
+      SOURCE #parmSalesLineRecId
+        #/// <summary>
+        #///     Sets the <c>salesLineRecId</c> variable
+        #/// </summary>
+        #/// <param name="_salesLineRecId">
+        #///     a <c>salesLineRecId</c> parameter
+        #/// </param>
+        #/// <returns>
+        #///     <c>salesLineRecId</c> variable
+        #/// </returns>
+        #/// <remarks>
+        #///     Ray M - 2/14/2019 - Mca_TASK118324_CutlistMultiThread
+        #/// </remarks>
+        #//[DataMemberAttribute]
+        #public RecId parmSalesLineRecId(RecId _salesLineRecId = salesLineRecId)
+        #{
+        #    salesLineRecId = _salesLineRecId;
+        #    return salesLineRecId;
+        #}
+      ENDSOURCE
+      SOURCE #setFromContract
+        #/// <summary>
+        #///     Set the class variables from a <c>McaCutlistCreateContract</c> contract
+        #/// </summary>
+        #/// <param name="_contract">
+        #///     a <c>McaCutlistCreateContract</c> contract
+        #/// </param>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #void setFromContract(McaCutlistCreateContract _contract)
+        #{
+        #    this.parmQuery(_contract.parmQuery());
+        #}
+      ENDSOURCE
+      SOURCE #setQuery
+        #/// <summary>
+        #///     Sets the packedQuery <c>Query</c> object variable after packing
+        #/// </summary>
+        #/// <param name="_query">
+        #///     A <c>Query</c> object.
+        #/// </param>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #public void setQuery(Query _query)
+        #{
+        #     packedQuery = SysOperationHelper::base64Encode(_query.pack());
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: END

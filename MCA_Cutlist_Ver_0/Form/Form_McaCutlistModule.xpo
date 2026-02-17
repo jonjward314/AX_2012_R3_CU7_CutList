@@ -1,0 +1,955 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: FRM
+
+; Microsoft Dynamics AX Forms unloaded
+; --------------------------------------------------------------------------------
+FRMVERSION 12
+
+FORM #McaCutlistModule
+  PROPERTIES
+    Name                #McaCutlistModule
+    Origin              #{ECB4B78E-F0F9-44E0-A3E8-DC3FCFF5B95A}
+  ENDPROPERTIES
+  
+  METHODS
+    SOURCE #classDeclaration
+      #/// <summary>
+      #///     creating cutlist module records
+      #/// </summary>
+      #/// <remarks>
+      #///      Ray M. - 05/27/2018 - Mca_CR009_CutlistEnhancements
+      #/// </remarks>
+      #public class FormRun extends ObjectRun
+      #{
+      #    SysFormSplitter_Y   formSplitter;
+      #}
+    ENDSOURCE
+    SOURCE #init
+      #public void init()
+      #{
+      #    super();
+      #}
+    ENDSOURCE
+    SOURCE #run
+      #void run()
+      #{
+      #    formSplitter = new SysFormSplitter_Y(ctrlSplit, Items, element);
+      #
+      #    super();
+      #}
+    ENDSOURCE
+  ENDMETHODS
+  OBJECTBANK
+    PROPERTIES
+      Version             #524
+    ENDPROPERTIES
+    
+    DATASOURCE
+      OBJECTPOOL
+        PROPERTIES
+          Name                #InventTable
+          Table               #InventTable
+          AllowEdit           #No
+          AllowCreate         #No
+          AllowDelete         #No
+        ENDPROPERTIES
+        
+        FIELDLIST
+        ENDFIELDLIST
+      ENDOBJECTPOOL
+      METHODS
+        SOURCE #init
+          #public void init()
+          #{
+          #    super();
+          #
+          #    this.query().dataSourceTable(tableNum(InventTable)).addRange(fieldNum(InventTable, BOMUnitId)).value(McaCutlistParameters::find().CutKitUnitId);
+          #}
+        ENDSOURCE
+      ENDMETHODS
+    ENDDATASOURCE
+    DATASOURCE
+      OBJECTPOOL
+        PROPERTIES
+          Name                #EcoResProduct
+          Table               #EcoResProduct
+          AllowEdit           #No
+          AllowCreate         #No
+          AllowDelete         #No
+          JoinSource          #InventTable
+          LinkType            #InnerJoin
+          InsertIfEmpty       #No
+        ENDPROPERTIES
+        
+        FIELDLIST
+        ENDFIELDLIST
+      ENDOBJECTPOOL
+      METHODS
+      ENDMETHODS
+    ENDDATASOURCE
+    DERIVEDDATASOURCE
+      OBJECTPOOL
+        PROPERTIES
+          Name                #EcoResProduct_EcoResDistinctProduct
+          Table               #EcoResDistinctProduct
+          InsertIfEmpty       #No
+          Extends             #EcoResProduct
+        ENDPROPERTIES
+        
+        FIELDLIST
+        ENDFIELDLIST
+      ENDOBJECTPOOL
+      METHODS
+      ENDMETHODS
+    ENDDERIVEDDATASOURCE
+    DERIVEDDATASOURCE
+      OBJECTPOOL
+        PROPERTIES
+          Name                #EcoResProduct_EcoResDistinctProductVariant
+          Table               #EcoResDistinctProductVariant
+          Extends             #EcoResProduct_EcoResDistinctProduct
+        ENDPROPERTIES
+        
+        FIELDLIST
+        ENDFIELDLIST
+      ENDOBJECTPOOL
+      METHODS
+      ENDMETHODS
+    ENDDERIVEDDATASOURCE
+    DERIVEDDATASOURCE
+      OBJECTPOOL
+        PROPERTIES
+          Name                #EcoResProduct_EcoResProductMaster
+          Table               #EcoResProductMaster
+          Extends             #EcoResProduct
+        ENDPROPERTIES
+        
+        FIELDLIST
+        ENDFIELDLIST
+      ENDOBJECTPOOL
+      METHODS
+      ENDMETHODS
+    ENDDERIVEDDATASOURCE
+    DATASOURCE
+      OBJECTPOOL
+        PROPERTIES
+          Name                #EcoResProductTranslation
+          Table               #EcoResProductTranslation
+          AllowEdit           #No
+          AllowCreate         #No
+          AllowDelete         #No
+          JoinSource          #EcoResProduct
+          LinkType            #OuterJoin
+          InsertIfEmpty       #No
+        ENDPROPERTIES
+        
+        FIELDLIST
+        ENDFIELDLIST
+      ENDOBJECTPOOL
+      METHODS
+      ENDMETHODS
+    ENDDATASOURCE
+    DATASOURCE
+      OBJECTPOOL
+        PROPERTIES
+          Name                #McaCutlistModuleTmp
+          Table               #McaCutlistModuleTmp
+          InsertIfEmpty       #No
+        ENDPROPERTIES
+        
+        FIELDLIST
+        ENDFIELDLIST
+      ENDOBJECTPOOL
+      METHODS
+        SOURCE #initValue
+          #public void initValue()
+          #{
+          #    super();
+          #
+          #    McaCutlistModuleTmp.InventSiteId = StringEditSite.text();
+          #    McaCutlistModuleTmp.MoveToAreaId = StringEditMoveToAreaId.text();
+          #    McaCutlistModuleTmp.Qty          = 1.0;
+          #}
+        ENDSOURCE
+      ENDMETHODS
+    ENDDATASOURCE
+  ENDOBJECTBANK
+  
+  REFERENCEDATASOURCES
+  ENDREFERENCEDATASOURCES
+  
+  JOINS
+    EcoResProduct InventTable
+    EcoResProductTranslation EcoResProduct
+  ENDJOINS
+  
+  PARTREFERENCES
+  ENDPARTREFERENCES
+  
+  DESIGN
+    PROPERTIES
+      Width               #Column width
+      Height              #Column height
+      Caption             #@MCA1895
+    ENDPROPERTIES
+    
+    CONTAINER
+      CONTROL ACTIONPANE
+        PROPERTIES
+          Name                #ActionPane
+          ElementPosition     #178956970
+          Style               #Strip
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL ACTIONPANE
+        PROPERTIES
+          Name                #ActionPane1
+          ElementPosition     #1073741823
+          HierarchyParent     #Items
+          Style               #Strip
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL ACTIONPANE
+        PROPERTIES
+          Name                #ActionPaneItem
+          ElementPosition     #715827882
+          HierarchyParent     #SelectedItems
+          Style               #Strip
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL ACTIONPANETAB
+        PROPERTIES
+          Name                #ActionPaneTab
+          ElementPosition     #1431655764
+          HierarchyParent     #ActionPane
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL ACTIONPANETAB
+        PROPERTIES
+          Name                #ActionPaneTab1
+          ElementPosition     #1431655764
+          HierarchyParent     #ActionPane1
+          DataSource          #InventTable
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL ACTIONPANETAB
+        PROPERTIES
+          Name                #ActionPaneTabItem
+          ElementPosition     #1431655764
+          HierarchyParent     #ActionPaneItem
+          DataSource          #McaCutlistModuleTmp
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL BUTTONGROUP
+        PROPERTIES
+          Name                #ButtonGroup
+          ElementPosition     #1431655764
+          HierarchyParent     #ActionPaneTab
+          DataSource          #McaCutlistModuleTmp
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL BUTTONGROUP
+        PROPERTIES
+          Name                #ButtonGroupItem
+          ElementPosition     #1431655764
+          HierarchyParent     #ActionPaneTabItem
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL BUTTONGROUP
+        PROPERTIES
+          Name                #UpperButtonGroup
+          ElementPosition     #1073741823
+          HierarchyParent     #ActionPaneTab1
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL GRID
+        PROPERTIES
+          Name                #ItemGrid
+          AllowEdit           #No
+          Width               #Column width
+          Height              #Column height
+          ElementPosition     #1610612734
+          HierarchyParent     #Items
+          DataSource          #InventTable
+          DefaultActionLabel  #@SYS122402
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL GRID
+        PROPERTIES
+          Name                #SelectedItemsGrid
+          Width               #Column width
+          Height              #Column height
+          ElementPosition     #1431655764
+          HierarchyParent     #SelectedItems
+          DataSource          #McaCutlistModuleTmp
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL GROUP
+        PROPERTIES
+          Name                #CtrlSplit
+          AutoDeclaration     #Yes
+          Width               #Column width
+          Height              #5
+          ElementPosition     #1073741822
+          FrameType           #Raised 3D
+          BackgroundColor     #Window background
+          HideIfEmpty         #No
+          AlignChild          #No
+        ENDPROPERTIES
+        
+        METHODS
+          SOURCE #mouseDown
+            #int mouseDown(int x, int y, int button, boolean ctrl, boolean shift)
+            #{
+            #    super(x, y, button, ctrl, shift);
+            #    return formSplitter.mouseDown(x, y, button, ctrl, shift);
+            #}
+          ENDSOURCE
+          SOURCE #mouseMove
+            #int mouseMove(int x, int y, int button, boolean ctrl, boolean shift)
+            #{
+            #    super(x, y, button, ctrl, shift);
+            #    return formSplitter.mouseMove(x,y,button,ctrl,shift);
+            #}
+          ENDSOURCE
+          SOURCE #mouseUp
+            #int mouseUp(int x, int y, int button, boolean ctrl, boolean shift)
+            #{
+            #    super(x, y, button, ctrl, shift);
+            #    return formSplitter.mouseUp(x, y, button, ctrl, shift);
+            #}
+          ENDSOURCE
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL GROUP
+        PROPERTIES
+          Name                #Items
+          AutoDeclaration     #Yes
+          Width               #Column width
+          Height              #Column height
+          ElementPosition     #536870911
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL GROUP
+        PROPERTIES
+          Name                #SelectedItems
+          AutoDeclaration     #Yes
+          Width               #Column width
+          Height              #Column height
+          ElementPosition     #1610612733
+          DataSource          #McaCutlistModuleTmp
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL GROUP
+        PROPERTIES
+          Name                #Setting
+          ElementPosition     #357913940
+          FrameType           #Thin
+          Caption             #@SYS334126
+          Columns             #3
+          ArrangeGuide        
+            ARRAY INDEX Columns 
+              #0
+              #0
+              #0
+            ENDARRAY
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL BUTTON
+        PROPERTIES
+          Name                #LoadRecords
+          HelpText            #@MCA643
+          ElementPosition     #1431655764
+          HierarchyParent     #ButtonGroup
+          Text                #@MCA643
+          ButtonDisplay       #Text & Image left
+          NormalImage         #1223
+          ImageLocation       #EmbeddedResource
+          NeedsRecord         #Yes
+        ENDPROPERTIES
+        
+        METHODS
+          SOURCE #clicked
+            #void clicked()
+            #{
+            #    Args args = new Args();
+            #    McaCutlistCreate_Module cutlistCreate;
+            #
+            #    cutlistCreate = McaCutlistCreate_Module::newStandard(McaCutlistModuleTmp_ds);
+            #    cutlistCreate.run();
+            #
+            #    if (cutlistCreate.parmMcaCutModuleId())
+            #    {
+            #        args.parm(cutlistCreate.parmMcaCutModuleId());
+            #
+            #        args.caller(element);
+            #
+            #        new MenuFunction(menuitemDisplayStr(McaCutlistRecords), MenuItemType::Display).run(args);
+            #    }
+            #
+            #    element.closeOk();
+            #}
+          ENDSOURCE
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL BUTTON
+        PROPERTIES
+          Name                #Select
+          HelpText            #@SYS59127
+          ElementPosition     #1431655764
+          HierarchyParent     #UpperButtonGroup
+          Text                #@SYS60080
+          ButtonDisplay       #Text & Image left
+          NormalImage         #11421
+          ImageLocation       #EmbeddedResource
+          MultiSelect         #Yes
+        ENDPROPERTIES
+        
+        METHODS
+          SOURCE #clicked
+            #void clicked()
+            #{
+            #    InventTable   inventTableLocal;
+            #
+            #    super();
+            #
+            #    for (inventTableLocal = inventTable_ds.getFirst(1);
+            #         inventTableLocal;
+            #         inventTableLocal = inventTable_ds.getNext())
+            #    {
+            #        McaCutlistModuleTmp.clear();
+            #
+            #        McaCutlistModuleTmp.ItemId              = inventTableLocal.ItemId;
+            #        McaCutlistModuleTmp.MoveToAreaId        = StringEditMoveToAreaId.text();
+            #        McaCutlistModuleTmp.InventSiteId        = StringEditSite.text();
+            #        McaCutlistModuleTmp.Qty                 = 1.0;
+            #        McaCutlistModuleTmp.Prefix              = StringEditPrefix.text();
+            #        McaCutlistModuleTmp.ShipToWarehouse     = StringEditShipTo.text();
+            #        McaCutlistModuleTmp.ModelItemId         = StringEditModel.text();
+            #        McaCutlistModuleTmp.PWSBuildScheduleId  = StringEditBuildSchedule.text();
+            #
+            #        McaCutlistModuleTmp.insert();
+            #
+            #        inventTable_ds.findRecord(inventTableLocal);
+            #        inventTable_ds.mark(false);
+            #    }
+            #
+            #    McaCutlistModuleTmp_ds.reread();
+            #    McaCutlistModuleTmp_ds.research();
+            #
+            #    //for (inventTableLocal = inventTable_ds.getFirst(1);
+            #         //inventTableLocal;
+            #         //inventTableLocal = inventTable_ds.getNext())
+            #    //{
+            #        //inventTable_ds.findRecord(inventTableLocal);
+            #        //inventTable_ds.mark(false);
+            #    //}
+            #}
+          ENDSOURCE
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL COMBOBOX
+        PROPERTIES
+          Name                #EcoResProduct_M_productSubtype
+          AllowEdit           #No
+          ElementPosition     #1717986912
+          HierarchyParent     #ItemGrid
+          DataSource          #EcoResProduct
+          DataMethod          #productSubtype
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL COMBOBOX
+        PROPERTIES
+          Name                #EcoResProduct_ProductType
+          ElementPosition     #1503238548
+          HierarchyParent     #ItemGrid
+          DataSource          #EcoResProduct
+          DataField           #ProductType
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL COMMANDBUTTON
+        PROPERTIES
+          Name                #Delete
+          ElementPosition     #1610612733
+          HierarchyParent     #ButtonGroupItem
+          Text                #@SYS320778
+          ButtonDisplay       #Text & Image left
+          NormalImage         #10121
+          ImageLocation       #EmbeddedResource
+          SaveRecord          #No
+          NeedsRecord         #Yes
+          Command             #2832
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL COMMANDBUTTON
+        PROPERTIES
+          Name                #New
+          AutoDeclaration     #Yes
+          Visible             #No
+          ElementPosition     #1073741822
+          HierarchyParent     #ButtonGroupItem
+          ButtonDisplay       #Text & Image left
+          NormalImage         #11045
+          ImageLocation       #EmbeddedResource
+          Command             #260
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL REALEDIT
+        PROPERTIES
+          Name                #McaCutlistModuleTmp_Qty
+          ElementPosition     #1932735276
+          HierarchyParent     #SelectedItemsGrid
+          ShowZero            #No
+          DataSource          #McaCutlistModuleTmp
+          DataField           #Qty
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #EcoResProduct_SearchName
+          ElementPosition     #1288490184
+          HierarchyParent     #ItemGrid
+          DataSource          #InventTable
+          DataField           #NameAlias
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #EcoResProductTranslation_Name
+          ElementPosition     #1073741820
+          HierarchyParent     #ItemGrid
+          DataSource          #EcoResProductTranslation
+          DataField           #Name
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #InventTable_BOMUnitId
+          ElementPosition     #429496728
+          HierarchyParent     #ItemGrid
+          DataSource          #InventTable
+          DataField           #BOMUnitId
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #InventTable_ItemId
+          AutoDeclaration     #Yes
+          HyperLinkMenuItem   #EcoResProductDetailsExtended
+          HyperLinkDataSource #InventTable
+          ElementPosition     #644245092
+          HierarchyParent     #ItemGrid
+          DataSource          #InventTable
+          DataField           #ItemId
+          ViewEditMode        #View
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #McaCutlistModuleTmp_InventSiteId
+          ElementPosition     #1288490184
+          HierarchyParent     #SelectedItemsGrid
+          DataSource          #McaCutlistModuleTmp
+          DataField           #InventSiteId
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #McaCutlistModuleTmp_ItemId
+          ElementPosition     #1073741820
+          HierarchyParent     #SelectedItemsGrid
+          DataSource          #McaCutlistModuleTmp
+          DataField           #ItemId
+        ENDPROPERTIES
+        
+        METHODS
+          SOURCE #lookup
+            #public void lookup()
+            #{
+            #    McaCutlistModuleTmp::lookupCutItems(this);
+            #}
+          ENDSOURCE
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #McaCutlistModuleTmp_ModelItemId
+          ElementPosition     #644245092
+          HierarchyParent     #SelectedItemsGrid
+          DataSource          #McaCutlistModuleTmp
+          DataField           #ModelItemId
+        ENDPROPERTIES
+        
+        METHODS
+          SOURCE #lookup
+            #public void lookup()
+            #{
+            #    McaCutlistModuleTmp::lookupModelItems(this);
+            #}
+          ENDSOURCE
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #McaCutlistModuleTmp_MoveToAreaId
+          ElementPosition     #1717986912
+          HierarchyParent     #SelectedItemsGrid
+          DataSource          #McaCutlistModuleTmp
+          DataField           #MoveToAreaId
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #McaCutlistModuleTmp_Prefix
+          ElementPosition     #858993456
+          HierarchyParent     #SelectedItemsGrid
+          ChangeCase          #UPPER CASE
+          DataSource          #McaCutlistModuleTmp
+          DataField           #Prefix
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #McaCutlistModuleTmp_PWSBuildScheduleId
+          ElementPosition     #429496728
+          HierarchyParent     #SelectedItemsGrid
+          DataSource          #McaCutlistModuleTmp
+          DataField           #PWSBuildScheduleId
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #McaCutlistModuleTmp_ShipToWarehouse
+          ElementPosition     #1503238548
+          HierarchyParent     #SelectedItemsGrid
+          DataSource          #McaCutlistModuleTmp
+          DataField           #ShipToWarehouse
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #StringEditBuildSchedule
+          AutoDeclaration     #Yes
+          ElementPosition     #1879048185
+          HierarchyParent     #Setting
+          ExtendedDataType    
+            ARRAY 
+              #PWSBuildScheduleId
+              #
+            ENDARRAY
+        ENDPROPERTIES
+        
+        METHODS
+          SOURCE #lookup
+            #public void lookup()
+            #{
+            #    McaCutlistModuleTmp::lookupBuildSchedule(this);
+            #}
+          ENDSOURCE
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #StringEditModel
+          AutoDeclaration     #Yes
+          ElementPosition     #536870910
+          HierarchyParent     #Setting
+          ExtendedDataType    
+            ARRAY 
+              #McaModelItemId
+              #
+            ENDARRAY
+        ENDPROPERTIES
+        
+        METHODS
+          SOURCE #lookup
+            #public void lookup()
+            #{
+            #    McaCutlistModuleTmp::lookupModelItems(this);
+            #}
+          ENDSOURCE
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #StringEditMoveToAreaId
+          AutoDeclaration     #Yes
+          ElementPosition     #1342177275
+          HierarchyParent     #Setting
+          ExtendedDataType    
+            ARRAY 
+              #McaMoveToAreaId
+              #
+            ENDARRAY
+        ENDPROPERTIES
+        
+        METHODS
+          SOURCE #lookup
+            #public void lookup()
+            #{
+            #    McaCutlistModuleTmp::lookupMoveToArea(this);
+            #}
+          ENDSOURCE
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #StringEditPrefix
+          AutoDeclaration     #Yes
+          ElementPosition     #805306365
+          HierarchyParent     #Setting
+          ChangeCase          #UPPER CASE
+          ExtendedDataType    
+            ARRAY 
+              #McaPrefix
+              #
+            ENDARRAY
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #StringEditShipTo
+          AutoDeclaration     #Yes
+          ElementPosition     #1610612730
+          HierarchyParent     #Setting
+          ExtendedDataType    
+            ARRAY 
+              #McaShipToWarehouse
+              #
+            ENDARRAY
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #StringEditSite
+          AutoDeclaration     #Yes
+          ElementPosition     #1073741820
+          HierarchyParent     #Setting
+          Label               #@MCA1917
+          ExtendedDataType    
+            ARRAY 
+              #InventSiteId
+              #
+            ENDARRAY
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+    ENDCONTAINER
+    
+  ENDDESIGN
+  
+  PERMISSIONS #Permissions
+    PROPERTIES
+    ENDPROPERTIES
+    
+    PERMISSIONSET #Read
+      PROPERTIES
+      ENDPROPERTIES
+      
+      FORM #Controls
+      ENDFORM
+      
+    TABLES #Tables
+    ENDTABLES
+    
+  SERVERMETHODS #Server Methods
+  ENDSERVERMETHODS
+  
+ASSOCIATEDFORMS #Associated Forms
+ENDASSOCIATEDFORMS
+
+ENDPERMISSIONSET
+
+PERMISSIONSET #Update
+  PROPERTIES
+  ENDPROPERTIES
+  
+  FORM #Controls
+  ENDFORM
+  
+TABLES #Tables
+ENDTABLES
+
+SERVERMETHODS #Server Methods
+ENDSERVERMETHODS
+
+ASSOCIATEDFORMS #Associated Forms
+ENDASSOCIATEDFORMS
+
+ENDPERMISSIONSET
+
+PERMISSIONSET #Create
+  PROPERTIES
+  ENDPROPERTIES
+  
+  FORM #Controls
+  ENDFORM
+  
+TABLES #Tables
+ENDTABLES
+
+SERVERMETHODS #Server Methods
+ENDSERVERMETHODS
+
+ASSOCIATEDFORMS #Associated Forms
+ENDASSOCIATEDFORMS
+
+ENDPERMISSIONSET
+
+PERMISSIONSET #Delete
+  PROPERTIES
+  ENDPROPERTIES
+  
+  FORM #Controls
+  ENDFORM
+  
+TABLES #Tables
+ENDTABLES
+
+SERVERMETHODS #Server Methods
+ENDSERVERMETHODS
+
+ASSOCIATEDFORMS #Associated Forms
+ENDASSOCIATEDFORMS
+
+ENDPERMISSIONSET
+
+ENDPERMISSIONS
+
+ENDFORM
+
+
+***Element: END

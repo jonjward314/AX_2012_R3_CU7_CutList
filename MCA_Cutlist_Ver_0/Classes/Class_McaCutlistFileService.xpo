@@ -1,0 +1,76 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: McaCutlistFileService unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #McaCutlistFileService
+    PROPERTIES
+      Name                #McaCutlistFileService
+      RunOn               #Server
+      Origin              #{5A236121-9371-404C-A8D9-947442396EA6}
+    ENDPROPERTIES
+    
+    METHODS
+      SOURCE #classDeclaration
+        #/// <summary>
+        #///     The service class for the Cutlist file creation.
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #class McaCutlistFileService //extends SysOperationServiceBase
+        #{
+        #}
+      ENDSOURCE
+      SOURCE #process
+        #/// <summary>
+        #///     Service method to process the cutlist files
+        #/// </summary>
+        #/// <param name="_contract">
+        #///     a <c>McaCutlistFileContract</c> object
+        #/// </param>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #[SysEntryPointAttribute(false)]
+        #public void process(McaCutlistFileContract _contract)
+        #{
+        #    setPrefix("@MCA639");
+        #
+        #    try
+        #    {
+        #        this.processCutlistFiles(_contract);
+        #    }
+        #    catch
+        #    {
+        #        throw error("@SYS21628"); //Update has been canceled because of an error.
+        #    }
+        #}
+      ENDSOURCE
+      SOURCE #processCutlistFiles
+        #/// <summary>
+        #///     Service method to process the cutlist files
+        #/// </summary>
+        #/// <param name="_contract">
+        #///     a <c>McaCutlistFileContract</c> object
+        #/// </param>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #[SysEntryPointAttribute(false)]
+        #public void processCutlistFiles(McaCutlistFileContract _contract)
+        #{
+        #    McaCutlistFilesReports mcaCutlistFilesReports;
+        #
+        #    mcaCutlistFilesReports = McaCutlistFilesReports::newStandard(_contract);
+        #    mcaCutlistFilesReports.run();
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: END

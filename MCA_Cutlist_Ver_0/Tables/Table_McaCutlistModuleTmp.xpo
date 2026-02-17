@@ -1,0 +1,360 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: DBT
+
+; Microsoft Dynamics AX Table : McaCutlistModuleTmp unloaded
+; --------------------------------------------------------------------------------
+  TABLEVERSION 1
+  
+  TABLE #McaCutlistModuleTmp
+    EnforceFKRelation 1
+    PROPERTIES
+      Name                #McaCutlistModuleTmp
+      Label               #@MCA1895
+      TableType           #TempDB
+      CreateRecIdIndex    #Yes
+      PrimaryIndex        #SurrogateKey
+      ClusterIndex        #SurrogateKey
+      Origin              #{7842899F-6BBC-4F6B-8B75-B67EF521B14D}
+    ENDPROPERTIES
+    
+    FIELDS
+      FIELD #InventSiteId
+        STRING
+        PROPERTIES
+          Name                #InventSiteId
+          Mandatory           #Yes
+          Table               #McaCutlistModuleTmp
+          IgnoreEDTRelation   #Yes
+          Origin              #{8E4512BA-F4CB-4559-9BE4-28675F7AFACB}
+          ExtendedDataType    #InventSiteId
+        ENDPROPERTIES
+        
+      FIELD #ItemId
+        STRING
+        PROPERTIES
+          Name                #ItemId
+          Mandatory           #Yes
+          Table               #McaCutlistModuleTmp
+          IgnoreEDTRelation   #Yes
+          Origin              #{C2B5714E-22A4-450B-A859-6DBF79912B03}
+          ExtendedDataType    #ItemId
+          StringSize          #40
+        ENDPROPERTIES
+        
+      FIELD #ModelItemId
+        STRING
+        PROPERTIES
+          Name                #ModelItemId
+          Table               #McaCutlistModuleTmp
+          IgnoreEDTRelation   #Yes
+          Origin              #{E0AF7D89-55E2-4A7B-8878-8ECEA4BB4C54}
+          ExtendedDataType    #McaModelItemId
+          StringSize          #40
+        ENDPROPERTIES
+        
+      FIELD #MoveToAreaId
+        STRING
+        PROPERTIES
+          Name                #MoveToAreaId
+          Table               #McaCutlistModuleTmp
+          Origin              #{F47620D1-F63E-40B4-8010-BB67B0DF029F}
+          ExtendedDataType    #McaMoveToAreaId
+        ENDPROPERTIES
+        
+      FIELD #Prefix
+        STRING
+        PROPERTIES
+          Name                #Prefix
+          Table               #McaCutlistModuleTmp
+          Origin              #{E7CA0E81-55A4-4BDB-9DD2-60AFCD6D5E81}
+          ExtendedDataType    #McaPrefix
+        ENDPROPERTIES
+        
+      FIELD #PWSBuildScheduleId
+        STRING
+        PROPERTIES
+          Name                #PWSBuildScheduleId
+          Table               #McaCutlistModuleTmp
+          Origin              #{B259882C-60DC-4EED-94A6-C325653EE46E}
+          ExtendedDataType    #PWSBuildScheduleId
+          StringSize          #20
+        ENDPROPERTIES
+        
+      FIELD #Qty
+        REAL
+        PROPERTIES
+          Name                #Qty
+          Table               #McaCutlistModuleTmp
+          Origin              #{F8282816-5DC1-4521-AF24-A039D65861E2}
+          ExtendedDataType    #Qty
+        ENDPROPERTIES
+        
+      FIELD #ShipToWarehouse
+        STRING
+        PROPERTIES
+          Name                #ShipToWarehouse
+          Table               #McaCutlistModuleTmp
+          IgnoreEDTRelation   #Yes
+          Origin              #{8B5270F4-C8DE-4EAB-9D2D-CCD890645288}
+          ExtendedDataType    #McaShipToWarehouse
+        ENDPROPERTIES
+        
+    ENDFIELDS
+    GROUPS
+    ENDGROUPS
+    
+    INDICES
+      #ItemSiteMoveIdx
+      PROPERTIES
+        Name                #ItemSiteMoveIdx
+        AllowDuplicates     #No
+        Origin              #{775BFBDA-F529-4266-B446-8DF2038002CD}
+      ENDPROPERTIES
+      
+      INDEXFIELDS
+        #ItemId
+        #InventSiteId
+        #MoveToAreaId
+      ENDINDEXFIELDS
+      
+    ENDINDICES
+    FULLTEXTINDICES
+    ENDFULLTEXTINDICES
+    REFERENCES
+      REFERENCE #InventLocation
+        PROPERTIES
+          Name                #InventLocation
+          Table               #InventLocation
+          RelatedTableCardinality   #ExactlyOne
+          Cardinality         #ZeroMore
+          RelationshipType    #Association
+          UseDefaultRoleNames #Yes
+        ENDPROPERTIES
+        
+        FIELDREFERENCES
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #ShipToWarehouse
+            RelatedField        #InventLocationId
+          ENDPROPERTIES
+          
+        ENDFIELDREFERENCES
+      ENDREFERENCE
+      REFERENCE #InventSite
+        PROPERTIES
+          Name                #InventSite
+          Table               #InventSite
+          RelatedTableCardinality   #ExactlyOne
+          Cardinality         #ZeroMore
+          RelationshipType    #Association
+          UseDefaultRoleNames #Yes
+        ENDPROPERTIES
+        
+        FIELDREFERENCES
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #InventSiteId
+            RelatedField        #SiteId
+          ENDPROPERTIES
+          
+        ENDFIELDREFERENCES
+      ENDREFERENCE
+      REFERENCE #InventTable
+        PROPERTIES
+          Name                #InventTable
+          Table               #InventTable
+          RelatedTableCardinality   #ExactlyOne
+          Cardinality         #ZeroMore
+          RelationshipType    #Association
+          UseDefaultRoleNames #Yes
+        ENDPROPERTIES
+        
+        FIELDREFERENCES
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #ItemId
+            RelatedField        #ItemId
+          ENDPROPERTIES
+          
+        ENDFIELDREFERENCES
+      ENDREFERENCE
+      REFERENCE #McaCutlistMoveToAreas
+        PROPERTIES
+          Name                #McaCutlistMoveToAreas
+          Table               #McaCutlistMoveToAreas
+          RelatedTableCardinality   #ExactlyOne
+          Cardinality         #ZeroMore
+          RelationshipType    #Association
+          UseDefaultRoleNames #Yes
+        ENDPROPERTIES
+        
+        FIELDREFERENCES
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #MoveToAreaId
+            RelatedField        #MoveToAreaId
+          ENDPROPERTIES
+          
+        ENDFIELDREFERENCES
+      ENDREFERENCE
+      REFERENCE #ModelInventTable
+        PROPERTIES
+          Name                #ModelInventTable
+          Table               #InventTable
+          RelatedTableCardinality   #ExactlyOne
+          Cardinality         #ZeroMore
+          RelationshipType    #Association
+          UseDefaultRoleNames #Yes
+          RelatedTableRole    #ModelItemId
+        ENDPROPERTIES
+        
+        FIELDREFERENCES
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #ModelItemId
+            RelatedField        #ItemId
+          ENDPROPERTIES
+          
+        ENDFIELDREFERENCES
+      ENDREFERENCE
+      REFERENCE #PWSBuildSchedule
+        PROPERTIES
+          Name                #PWSBuildSchedule
+          Table               #PWSBuildSchedule
+          RelatedTableCardinality   #ZeroOne
+          Cardinality         #ZeroMore
+          RelationshipType    #Association
+          UseDefaultRoleNames #Yes
+        ENDPROPERTIES
+        
+        FIELDREFERENCES
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #PWSBuildScheduleId
+            RelatedField        #BuildSchedule
+          ENDPROPERTIES
+          
+        ENDFIELDREFERENCES
+      ENDREFERENCE
+    ENDREFERENCES
+    
+    DELETEACTIONS
+    ENDDELETEACTIONS
+    
+    METHODS
+      SOURCE #lookupBuildSchedule
+        #/// <summary>
+        #///     Lookup up the machine type resources.
+        #/// </summary>
+        #/// <param name="_ctrl">
+        #///     <c>FormStringControl</c> control
+        #/// </param>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/15/2018 - Mca_CR009_PWSCutlistCRP2
+        #/// </remarks>
+        #public client static void lookupBuildSchedule(
+        #    FormStringControl    _ctrl)
+        #{
+        #    SysTableLookup          sysTableLookup  = SysTableLookup::newParameters(tablenum(PWSBuildSchedule), _ctrl);
+        #    Query                   query           = new Query();
+        #    QueryBuildDataSource    qbds;
+        #
+        #    qbds = query.addDataSource(tablenum(PWSBuildSchedule));
+        #
+        #    sysTableLookup.addLookupfield(fieldnum(PWSBuildSchedule, BuildSchedule));
+        #    sysTableLookup.addLookupfield(fieldnum(PWSBuildSchedule, ProdUnitId));
+        #
+        #    sysTableLookup.parmQuery(query);
+        #    sysTableLookup.performFormLookup();
+        #}
+      ENDSOURCE
+      SOURCE #lookupCutItems
+        #/// <summary>
+        #///     Lookup up the CUT items
+        #/// </summary>
+        #/// <param name="_ctrl">
+        #///     <c>FormStringControl</c> control
+        #/// </param>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/15/2018 - Mca_CR009_PWSCutlistCRP2
+        #/// </remarks>
+        #public client static void lookupCutItems(
+        #    FormStringControl    _ctrl)
+        #{
+        #    SysTableLookup          sysTableLookup  = SysTableLookup::newParameters(tablenum(InventTable), _ctrl);
+        #    Query                   query           = new Query();
+        #    QueryBuildDataSource    qbds;
+        #
+        #    qbds = query.addDataSource(tablenum(InventTable));
+        #    qbds.addRange(fieldnum(InventTable, BOMUnitId)).value(McaCutlistParameters::find().CutKitUnitId);
+        #
+        #    sysTableLookup.addLookupfield(fieldnum(InventTable, ItemId));
+        #    sysTableLookup.addLookupfield(fieldnum(InventTable, NameAlias));
+        #
+        #    sysTableLookup.parmQuery(query);
+        #    sysTableLookup.performFormLookup();
+        #}
+      ENDSOURCE
+      SOURCE #lookupModelItems
+        #/// <summary>
+        #///     Lookup up the model items.
+        #/// </summary>
+        #/// <param name="_ctrl">
+        #///     <c>FormStringControl</c> control
+        #/// </param>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/15/2018 - Mca_CR009_PWSCutlistCRP2
+        #/// </remarks>
+        #public client static void lookupModelItems(
+        #    FormStringControl    _ctrl)
+        #{
+        #    SysTableLookup          sysTableLookup  = SysTableLookup::newParameters(tablenum(InventTable), _ctrl);
+        #    Query                   query           = new Query();
+        #    QueryBuildDataSource    qbds, qbds2;
+        #
+        #    qbds = query.addDataSource(tablenum(InventTable));
+        #    //qbds.addRange(fieldnum(InventTable, BOMUnitId)).value(McaCutlistParameters::find().CutKitUnitId);
+        #    qbds2 = qbds.addDataSource(tableNum(EcoResProductMaster));
+        #    qbds2.joinMode(JoinMode::InnerJoin);
+        #    qbds2.addLink(fieldNum(InventTable, Product), fieldNum(EcoResProductMaster, RecId));
+        #
+        #    sysTableLookup.addLookupfield(fieldnum(InventTable, ItemId));
+        #    sysTableLookup.addLookupfield(fieldnum(InventTable, NameAlias));
+        #
+        #    sysTableLookup.parmQuery(query);
+        #    sysTableLookup.performFormLookup();
+        #}
+      ENDSOURCE
+      SOURCE #lookupMoveToArea
+        #/// <summary>
+        #///     Lookup up the move to areas
+        #/// </summary>
+        #/// <param name="_ctrl">
+        #///     <c>FormStringControl</c> control
+        #/// </param>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/15/2018 - Mca_CR009_PWSCutlistCRP2
+        #/// </remarks>
+        #public client static void lookupMoveToArea(
+        #    FormStringControl    _ctrl)
+        #{
+        #    SysTableLookup          sysTableLookup  = SysTableLookup::newParameters(tablenum(McaCutlistMoveToAreas), _ctrl);
+        #    Query                   query           = new Query();
+        #    QueryBuildDataSource    qbds;
+        #
+        #    qbds = query.addDataSource(tablenum(McaCutlistMoveToAreas));
+        #
+        #    sysTableLookup.addLookupfield(fieldnum(McaCutlistMoveToAreas, MoveToAreaId));
+        #    sysTableLookup.addLookupfield(fieldnum(McaCutlistMoveToAreas, Description));
+        #
+        #    sysTableLookup.parmQuery(query);
+        #    sysTableLookup.performFormLookup();
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDTABLE
+  
+
+***Element: END

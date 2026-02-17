@@ -1,0 +1,86 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: McaCutlistDeleteController unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #McaCutlistDeleteController
+    PROPERTIES
+      Name                #McaCutlistDeleteController
+      Extends             #SysOperationServiceController
+      Origin              #{66914C9D-825C-4668-B85B-FDD23C70976E}
+    ENDPROPERTIES
+    
+    METHODS
+      SOURCE #caption
+        #/// <summary>
+        #/// The description for the class
+        #/// </summary>
+        #/// <returns>
+        #/// <c>ClassDescription</c>
+        #/// </returns>
+        #public ClassDescription caption()
+        #{
+        #    return "@MCA1918";
+        #}
+      ENDSOURCE
+      SOURCE #classDeclaration
+        #/// <summary>
+        #/// Controller class for the cutlist deletion recurring batch job
+        #/// </summary>
+        #/// <remarks>
+        #/// MCA Robert O'Berry 7/31/2024 Case mca202404317 Create job to create and delete cutlist records
+        #/// </remarks>
+        #[SysOperationJournaledParametersAttribute(true)]
+        #class McaCutlistDeleteController extends SysOperationServiceController
+        #{
+        #}
+      ENDSOURCE
+      SOURCE #new
+        #public void new(IdentifierName _className = classStr(McaCutlistDeleteService), IdentifierName _methodName = methodStr(McaCutlistDeleteService, process), SysOperationExecutionMode _executionMode = SysOperationExecutionMode::Synchronous)
+        #{
+        #    super(_className, _methodName, _executionMode);
+        #}
+      ENDSOURCE
+      SOURCE #main
+        #/// <summary>
+        #/// Provides an entry point for the <c>McaCutlistDeleteController</c> class when it is called from a menu item.
+        #/// </summary>
+        #/// <param name="args">
+        #/// The arguments for the <c>McaCutlistCreateController</c> class.
+        #/// </param>
+        #public static void main(Args args)
+        #{
+        #    McaCutlistDeleteController controller;   
+        #    IdentifierName className;       
+        #    IdentifierName methodName;
+        #    SysOperationExecutionMode executionMode;
+        #    McaCutlistDeleteContract contract;
+        #
+        #    [className, methodName, executionMode] = SysOperationServiceController::parseServiceInfo(args);
+        #
+        #    controller = new McaCutlistDeleteController(className, methodName, executionMode);
+        #
+        #    controller.parmDialogCaption("@MCA643");
+        #
+        #    contract = controller.getBaseDataContract() as McaCutlistDeleteContract;
+        #    if (!contract)
+        #    {
+        #        contract = new McaCutlistDeleteContract();
+        #    }
+        #
+        #    if (args.parmObject())
+        #    {
+        #        contract.setQuery(args.parmObject());
+        #    }
+        #
+        #    controller.startOperation();
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: END

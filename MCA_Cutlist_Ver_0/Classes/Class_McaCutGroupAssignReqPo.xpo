@@ -1,0 +1,128 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: McaCutGroupAssignReqPo unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #McaCutGroupAssignReqPo
+    PROPERTIES
+      Name                #McaCutGroupAssignReqPo
+      Origin              #{FE614789-9B06-4B9C-9022-9F06B5125835}
+    ENDPROPERTIES
+    
+    METHODS
+      SOURCE #classDeclaration
+        #/// <summary>
+        #///     This class updates the ReqPo table with CutGroupId
+        #/// </summary>
+        #/// <remarks>
+        #///     Ray M - 05/15/2019 - Mca_TASK122734_CutGroupReqPo
+        #/// </remarks>
+        #class McaCutGroupAssignReqPo
+        #{
+        #    RefRecId                planVersionRefRecId;
+        #}
+      ENDSOURCE
+      SOURCE #processPlannedOrders
+        #/// <summary>
+        #///     Runs the class logic
+        #/// </summary>
+        #/// <remarks>
+        #///     Ray M - 05/15/2019 - Mca_TASK122734_CutGroupReqPo
+        #/// </remarks>
+        #public void processPlannedOrders()
+        #{
+        #    #OCCRetryCount
+        #    ReqPO                   reqPo, reqPoUpdate;
+        #    InventDim               inventDim;
+        #    McaCutGroupId           cutGroupId;
+        #    InventSiteId            curInventSiteId;
+        #    ItemId                  curItemId;
+        #    McaStopWatch            stopWatch = new McaStopWatch();
+        #
+        #    planVersionRefRecId = ReqPlanVersion::findReqPlanId(ReqParameters::find().CurrentReqPlanIdSchedStatic, curext(), true).RecId;
+        #
+        #    stopWatch.start();
+        #
+        #    try
+        #    {
+        #        ttsBegin;
+        #
+        #        while select reqPo
+        #            order by ItemId, CovInventDimId
+        #            group by ItemId, CovInventDimId
+        #            where reqPo.PlanVersion == planVersionRefRecId
+        #        {
+        #            inventDim = inventDim::find(reqPo.CovInventDimId);
+        #            if ((curItemId != reqPo.ItemId) || (curInventSiteId != inventDim.InventSiteId))
+        #            {
+        #                curItemId       = reqPo.ItemId;
+        #                curInventSiteId = inventDim.InventSiteId;
+        #                cutGroupId      = McaCutlist::getCutGroupId(reqPo.ItemId, inventDim.InventSiteId);
+        #            }
+        #
+        #            if (cutGroupId)
+        #            {
+        #                reqPoUpdate.skipDataMethods(true);
+        #
+        #                update_recordSet reqPoUpdate
+        #                    setting McaCutGroupId = cutGroupId
+        #                    where reqPoUpdate.ItemId            == reqPo.ItemId
+        #                       && reqPoUpdate.CovInventDimId    == reqPo.CovInventDimId
+        #                       && reqPoUpdate.PlanVersion       == planVersionRefRecId;
+        #            }
+        #        }
+        #        ttsCommit;
+        #    }
+        #    catch (Exception::Error)
+        #    {
+        #        throw error("@SYS21628"); //Update has been canceled because of an error.
+        #    }
+        #    catch (Exception::Deadlock)
+        #    {
+        #        retry;
+        #    }
+        #    catch (Exception::UpdateConflict)
+        #    {
+        #        if (appl.ttsLevel() == 0)
+        #        {
+        #            if (xSession::currentRetryCount() >= #RetryNum)
+        #            {
+        #                throw Exception::UpdateConflictNotRecovered;
+        #            }
+        #            else
+        #            {
+        #                retry;
+        #            }
+        #        }
+        #        else
+        #        {
+        #            throw Exception::UpdateConflict;
+        #        }
+        #    }
+        #
+        #    stopWatch.stop();
+        #}
+      ENDSOURCE
+      SOURCE #construct
+        #/// <summary>
+        #///     Creates a new <c>McaCutGroupAssignReqPo</c> object.
+        #/// </summary>
+        #/// <returns>
+        #///     a newly created <c>McaCutGroupAssignReqPo</c> object.
+        #/// </returns>
+        #/// <remarks>
+        #///     Ray M - 05/15/2019 - Mca_TASK122734_CutGroupReqPo
+        #/// </remarks>
+        #public static McaCutGroupAssignReqPo construct()
+        #{
+        #    return new McaCutGroupAssignReqPo();
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: END

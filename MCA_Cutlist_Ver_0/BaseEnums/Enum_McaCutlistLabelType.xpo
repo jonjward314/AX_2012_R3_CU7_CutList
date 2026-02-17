@@ -1,0 +1,37 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: DBE
+
+; Microsoft Dynamics AX Enumtype : McaCutlistLabelType unloaded
+; --------------------------------------------------------------------------------
+  ENUMTYPEVERSION 1
+  
+  ENUMTYPE #McaCutlistLabelType
+    PROPERTIES
+      Name                #McaCutlistLabelType
+      Label               #@RET3452
+      UseEnumValue        #Yes
+      Origin              #{E57F4158-B9AF-49A2-BD83-CC7AECECB90C}
+    ENDPROPERTIES
+    
+    TYPEELEMENTS
+      #Module
+      PROPERTIES
+        Name                #Module
+        Label               #@SYS9941
+        EnumValue           #0
+      ENDPROPERTIES
+      
+      #RawMaterial
+      PROPERTIES
+        Name                #RawMaterial
+        Label               #@SYS332340
+        EnumValue           #1
+      ENDPROPERTIES
+      
+    ENDTYPEELEMENTS
+  ENDENUMTYPE
+  
+
+***Element: END

@@ -1,0 +1,90 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: QUE
+
+; Microsoft Dynamics AX Query: McaCutlistQuery unloaded
+; --------------------------------------------------------------------------------
+VERSION 31
+
+QUERY #McaCutlistQuery
+  PROPERTIES
+    Name                #McaCutlistQuery
+    Title               #@MCA616
+    Description         #@MCA616
+    Version             #51
+    NextUniqueId        #1001
+    Origin              #{8F19BEA0-4E90-444A-9C5D-1589D95A4F0D}
+  ENDPROPERTIES
+  
+  METHODS
+    SOURCE #classDeclaration
+      #public class QueryRun extends ObjectRun
+      #{
+      #}
+    ENDSOURCE
+  ENDMETHODS
+  BLOCKS
+    BLOCK #McaCutlist
+      PROPERTIES
+        Name                #McaCutlist
+        Table               #McaCutlist
+        UniqueId            #1000
+        FetchMode           #1:1
+      ENDPROPERTIES
+      
+      FIELDLIST
+        PROPERTIES
+        ENDPROPERTIES
+        
+      ENDFIELDLIST
+      SORTING
+      ENDSORTING
+      LINES
+        LINE #PWSBuildScheduleId
+        PROPERTIES
+          Name                #PWSBuildScheduleId
+          Table               #McaCutlist
+          Field               #PWSBuildScheduleId
+        ENDPROPERTIES
+        
+        LINE #ModelItemId
+        PROPERTIES
+          Name                #ModelItemId
+          Table               #McaCutlist
+          Field               #ModelItemId
+        ENDPROPERTIES
+        
+        LINE #Prefix
+        PROPERTIES
+          Name                #Prefix
+          Table               #McaCutlist
+          Field               #Prefix
+        ENDPROPERTIES
+        
+        LINE #CutGroupId
+        PROPERTIES
+          Name                #CutGroupId
+          Table               #McaCutlist
+          Field               #CutGroupId
+        ENDPROPERTIES
+        
+      ENDLINES
+      BLOCKS
+      ENDBLOCKS
+      GROUPBY
+      ENDGROUPBY
+      HAVING
+      ENDHAVING
+      ORDERBY
+      ENDORDERBY
+    ENDBLOCK
+  ENDBLOCKS
+  DEPENDENTS
+  ENDDEPENDENTS
+  COMPOSITEQUERIES
+  ENDCOMPOSITEQUERIES
+ENDQUERY
+
+
+***Element: END

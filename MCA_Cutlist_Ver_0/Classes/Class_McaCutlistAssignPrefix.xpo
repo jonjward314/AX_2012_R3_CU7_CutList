@@ -1,0 +1,393 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: McaCutlistAssignPrefix unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #McaCutlistAssignPrefix
+    PROPERTIES
+      Name                #McaCutlistAssignPrefix
+      Origin              #{6FDDC43D-CE88-435B-9D2A-F18A2F8B5DE9}
+    ENDPROPERTIES
+    
+    METHODS
+      SOURCE #abortNumber
+        #public void abortNumber()
+        #{
+        #    if (num == 1)
+        #    {
+        #        num = 9;
+        #        charValue -= 1;
+        #    }
+        #    else
+        #    {
+        #        num -= 1;
+        #    }
+        #}
+      ENDSOURCE
+      SOURCE #assignPrefix
+        #/// <summary>
+        #///     Assign prefix to cutlist records.
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #private void assignPrefix()
+        #{
+        #    #File
+        #    Query                   query = contract.getQuery();
+        #    QueryRun                queryRun;
+        #    QueryBuildRange         qbr;
+        #    QueryBuildDataSource    qbds;
+        #    McaCutlist              cutList;
+        #    Map                     cutlistRecIdMap = new Map(Types::Int64, Types::String);
+        #    MapEnumerator           me;
+        #    McaPrefix               prefix;
+        #    McaModelItemId          curModelItemId, lastModelItemId;
+        #    PWSBuildScheduleId      curBuildSchedule, lastBuildSchedule;
+        #
+        #    // add the prefix as a range
+        #    qbds = query.dataSourceTable(tablenum(McaCutlist));
+        #    qbr  = SysQuery::findOrCreateRange(qbds, fieldnum(McaCutlist, Prefix));
+        #    qbr.value(SysQuery::value(''));
+        #
+        #    // sort by fields
+        #    qbds.addSortField(fieldNum(McaCutlist, PWSBuildScheduleId));
+        #
+        #    queryRun = new QueryRun(query);
+        #
+        #    while (queryrun.next())
+        #    {
+        #        cutList = queryRun.get(tablenum(McaCutlist));
+        #
+        #        curModelItemId      = cutList.ModelItemId;
+        #        curBuildSchedule    = cutList.PWSBuildScheduleId;
+        #
+        #        if ((curBuildSchedule != lastBuildSchedule) || (curModelItemId != lastModelItemId))
+        #        {
+        #            //prefix = McaCutlistPrefixNumberSeq::construct().num();
+        #            prefix = this.prefix();
+        #            info(strFmt(infoPrefix + 'Prefix %1 created for item %2 in Schedule %3', prefix, cutList.ModelItemId, cutList.PWSBuildScheduleId));
+        #        }
+        #
+        #        // Add the cutlist recId's to a map so we can assign them a prefix
+        #        if (!cutlistRecIdMap.exists(cutList.RecId))
+        #        {
+        #            cutlistRecIdMap.insert(cutList.RecId, prefix);
+        #            cutlistRecIdMap.valueSet();
+        #        }
+        #
+        #        lastModelItemId     = curModelItemId;
+        #        lastBuildSchedule   = curBuildSchedule;
+        #    }
+        #
+        #    me = new MapEnumerator(cutlistRecIdMap);
+        #
+        #    ttsBegin;
+        #    while (me.moveNext())
+        #    {
+        #        update_recordSet cutList
+        #            setting prefix = me.currentValue()
+        #           where cutList.RecId == me.currentKey();
+        #    }
+        #    ttscommit;
+        #}
+        #
+      ENDSOURCE
+      SOURCE #assignPrefixOld
+        #/// <summary>
+        #///     Assign prefix to cutlist records.
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #private void assignPrefixOld()
+        #{
+        #    #File
+        #    Query                   query = contract.getQuery();
+        #    QueryRun                queryRun;
+        #    QueryBuildRange         qbr;
+        #    QueryBuildDataSource    qbds;
+        #    McaCutlist              cutList;
+        #    Map                     kanbanMap = new Map(Types::String, Types::String);
+        #    MapEnumerator           me;
+        #    McaPrefix               prefix;
+        #    McaBuildQty             buildQty;
+        #    McaModelItemId          curModelItemId, lastModelItemId;
+        #    InventLocationId        curInventLocationId, lastInventLocationId;
+        #    InventDim               modelInventDim;
+        #    InventLocation          inventLocation;
+        #
+        #    // add the prefix as a range
+        #    qbds = query.dataSourceTable(tablenum(McaCutlist));
+        #    qbr  = SysQuery::findOrCreateRange(qbds, fieldnum(McaCutlist, Prefix));
+        #    qbr.value(SysQuery::value(''));
+        #
+        #    // sort by fields
+        #    qbds.addSortField(fieldNum(McaCutlist, ModelItemID));
+        #    qbds.addSortField(fieldNum(McaCutlist, KanbanID));
+        #
+        #    // add the grouping
+        #    SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, ModelItemId));
+        #    SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, KanbanID));
+        #    SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, ShipToWarehouse));
+        #
+        #    queryRun = new QueryRun(query);
+        #
+        #    while (queryrun.next())
+        #    {
+        #        cutList = queryRun.get(tablenum(McaCutlist));
+        #
+        #        curModelItemId      = cutList.ModelItemId;
+        #        curInventLocationId = cutList.ShipToWarehouse;
+        #
+        #        if ((curInventLocationId != lastInventLocationId) || (curModelItemId != lastModelItemId) || !buildQty)
+        #        {
+        #            inventLocation = InventLocation::find(cutList.ShipToWarehouse);
+        #
+        #            modelInventDim.InventSiteId     = inventLocation.InventSiteId;
+        #            modelInventDim                  = InventDim::findOrCreate(modelInventDim);
+        #
+        #            buildQty = InventItemInventSetup::find(cutList.ModelItemId, modelInventDim.inventDimId).McaBuildQty;
+        #            if (buildQty == 0)
+        #            {
+        #                buildQty = InventItemInventSetup::findDefault(cutList.ModelItemId).McaBuildQty;
+        #                if (buildQty == 0)
+        #                    continue;
+        #            }
+        #
+        #            prefix = McaCutlistPrefixNumberSeq::construct().num();
+        #            info(strFmt(infoPrefix + 'Prefix %1 created for item %2 in warehouse %3 with a buildQty of %4', prefix, cutList.ModelItemId, cutList.ShipToWarehouse, buildQty));
+        #        }
+        #
+        #        // Add the cutlist recId's to a map so we can assign them a prefix
+        #        if (!kanbanMap.exists(cutList.KanbanId))
+        #        {
+        #            kanbanMap.insert(cutList.KanbanId, prefix);
+        #            kanbanMap.valueSet();
+        #            buildQty--;
+        #        }
+        #
+        #        lastModelItemId      = curModelItemId;
+        #        lastInventLocationId = curInventLocationId;
+        #    }
+        #
+        #    me = new MapEnumerator(kanbanMap);
+        #
+        #    ttsBegin;
+        #    while (me.moveNext())
+        #    {
+        #        update_recordSet cutList
+        #            setting prefix = me.currentValue()
+        #           where cutList.KanbanId == me.currentKey();
+        #    }
+        #    ttscommit;
+        #}
+        #
+      ENDSOURCE
+      SOURCE #classDeclaration
+        #/// <summary>
+        #///     This class generates and assigns a prefix to the cutlist records
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #class McaCutlistAssignPrefix
+        #{
+        #    McaCutlistFileContract  contract;
+        #    str                     infoPrefix;
+        #    int                     num;
+        #    int                     charValue;
+        #}
+      ENDSOURCE
+      SOURCE #initValues
+        #protected void initValues()
+        #{
+        #    num         = 0;
+        #    charValue   = 65;
+        #}
+      ENDSOURCE
+      SOURCE #parmContract
+        #/// <summary>
+        #///     Get/Set the <c>McaCutlistFileContract</c>
+        #/// </summary>
+        #/// <param name="_contract">
+        #///     a <c>McaCutlistFileContract</c> object
+        #/// </param>
+        #/// <returns>
+        #///     a <c>McaCutlistFileContract</c> object
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #McaCutlistFileContract parmContract(McaCutlistFileContract _contract = contract)
+        #{
+        #    if (!prmisDefault(_contract))
+        #    {
+        #        contract = _contract;
+        #    }
+        #
+        #    return contract;
+        #}
+      ENDSOURCE
+      SOURCE #prefix
+        #public str prefix()
+        #{
+        #    if (num < 9)
+        #    {
+        #        return strFmt('%1%2', num2char(charValue), this.prefixNumber());
+        #    }
+        #    else
+        #    {
+        #        return strFmt('%1%2', this.prefixChar(), this.prefixNumber());
+        #    }
+        #}
+      ENDSOURCE
+      SOURCE #prefixChar
+        #private str prefixChar()
+        #{
+        #    str char;
+        #
+        #    if (charValue < 90)
+        #    {
+        #        charValue++;
+        #        char = num2char(charValue);
+        #    }
+        #    else
+        #    {
+        #        charValue = 65;
+        #        char = num2char(charValue);
+        #    }
+        #
+        #    return char;
+        #}
+      ENDSOURCE
+      SOURCE #prefixNumber
+        #private int prefixNumber()
+        #{
+        #    //int number;
+        #
+        #    if (num < 9)
+        #    {
+        #        num++;
+        #    }
+        #    else
+        #    {
+        #        num = 1;
+        #    }
+        #
+        #    return num;
+        #}
+      ENDSOURCE
+      SOURCE #run
+        #/// <summary>
+        #///     Runs the class logic
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #public void run()
+        #{
+        #    #OCCRetryCount
+        #
+        #    startLengthyOperation();
+        #
+        #    this.setInfologPrefix("@MCA659");
+        #
+        #    try
+        #    {
+        #        this.assignPrefix();
+        #    }
+        #    catch (Exception::Error)
+        #    {
+        #        throw error("@SYS21628"); //Update has been canceled because of an error.
+        #    }
+        #    catch (Exception::Deadlock)
+        #    {
+        #        retry;
+        #    }
+        #    catch (Exception::UpdateConflict)
+        #    {
+        #        if (appl.ttsLevel() == 0)
+        #        {
+        #            if (xSession::currentRetryCount() >= #RetryNum)
+        #            {
+        #                throw Exception::UpdateConflictNotRecovered;
+        #            }
+        #            else
+        #            {
+        #                retry;
+        #            }
+        #        }
+        #        else
+        #        {
+        #            throw Exception::UpdateConflict;
+        #        }
+        #    }
+        #    endLengthyOperation();
+        #}
+      ENDSOURCE
+      SOURCE #setInfologPrefix
+        #/// <summary>
+        #///     Sets the infolog prefix level
+        #/// </summary>
+        #/// <param name="_prefix">
+        #///     string value for the infolog prefix level
+        #/// </param>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #private void setInfologPrefix(str _prefix)
+        #{
+        #    setPrefix(_prefix);
+        #    infoPrefix = getPrefix() + '\t';
+        #}
+      ENDSOURCE
+      SOURCE #newPrefix
+        #/// <summary>
+        #///     Creates a new <c>McaCutlistAssignPrefix</c> object.
+        #/// </summary>
+        #/// <returns>
+        #///     a newly created <c>McaCutlistAssignPrefix</c> object.
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #server static McaCutlistAssignPrefix newPrefix()
+        #{
+        #    McaCutlistAssignPrefix cutlistAssignPrefix = new McaCutlistAssignPrefix();
+        #
+        #    cutlistAssignPrefix.initValues();
+        #
+        #    return cutlistAssignPrefix;
+        #}
+      ENDSOURCE
+      SOURCE #newStandard
+        #/// <summary>
+        #///     Creates a new <c>McaCutlistAssignPrefix</c> object.
+        #/// </summary>
+        #/// <param name="_contract">
+        #///     a <c>McaCutlistContract</c> object
+        #/// </param>
+        #/// <returns>
+        #///     a newly created <c>McaCutlistAssignPrefix</c> object.
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #server static McaCutlistAssignPrefix newStandard(McaCutlistFileContract _contract)
+        #{
+        #    McaCutlistAssignPrefix cutlistAssignPrefix = new McaCutlistAssignPrefix();
+        #
+        #    cutlistAssignPrefix.parmContract(_contract);
+        #
+        #    return cutlistAssignPrefix;
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: END

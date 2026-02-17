@@ -1,0 +1,170 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: McaCutGroupAssignReqPoBatch unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #McaCutGroupAssignReqPoBatch
+    PROPERTIES
+      Name                #McaCutGroupAssignReqPoBatch
+      Extends             #RunBaseBatch
+      Origin              #{CBE43D96-72D8-4214-874D-EC483F61D836}
+    ENDPROPERTIES
+    
+    METHODS
+      SOURCE #canGoBatchJournal
+        #/// <summary>
+        #///    Indicates whether the class is shown in the list of <c>Journal</c> types.
+        #/// </summary>
+        #/// <returns>
+        #///    true if the class is shown in the list of <c>Journal</c> types; otherwise, false.
+        #/// </returns>
+        #/// <remarks>
+        #///    A class that can be used in a batch journal is a class where the same parameters can be used
+        #///    repeatedly. The dialog box can be shown and the parameters can be changed, but parameters of some
+        #///    classes might build on data that is only valid for a short time. Running a class two times with the
+        #///    same parameters is not always possible. If the <c>RunBaseBatch.canGoBatch</c> method is false, this
+        #///    method will not have any effect.
+        #///    Ray M - 05/15/2019 - Mca_TASK122734_CutGroupReqPo
+        #/// </remarks>
+        #public boolean canGoBatchJournal()
+        #{
+        #    return true;
+        #}
+      ENDSOURCE
+      SOURCE #classDeclaration
+        #/// <summary>
+        #///     Batch class that assigns the prefix to planned orders
+        #/// </summary>
+        #/// <remarks>
+        #///     Ray M - 05/15/2019 - Mca_TASK122734_CutGroupReqPo
+        #/// </remarks>
+        #class McaCutGroupAssignReqPoBatch extends RunBaseBatch
+        #{
+        #    #define.CurrentVersion(1)
+        #    #define.Version1(1)
+        #}
+      ENDSOURCE
+      SOURCE #new
+        #/// <summary>
+        #///     New
+        #/// </summary>
+        #/// <remarks>
+        #///     Ray M - 05/15/2019 - Mca_TASK122734_CutGroupReqPo
+        #/// </remarks>
+        #protected void new()
+        #{
+        #    super();
+        #}
+      ENDSOURCE
+      SOURCE #processPlannedOrders
+        #/// <summary>
+        #///     Add the cut group to the Static plan planned orders
+        #/// </summary>
+        #/// <remarks>
+        #///     Ray M - 05/15/2019 - Mca_TASK122734_CutGroupReqPo
+        #/// </remarks>
+        #private void processPlannedOrders()
+        #{
+        #    McaCutGroupAssignReqPo cutGroup = new McaCutGroupAssignReqPo();
+        #
+        #    cutGroup.processPlannedOrders();
+        #}
+      ENDSOURCE
+      SOURCE #run
+        #/// <summary>
+        #///    Contains the code that does the actual job of the class.
+        #/// </summary>
+        #/// <remarks>
+        #///     Ray M - 05/15/2019 - Mca_TASK122734_CutGroupReqPo
+        #/// </remarks>
+        #public void run()
+        #{
+        #    #OCCRetryCount
+        #
+        #    try
+        #    {
+        #        this.processPlannedOrders();
+        #    }
+        #    catch (Exception::Deadlock)
+        #    {
+        #        retry;
+        #    }
+        #    catch (Exception::UpdateConflict)
+        #    {
+        #        if (appl.ttsLevel() == 0)
+        #        {
+        #            if (xSession::currentRetryCount() >= #RetryNum)
+        #            {
+        #                throw Exception::UpdateConflictNotRecovered;
+        #            }
+        #            else
+        #            {
+        #                retry;
+        #            }
+        #        }
+        #        else
+        #        {
+        #            throw Exception::UpdateConflict;
+        #        }
+        #    }
+        #}
+      ENDSOURCE
+      SOURCE #runsImpersonated
+        #/// <summary>
+        #///    Determines whether the batch task is run on the server or on a client.
+        #/// </summary>
+        #/// <returns>
+        #///    true if the task is run on the server; otherwise, false.
+        #/// </returns>
+        #/// <remarks>
+        #///    Your classes that extend <c>RunBaseBatch</c> must override the <c>runsImpersonated</c> method and
+        #///    return false if you want those tasks to run on a client.
+        #///    Ray M - 05/15/2019 - Mca_TASK122734_CutGroupReqPo
+        #/// </remarks>
+        #public boolean runsImpersonated()
+        #{
+        #    return true;
+        #}
+      ENDSOURCE
+      SOURCE #construct
+        #server static McaCutGroupAssignReqPoBatch construct()
+        #{
+        #    return new McaCutGroupAssignReqPoBatch();
+        #}
+      ENDSOURCE
+      SOURCE #description
+        #// Here goes a description of the class
+        #static ClassDescription description()
+        #{
+        #    return "@MCA1971";
+        #}
+      ENDSOURCE
+      SOURCE #main
+        #/// <summary>
+        #///     Main
+        #/// </summary>
+        #/// <param name="args">
+        #///     Args
+        #/// </param>
+        #/// <remarks>
+        #///     Ray M - 05/15/2019 - Mca_TASK122734_CutGroupReqPo
+        #/// </remarks>
+        #static void main(Args args)
+        #{
+        #    McaCutGroupAssignReqPoBatch cutGroup;
+        #
+        #    cutGroup = McaCutGroupAssignReqPoBatch::construct();
+        #
+        #    if (cutGroup.prompt())
+        #        cutGroup.run();
+        #}
+        #
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: END

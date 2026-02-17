@@ -1,0 +1,413 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: DBT
+
+; Microsoft Dynamics AX Table : McaCutlistTmp unloaded
+; --------------------------------------------------------------------------------
+  TABLEVERSION 1
+  
+  TABLE #McaCutlistTmp
+    EnforceFKRelation 1
+    PROPERTIES
+      Name                #McaCutlistTmp
+      Label               #@MCA621
+      TableType           #TempDB
+      CreateRecIdIndex    #Yes
+      PrimaryIndex        #SurrogateKey
+      ClusterIndex        #SurrogateKey
+      Origin              #{3E61EC96-2CE3-48FE-9C93-2F6569879ED5}
+    ENDPROPERTIES
+    
+    FIELDS
+      FIELD #ComponentItemId
+        STRING
+        PROPERTIES
+          Name                #ComponentItemId
+          Table               #McaCutlistTmp
+          IgnoreEDTRelation   #Yes
+          Origin              #{9D65BA23-EB75-4CD2-896B-CE7DE001D120}
+          ExtendedDataType    #McaComponentItemId
+          StringSize          #40
+        ENDPROPERTIES
+        
+      FIELD #ComponentName
+        STRING
+        PROPERTIES
+          Name                #ComponentName
+          Table               #McaCutlistTmp
+          Origin              #{83C91BCC-2DFF-4D02-806B-BEE3C0AFFEC5}
+          ExtendedDataType    #EcoResProductName
+          StringSize          #60
+        ENDPROPERTIES
+        
+      FIELD #CutGroupId
+        STRING
+        PROPERTIES
+          Name                #CutGroupId
+          Mandatory           #Yes
+          Table               #McaCutlistTmp
+          Origin              #{D3C3D863-4C0B-49C0-8840-1A61B22CE176}
+          ExtendedDataType    #McaCutGroupId
+        ENDPROPERTIES
+        
+      FIELD #CutSizeSeperator
+        STRING
+        PROPERTIES
+          Name                #CutSizeSeperator
+          Label               #@MCA1898
+          Table               #McaCutlistTmp
+          Origin              #{FA843D5A-B3ED-47CB-B89B-2C76BD8FA7D4}
+          ExtendedDataType    #String10
+        ENDPROPERTIES
+        
+      FIELD #DateOffLine
+        DATE
+        PROPERTIES
+          Name                #DateOffLine
+          Label               #@PWS176
+          HelpText            #@PWS177
+          Table               #McaCutlistTmp
+          Origin              #{B24C7D2C-634F-4E2B-A20F-B2FDC246F186}
+          ExtendedDataType    #TransDate
+        ENDPROPERTIES
+        
+      FIELD #DateOnLine
+        DATE
+        PROPERTIES
+          Name                #DateOnLine
+          Label               #@PWS178
+          HelpText            #@PWS179
+          Table               #McaCutlistTmp
+          Origin              #{576B18A8-C14A-4E35-B239-FE560962D9D0}
+          ExtendedDataType    #TransDate
+        ENDPROPERTIES
+        
+      FIELD #Depth
+        REAL
+        PROPERTIES
+          Name                #Depth
+          Table               #McaCutlistTmp
+          Origin              #{ECBBB62D-F0CA-4CC9-8AAB-15EAEE1F08F6}
+          ExtendedDataType    #BOMMeasureDepth
+        ENDPROPERTIES
+        
+      FIELD #DepthString
+        STRING
+        PROPERTIES
+          Name                #DepthString
+          Table               #McaCutlistTmp
+          Origin              #{3180FE87-82FC-4BA7-A6CE-635953F4FECC}
+          ExtendedDataType    #String20
+          StringSize          #20
+        ENDPROPERTIES
+        
+      FIELD #DueDateTime
+        DATETIME
+        PROPERTIES
+          Name                #DueDateTime
+          Table               #McaCutlistTmp
+          Origin              #{CAF0F345-1A07-4DE7-9EF1-2DF20BF9F4A1}
+          ExtendedDataType    #KanbanDueDateTime
+        ENDPROPERTIES
+        
+      FIELD #Height
+        REAL
+        PROPERTIES
+          Name                #Height
+          Table               #McaCutlistTmp
+          Origin              #{DDE2FA4C-70EE-4F76-90D2-78ED8F7A9C47}
+          ExtendedDataType    #BOMMeasureHeight
+        ENDPROPERTIES
+        
+      FIELD #HeightString
+        STRING
+        PROPERTIES
+          Name                #HeightString
+          Table               #McaCutlistTmp
+          Origin              #{6BE5BE40-B698-41E1-98E5-45D2321614C0}
+          ExtendedDataType    #String20
+          StringSize          #20
+        ENDPROPERTIES
+        
+      FIELD #InventLocationId
+        STRING
+        PROPERTIES
+          Name                #InventLocationId
+          Table               #McaCutlistTmp
+          IgnoreEDTRelation   #Yes
+          Origin              #{3916611A-7647-471F-A071-9B4246D3617B}
+          ExtendedDataType    #InventLocationId
+        ENDPROPERTIES
+        
+      FIELD #InventSiteId
+        STRING
+        PROPERTIES
+          Name                #InventSiteId
+          Table               #McaCutlistTmp
+          IgnoreEDTRelation   #Yes
+          Origin              #{FABE96B7-277C-46A7-82BB-AD4C85D2BB44}
+          ExtendedDataType    #InventSiteId
+        ENDPROPERTIES
+        
+      FIELD #KanbanId
+        STRING
+        PROPERTIES
+          Name                #KanbanId
+          Table               #McaCutlistTmp
+          Origin              #{5684A131-B2E2-4EDC-A6CF-CFFDAE6AD51F}
+          ExtendedDataType    #KanbanId
+          StringSize          #20
+        ENDPROPERTIES
+        
+      FIELD #KitQty
+        REAL
+        PROPERTIES
+          Name                #KitQty
+          Table               #McaCutlistTmp
+          Origin              #{6314EA2F-FB3C-4404-A680-ED09BD8BCC34}
+          ExtendedDataType    #BOMQty
+        ENDPROPERTIES
+        
+      FIELD #MachineFilename
+        STRING
+        PROPERTIES
+          Name                #MachineFilename
+          Table               #McaCutlistTmp
+          Origin              #{F96E1348-8357-4A32-A8CB-D7889050BFD9}
+          ExtendedDataType    #Filename
+          StringSize          #259
+        ENDPROPERTIES
+        
+      FIELD #ModelItemId
+        STRING
+        PROPERTIES
+          Name                #ModelItemId
+          Table               #McaCutlistTmp
+          IgnoreEDTRelation   #Yes
+          Origin              #{5CEEA890-E721-488E-B2D0-9AB7654797D4}
+          ExtendedDataType    #McaModelItemId
+          StringSize          #40
+        ENDPROPERTIES
+        
+      FIELD #Models
+        STRING
+        PROPERTIES
+          Name                #Models
+          Table               #McaCutlistTmp
+          Origin              #{BA1AE25A-1721-45C1-915D-66EB8B9CFE30}
+          StringSize          #85
+        ENDPROPERTIES
+        
+      FIELD #MoveToLocation
+        STRING
+        PROPERTIES
+          Name                #MoveToLocation
+          Table               #McaCutlistTmp
+          Origin              #{F94CC6C9-2FB2-4B2C-AD4D-31BFDF6A3335}
+          ExtendedDataType    #String50
+          StringSize          #50
+        ENDPROPERTIES
+        
+      FIELD #NewPageGroupBy
+        STRING
+        PROPERTIES
+          Name                #NewPageGroupBy
+          Table               #McaCutlistTmp
+          Origin              #{65A2A857-437A-47FA-BE42-EED440368016}
+          ExtendedDataType    #Name
+          StringSize          #60
+        ENDPROPERTIES
+        
+      FIELD #NewWOPageGroupBy
+        STRING
+        PROPERTIES
+          Name                #NewWOPageGroupBy
+          Table               #McaCutlistTmp
+          Origin              #{EB086074-0B2E-40D3-A61B-A914637D2E87}
+          ExtendedDataType    #Name
+          StringSize          #60
+        ENDPROPERTIES
+        
+      FIELD #Notes
+        STRING
+        PROPERTIES
+          Name                #Notes
+          HelpText            #@SYS22561
+          Table               #McaCutlistTmp
+          Origin              #{32E5E61B-E0F4-48D6-B8F1-C2CD41D6B735}
+          ExtendedDataType    #NotesLine
+          StringSize          #254
+        ENDPROPERTIES
+        
+      FIELD #Pattern
+        STRING
+        PROPERTIES
+          Name                #Pattern
+          Table               #McaCutlistTmp
+          Origin              #{67ADBE94-B3B4-4751-A89A-4A75ADD4B7A3}
+          ExtendedDataType    #McaPattern
+          StringSize          #8
+        ENDPROPERTIES
+        
+      FIELD #Pieces
+        INT
+        PROPERTIES
+          Name                #Pieces
+          Table               #McaCutlistTmp
+          Origin              #{5FAFE49B-2D93-4134-B54C-28E42BB36761}
+          ExtendedDataType    #McaPieces
+        ENDPROPERTIES
+        
+      FIELD #Prefix
+        STRING
+        PROPERTIES
+          Name                #Prefix
+          Table               #McaCutlistTmp
+          Origin              #{96E5CFED-4B03-4CE6-8197-A88A4F443C2C}
+          ExtendedDataType    #McaPrefix
+        ENDPROPERTIES
+        
+      FIELD #Prefixes
+        STRING
+        PROPERTIES
+          Name                #Prefixes
+          Table               #McaCutlistTmp
+          Origin              #{65F5DA20-3A11-42F7-9137-D343985F0979}
+          StringSize          #85
+        ENDPROPERTIES
+        
+      FIELD #PrintNumberId
+        STRING
+        PROPERTIES
+          Name                #PrintNumberId
+          Table               #McaCutlistTmp
+          Origin              #{928F7BE2-5900-4A4E-A27E-C36CC880D614}
+          ExtendedDataType    #McaPrintNumberId
+          StringSize          #16
+        ENDPROPERTIES
+        
+      FIELD #Qty
+        REAL
+        PROPERTIES
+          Name                #Qty
+          Table               #McaCutlistTmp
+          Origin              #{DD9F4CE1-073E-47F1-A853-51D0FB2C3B47}
+          ExtendedDataType    #BOMQty
+        ENDPROPERTIES
+        
+      FIELD #RawMatItemId
+        STRING
+        PROPERTIES
+          Name                #RawMatItemId
+          Table               #McaCutlistTmp
+          IgnoreEDTRelation   #Yes
+          Origin              #{39B5DCB1-8827-4B92-AC73-04C090C93D8F}
+          ExtendedDataType    #McaRawMaterialItemId
+          StringSize          #40
+        ENDPROPERTIES
+        
+      FIELD #RawMatName
+        STRING
+        PROPERTIES
+          Name                #RawMatName
+          Table               #McaCutlistTmp
+          Origin              #{CFDA5380-56F2-4DFF-AA5C-0C3500800868}
+          ExtendedDataType    #EcoResProductName
+          StringSize          #60
+        ENDPROPERTIES
+        
+      FIELD #ShipToWarehouse
+        STRING
+        PROPERTIES
+          Name                #ShipToWarehouse
+          Table               #McaCutlistTmp
+          IgnoreEDTRelation   #Yes
+          Origin              #{0FA79C5B-3EAB-4502-B19F-354468DA4435}
+          ExtendedDataType    #McaShipToWarehouse
+        ENDPROPERTIES
+        
+      FIELD #UnitId
+        STRING
+        PROPERTIES
+          Name                #UnitId
+          Table               #McaCutlistTmp
+          Origin              #{6B42868F-5AFB-414A-A37A-DCD7E889E072}
+          ExtendedDataType    #UnitOfMeasureSymbol
+        ENDPROPERTIES
+        
+      FIELD #Usage
+        REAL
+        PROPERTIES
+          Name                #Usage
+          Table               #McaCutlistTmp
+          Origin              #{D1D6CF66-B54C-42A9-B134-379555C1D3A3}
+          ExtendedDataType    #McaUsage
+        ENDPROPERTIES
+        
+      FIELD #UsageType
+        ENUM
+        PROPERTIES
+          Name                #UsageType
+          Table               #McaCutlistTmp
+          Origin              #{9A140FE9-E917-440C-ADFC-199068E95CDD}
+          EnumType            #McaUsageType
+        ENDPROPERTIES
+        
+      FIELD #Width
+        REAL
+        PROPERTIES
+          Name                #Width
+          Table               #McaCutlistTmp
+          Origin              #{9988D5CE-F1ED-4A03-8F15-2EF93492AC75}
+          ExtendedDataType    #BOMMeasureWidth
+        ENDPROPERTIES
+        
+      FIELD #WidthString
+        STRING
+        PROPERTIES
+          Name                #WidthString
+          Table               #McaCutlistTmp
+          Origin              #{E57169CB-CA9B-4EA1-823C-063837F5C5A5}
+          ExtendedDataType    #String20
+          StringSize          #20
+        ENDPROPERTIES
+        
+      FIELD #WMSLocationId
+        STRING
+        PROPERTIES
+          Name                #WMSLocationId
+          Table               #McaCutlistTmp
+          Origin              #{16C67134-76FB-4A62-9CF8-960E278F91E3}
+          ExtendedDataType    #WMSLocationId
+        ENDPROPERTIES
+        
+      FIELD #WrkCtrId
+        STRING
+        PROPERTIES
+          Name                #WrkCtrId
+          Table               #McaCutlistTmp
+          Origin              #{7708AD8E-0AF8-4BA7-8155-AC03BC1AAC8D}
+          ExtendedDataType    #WrkCtrId
+        ENDPROPERTIES
+        
+    ENDFIELDS
+    GROUPS
+    ENDGROUPS
+    
+    INDICES
+    ENDINDICES
+    FULLTEXTINDICES
+    ENDFULLTEXTINDICES
+    REFERENCES
+    ENDREFERENCES
+    
+    DELETEACTIONS
+    ENDDELETEACTIONS
+    
+    METHODS
+    ENDMETHODS
+  ENDTABLE
+  
+
+***Element: END

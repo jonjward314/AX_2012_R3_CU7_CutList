@@ -1,0 +1,1306 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: McaCutlistFile unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #McaCutlistFile
+    PROPERTIES
+      Name                #McaCutlistFile
+      Origin              #{87F3D785-C908-45FB-8B9C-B9232D3F1B6C}
+    ENDPROPERTIES
+    
+    METHODS
+      SOURCE #classDeclaration
+        #/// <summary>
+        #///     This class generates the cutting machine files and reports
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #class McaCutlistFile
+        #{
+        #    McaUsageType            usageType;
+        #    McaCutlistParameters    cutListParameters;
+        #    McaCutlistFileContract  contract;
+        #    int                     numFilesCreated;
+        #    str                     infoPrefix;
+        #
+        #    #define.FileExtensionPNX(".pnx")
+        #}
+      ENDSOURCE
+      SOURCE #create
+        #/// <summary>
+        #///     Creates all the cutting machine files.
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 05/23/2018 - Mca_CR009_CutlistEnhancements
+        #/// </remarks>
+        #private void create()
+        #{
+        #    setPrefix("@MCA630");
+        #
+        #    // Mca Robert O'Berry 11 September 2020 Case 202006881 [SR89517] - Cut list/PNX - sorting and condensing of information begin
+        #    /*
+        #    this.createMachineFilesUsageType(this.parmMcaUsageType(McaUsageType::Linear));
+        #    this.createMachineFilesUsageType(this.parmMcaUsageType(McaUsageType::Sheet));
+        #    */
+        #    //Start-mca202404318_SR346152_ChangePNXFileOutput_LinearParts
+        #    //this.createMachineFilesByUsageType(this.parmMcaUsageType(McaUsageType::Linear));
+        #    this.createMachineFilesByMoveTo(this.parmMcaUsageType(McaUsageType::Linear));
+        #    //End-mca202404318_SR346152_ChangePNXFileOutput_LinearParts
+        #    this.createMachineFilesByUsageType(this.parmMcaUsageType(McaUsageType::Sheet));
+        #    // Mca Robert O'Berry 11 September 2020 Case 202006881 [SR89517] - Cut list/PNX - sorting and condensing of information end
+        #
+        #    info(strFmt("@RET764", numFilesCreated));
+        #}
+        #
+      ENDSOURCE
+      SOURCE #createFile
+        #/// <summary>
+        #///     Creates a <c>TextIo</c> object
+        #/// </summary>
+        #/// <param name="_fileName">
+        #///     Name of the file to create
+        #/// </param>
+        #/// <returns>
+        #///     the newly created <c>TextIo</c> object
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #/// <exception cref="Exception::Error">
+        #///     Error cannot create file
+        #/// </exception>
+        #private TextIo createFile(Filename _fileName)
+        #{
+        #    #File
+        #    TextIo              textIo;
+        #    FileIOPermission    permission;
+        #
+        #    //if (this.parmContract().parmRegenCutlistFile())
+        #    //{
+        #        //_fileName = System.IO.Path::Combine(this.cutlistParameters().RegenMachineFilePath, _fileName);
+        #    //}
+        #    //else
+        #    //{
+        #        //_fileName = System.IO.Path::Combine(this.filePath(), _fileName);
+        #    //}
+        #
+        #    _fileName = System.IO.Path::Combine(this.filePath(), _fileName);
+        #
+        #    permission  = new FileIOPermission(_fileName, #io_write);
+        #    permission.assert();
+        #
+        #    textIo = new TextIo(_fileName, #io_write);
+        #    if (!textIo || textIo.status() != IO_Status::Ok)
+        #    {
+        #        throw error("@SYS19358");
+        #    }
+        #    textIo.outFieldDelimiter(',');
+        #
+        #    return textIo;
+        #}
+      ENDSOURCE
+      SOURCE #createMachineFiles
+        #/// <summary>
+        #///     Creates all the cutting machine files.
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #private void createMachineFiles()
+        #{
+        #    #File
+        #    Query                   query = contract.getQuery();
+        #    query                   querySaved = query;
+        #    QueryRun                queryRun;
+        #    QueryBuildRange         qbr;
+        #    QueryGroupByField       qgf;
+        #    QueryBuildDataSource    qbds;
+        #    container               line;
+        #    TextIo                  textIo;
+        #    McaCutlist              cutList;
+        #    InventTable             inventTable;
+        #    WrkCtrTable             wrkCtrTable;
+        #    str                     fileName;
+        #    boolean                 fileCreated = false;
+        #    McaPrefix               currentPrefix, lastPrefix;
+        #
+        #    setPrefix("@MCA630");
+        #
+        #    // Loop through all the Resources that are of type Machine
+        #    while select WrkCtrId from wrkCtrTable
+        #        where wrkCtrTable.WrkCtrType == WrkCtrType::Machine
+        #    {
+        #        // reset vars
+        #        fileCreated = false;
+        #        lastPrefix  = '';
+        #
+        #        // add the resource as a range
+        #        qbds = query.dataSourceTable(tablenum(McaCutlist));
+        #        qbr  = SysQuery::findOrCreateRange(qbds, fieldnum(McaCutlist, WrkCtrId));
+        #        qbr.value(wrkCtrTable.WrkCtrId);
+        #
+        #        // Add aggregate
+        #        qbds.fields().addField(fieldNum(McaCutlist, Qty), SelectionField::Sum);
+        #        qbds.fields().addField(fieldNum(McaCutlist, Pieces), SelectionField::Sum);
+        #
+        #        // add the grouping
+        #        qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, ItemId));
+        #        qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, InventLocationId));
+        #        qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, Prefix));
+        #        qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, PWSBuildScheduleId));
+        #        qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, Height));
+        #        qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, Width));
+        #        qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, Depth));
+        #        qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, ModelItemId));
+        #        qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, MoveToLocation));
+        #        qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, ShipToWarehouse));
+        #        qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, WrkCtrId));
+        #        qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, Notes));
+        #        qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, MoveToAreaId));
+        #        qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, Pattern));
+        #        qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, BluePrint));
+        #
+        #        // sort by prefix
+        #        qbds.addSortField(fieldNum(McaCutlist, Prefix));
+        #
+        #        // if we are regenerating the file, we can pull in all recordes regardless of IsCutlistProcessed
+        #        if (!this.parmContract().parmRegenCutlistFile())
+        #        {
+        #            qbr  = SysQuery::findOrCreateRange(qbds, fieldnum(McaCutlist, IsCutlistProcessed));
+        #            qbr.value(strFmt('%1', NoYes::No));
+        #        }
+        #
+        #        queryRun = new QueryRun(query);
+        #
+        #        while (queryrun.next())
+        #        {
+        #            cutList         = queryRun.get(tablenum(McaCutlist));
+        #            currentPrefix   = cutList.Prefix;
+        #
+        #            if (currentPrefix != lastPrefix)
+        #            {
+        #                if (fileCreated)
+        #                {
+        #                    ++numFilesCreated;
+        #                    textIo.finalize();
+        #                    CodeAccessPermission::revertAssert();
+        #
+        #                    info(strFmt(infoPrefix + "@MCA631", fileName, McaCutlistParameters::find().MachineFilePath));
+        #                }
+        #
+        #                // try to make the file name unique
+        #                fileName = cutList.BuildPrefix() + '_' + wrkCtrTable.WrkCtrId + '_'+ int2str(WinAPI::getTickCount()) + #FileExtensionPNX;
+        #
+        #                while (this.existsFile(fileName))
+        #                {
+        #                    fileName = cutList.BuildPrefix() + '_' + wrkCtrTable.WrkCtrId + '_'+ int2str(WinAPI::getTickCount()) + #FileExtensionPNX;
+        #                }
+        #
+        #                textIo = this.createFile(fileName);
+        #                this.setInfologPrefix(strFmt("@MCA632", wrkCtrTable.WrkCtrId, cutList.Prefix));
+        #            }
+        #
+        #            line += '';                                                                 // comma
+        #            line += strLFix(strReplace(cutlist.ItemId, ',', ''), 8, " ");               // Raw Material - 8 alpha
+        #
+        #            inventTable = InventTable::find(cutList.ItemId);
+        #
+        #            if (inventTable.McaUsageType == McaUsageType::Sheet) // sheet
+        #            {
+        #                line += strRFix(strfmt('%1', decRound(cutlist.Height, 3)), 9, "0");     // Length - 9 alpha
+        #                line += strRFix(strfmt('%1', decRound(cutlist.Width, 3)), 9, "0");      // Width - 9 alpha
+        #            }
+        #            else if (inventTable.McaUsageType == McaUsageType::Linear) // linear
+        #            {
+        #                line += strRFix(strfmt('%1', decRound(cutlist.Depth, 3)), 9, "0");      // Length - 9 alpha
+        #                line += '';                                                             // Width - 9 alpha
+        #            }
+        #
+        #            line += strRFix(strfmt('%1', real2int(cutList.Pieces)), 5, "0");            // Qty -    5 alpha
+        #            line += '';                                                                 // comma
+        #            line += '';                                                                 // comma
+        #            line += '0';                                                                // Grain - 1 alpha
+        #            line += '';                                                                 // comma
+        #            line += '';                                                                 // comma
+        #            line += '';                                                                 // comma
+        #            line += '';                                                                 // comma
+        #            line += strRFix(strReplace(cutlist.ShipToWarehouse, ',', ''), 2, "0");      // Ship Whse - 2 alpha
+        #            line += strRFix(strReplace(cutlist.ModelItemId, ',', ''), 4, "0");          // Model - 4 alpha
+        #            line += strRFix(strReplace(cutlist.Prefix, ',', ''), 2, "0");               // Prefix - 2 alpha
+        #            line += strLFix(strReplace(cutlist.MoveToLocation, ',', ''), 20, " ");      // Move to- 20 alpha
+        #            line += strLFix(strReplace(cutlist.MoveToAreaId, ',', ''), 20, " ");        // Move to 2 - 20 alpha
+        #            line += strLFix(cutlist.Pattern, 6, " ");                                   // Pattern - 6 alpha
+        #            line += strLFix(cutlist.BluePrint, 30, " ");                                // Comments - 30 alpha blueprint
+        #            line += strLFix(cutList.Notes, 20, " ");                                    // Var Description - 20 alpha
+        #
+        #            textIo.writeExp(line);
+        #
+        #            line        = connull();
+        #            fileCreated = true;
+        #            lastPrefix  = cutList.Prefix;
+        #
+        #            info(strFmt(infoPrefix + "@MCA633", cutList.ItemId));
+        #        }
+        #
+        #        if (fileCreated)
+        #        {
+        #            ++numFilesCreated;
+        #            textIo.finalize();
+        #            CodeAccessPermission::revertAssert();
+        #
+        #            info(strFmt(infoPrefix + "@MCA631", fileName, McaCutlistParameters::find().MachineFilePath));
+        #        }
+        #    }
+        #
+        #    if (!this.parmContract().parmRegenCutlistFile())
+        #    {
+        #        this.markCutlistRecords(query);
+        #    }
+        #
+        #    info(strFmt("@RET764", numFilesCreated));
+        #}
+        #
+      ENDSOURCE
+      SOURCE #createMachineFilesByMoveTo
+        #/// <summary>
+        #///     Creates all the linear PNX files by move to location.
+        #/// </summary>
+        #/// <param name="_usageType">
+        #///     a <c>McaUsageType</c> enum
+        #/// </param>
+        #/// <remarks>
+        #/// mca202404318_SR346152_ChangePNXFileOutput_LinearParts
+        #/// Change PNX file output to generate separate PNX files based on Move To for linear parts.
+        #/// </remarks>
+        #private void createMachineFilesByMoveTo(McaUsageType _usageType)
+        #{
+        #    #File
+        #    Query query = contract.getQuery();
+        #    query querySaved = query;
+        #    QueryRun queryRun;
+        #    QueryBuildRange qbr;
+        #    QueryGroupByField qgf;
+        #    QueryBuildDataSource qbds;
+        #    container line;
+        #    TextIo textIo;
+        #    McaCutlist cutList;
+        #    str fileName;
+        #    boolean fileCreated = false;
+        #    ItemId currentItemId, lastItemId;
+        #    str models, prefixes;
+        #    Map sheetMap = new Map(Types::String, Types::String);
+        #    McaCutlistMachineFileId cutlistMachineFileId;
+        #    McaCutlistTmp mcaCutlistTmp;
+        #
+        #    String50     currentMoveToAreaId, lastMoveToAreaId;
+        #
+        #    [models, prefixes] = McaCutlist::getModelPrefixes(new queryRun(query));
+        #
+        #    // reset vars
+        #    fileCreated = false;
+        #
+        #    // add the usageType as a range
+        #    qbds = query.dataSourceTable(tablenum(McaCutlist));
+        #    qbr  = SysQuery::findOrCreateRange(qbds, fieldnum(McaCutlist, UsageType));
+        #    qbr.value(SysQuery::value(_usageType));
+        #
+        #    // Add aggregate
+        #    qbds.fields().addField(fieldNum(McaCutlist, Qty), SelectionField::Sum);
+        #    qbds.fields().addField(fieldNum(McaCutlist, Pieces), SelectionField::Sum);
+        #
+        #    // add the grouping
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, MoveToAreaId));
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, ItemId));
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, Width));
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, Depth));
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, ShipToWarehouse));
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, Notes));
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, Pattern));
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, BluePrint));
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, WrkCtrId));
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, KitQty));
+        #
+        #    // sort by move to, itemid, depth, width, and pattern
+        #    qbds.addSortField(fieldNum(McaCutlist, MoveToAreaId));
+        #    qbds.addSortField(fieldNum(McaCutlist, ItemId));
+        #    qbds.addSortField(fieldNum(McaCutlist, Depth), SortOrder::Descending);
+        #    qbds.addSortField(fieldNum(McaCutlist, Width), SortOrder::Descending);
+        #    qbds.addSortField(fieldNum(McaCutlist, Pattern));
+        #
+        #    queryRun = new QueryRun(query);
+        #    while (queryrun.next())
+        #    {
+        #        cutList = queryRun.get(tablenum(McaCutlist));
+        #
+        #        mcaCutlistTmp.clear();
+        #
+        #        mcaCutlistTmp.RawMatItemId = cutlist.ItemId;
+        #        mcaCutlistTmp.InventLocationId = cutlist.InventLocationId;
+        #        mcaCutlistTmp.Width = cutlist.Width;
+        #        mcaCutlistTmp.Depth = cutlist.Depth;
+        #        mcaCutlistTmp.ShipToWarehouse = cutlist.ShipToWarehouse;
+        #        mcaCutlistTmp.Notes = cutlist.Notes;
+        #        if (cutlist.MoveToAreaId)
+        #        {
+        #            mcaCutlistTmp.MoveToLocation = this.moveToDescription(cutList.MoveToAreaId);
+        #        }
+        #        mcaCutlistTmp.Pattern           = cutlist.Pattern;
+        #        mcaCutlistTmp.PrintNumberId     = cutlist.BluePrint;
+        #        mcaCutlistTmp.WrkCtrId          = cutlist.WrkCtrId;
+        #        mcaCutlistTmp.Pieces            = real2int(cutlist.Pieces * cutlist.KitQty);
+        #
+        #        mcaCutlistTmp.insert();
+        #    }
+        #
+        #    while select MoveToLocation, RawMatItemId, Width, Depth, ShipToWarehouse, Notes, Pattern, PrintNumberId, WrkCtrId, sum(Pieces) from mcaCutlistTmp
+        #        group by mcaCutlistTmp.MoveToLocation, mcaCutlistTmp.RawMatItemId, mcaCutlistTmp.Width, mcaCutlistTmp.Depth, mcaCutlistTmp.ShipToWarehouse,
+        #                 mcaCutlistTmp.Notes, mcaCutlistTmp.Pattern, mcaCutlistTmp.PrintNumberId, mcaCutlistTmp.WrkCtrId
+        #        order by mcaCutlistTmp.MoveToLocation, mcaCutlistTmp.RawMatItemId, mcaCutlistTmp.Depth desc, mcaCutlistTmp.Width desc, mcaCutlistTmp.Pattern
+        #    {
+        #        currentMoveToAreaId = mcaCutlistTmp.MoveToLocation;
+        #        currentItemId = mcaCutlistTmp.RawMatItemId;
+        #
+        #        if (((currentMoveToAreaId != lastMoveToAreaId) || (!currentMoveToAreaId && currentItemId != lastItemId)) && _usageType == McaUsageType::Linear)
+        #        {
+        #            if (fileCreated)
+        #            {
+        #                ++numFilesCreated;
+        #                textIo.finalize();
+        #                CodeAccessPermission::revertAssert();
+        #
+        #                info(strFmt("@MCA631", fileName, McaCutlistParameters::find().MachineFilePathLinear));
+        #            }
+        #
+        #            // try to make the file name unique
+        #            cutlistMachineFileId = NumberSeq::newGetNum(McaCutlistParameters::numRefMcaCutlistMachineFileId()).num();
+        #            cutlistMachineFileId = subStr(cutlistMachineFileId, strLen(cutlistMachineFileId), -6);
+        #            fileName = cutlistMachineFileId + #FileExtensionPNX;
+        #
+        #            while (this.existsFile(fileName))
+        #            {
+        #                cutlistMachineFileId = NumberSeq::newGetNum(McaCutlistParameters::numRefMcaCutlistMachineFileId()).num();
+        #                cutlistMachineFileId = subStr(cutlistMachineFileId, strLen(cutlistMachineFileId), -6);
+        #                fileName = cutlistMachineFileId + #FileExtensionPNX;
+        #            }
+        #
+        #            textIo = this.createFile(fileName);
+        #        }
+        #
+        #        // Element 1 - Blank
+        #        line += '';
+        #
+        #        // Element 2 - Raw material - 10 alpha
+        #        line += strLFix(strReplace(mcaCutlistTmp.RawMatItemId, ',', ''), 10, ' ');
+        #
+        #        if (_usageType == McaUsageType::Sheet) // sheet
+        #        {
+        #            // Element 3 - Width - 9 alhpa
+        #            line += strRFix(strfmt('%1', num2str(mcaCutlistTmp.Width, -1, 3, DecimalSeparator::Dot, ThousandSeparator::None)), 9, '0');
+        #
+        #            // Element 4 - Length - 9 alpha
+        #            line += strRFix(strfmt('%1', num2str(mcaCutlistTmp.Depth, -1, 3, DecimalSeparator::Dot, ThousandSeparator::None)), 9, '0');
+        #        }
+        #        else if (_usageType == McaUsageType::Linear) // linear
+        #        {
+        #            // Element 3 - Length - 9 alpha
+        #            line += strRFix(strfmt('%1', num2str(mcaCutlistTmp.Depth, -1, 3, DecimalSeparator::Dot, ThousandSeparator::None)), 9, '0');
+        #
+        #            // Element 4 - Width - 9 alpha
+        #            line += '';
+        #        }
+        #
+        #        // Element 5 - Qty - 5 alpha
+        #        line += strRFix(strfmt('%1', real2int(mcaCutlistTmp.Pieces)), 5, '0');
+        #
+        #        // Element 6 - Blank
+        #        line += '';
+        #
+        #        // Element 7 - Blank
+        #        line += '';
+        #
+        #        // Element 8 - Grain - 1 alpha
+        #        line += '0';
+        #
+        #        // Element 9 - Blank
+        #        line += '';
+        #
+        #        // Element 10 - Blank
+        #        line += '';
+        #
+        #        // Element 11 - Blank
+        #        line += '';
+        #
+        #        // Element 12 - Blank
+        #        line += '';
+        #
+        #        // Element 13 - Ship-To warehouse - 3 alpha
+        #        line += strLFix(strReplace(mcaCutlistTmp.ShipToWarehouse, ',', ''), 3, ' ');
+        #
+        #        // Element 14 - Model - 50 alpha
+        #        line += strLFix(strReplace(models, ',', ''), 50, ' ');
+        #
+        #        // Element 15 - Prefix - 50 alpha
+        #        line += strLFix(strReplace(prefixes, ',', ''), 50, ' ');
+        #
+        #        // Element 16 - Move to location - 40 alpha
+        #        line += strLFix(strReplace(mcaCutlistTmp.MoveToLocation, ',', ''), 40, ' ');
+        #
+        #        // Element 17 - Pattern - 8 alpha
+        #        line += strLFix(mcaCutlistTmp.Pattern, 8, ' ');
+        #
+        #        // Element 18 - Blueprint - 10 alpha
+        #        line += strLFix(mcaCutlistTmp.PrintNumberId, 10, ' ');
+        #
+        #        // Element 19 - Machine - 10 alpha
+        #        line += strLFix(mcaCutlistTmp.WrkCtrId, 10, ' ');
+        #
+        #        // Element 20 - Notes - 50 alpha
+        #        line += strLFix(mcaCutlistTmp.Notes, 50, ' ');
+        #
+        #        textIo.writeExp(line);
+        #
+        #        line        = connull();
+        #
+        #        fileCreated = true;
+        #
+        #        // Add the cutlist move to area to a map so we can assign them a filename
+        #        if (_usageType == McaUsageType::Linear && !sheetMap.exists(mcaCutlistTmp.MoveToLocation))
+        #        {
+        #            sheetMap.insert(mcaCutlistTmp.MoveToLocation, fileName);
+        #            sheetMap.valueSet();
+        #        }
+        #
+        #        lastMoveToAreaId = currentMoveToAreaId;
+        #        lastItemId = currentItemId;
+        #    }
+        #
+        #    if (fileCreated)
+        #    {
+        #        ++numFilesCreated;
+        #        textIo.finalize();
+        #        CodeAccessPermission::revertAssert();
+        #
+        #        info(strFmt("@MCA631", fileName, this.filePath()));
+        #    }
+        #
+        #    this.updateCutlistRecords(query, sheetMap, fileName);
+        #}
+        #
+      ENDSOURCE
+      SOURCE #createMachineFilesByUsageType
+        #/// <summary>
+        #///     Creates all the cutting machine files.
+        #/// </summary>
+        #/// <param name="_usageType">
+        #///     a <c>McaUsageType</c> enum
+        #/// </param>
+        #/// <remarks>
+        #///     Mca Robert O'Berry 11 September 2020 Case 202006881 [SR89517] - Cut list/PNX - sorting and condensing of information
+        #/// </remarks>
+        #private void createMachineFilesByUsageType(McaUsageType _usageType)
+        #{
+        #    #File
+        #    Query query = contract.getQuery();
+        #    query querySaved = query;
+        #    QueryRun queryRun;
+        #    QueryBuildRange qbr;
+        #    QueryGroupByField qgf;
+        #    QueryBuildDataSource qbds;
+        #    container line;
+        #    TextIo textIo;
+        #    McaCutlist cutList;
+        #    str fileName;
+        #    boolean fileCreated = false;
+        #    ItemId currentItemId, lastItemId;
+        #    str models, prefixes;
+        #    Map sheetMap = new Map(Types::String, Types::String);
+        #    McaCutlistMachineFileId cutlistMachineFileId;
+        #    McaCutlistTmp mcaCutlistTmp;
+        #
+        #    [models, prefixes] = McaCutlist::getModelPrefixes(new queryRun(query));
+        #
+        #    // reset vars
+        #    fileCreated = false;
+        #
+        #    // add the usageType as a range
+        #    qbds = query.dataSourceTable(tablenum(McaCutlist));
+        #    qbr  = SysQuery::findOrCreateRange(qbds, fieldnum(McaCutlist, UsageType));
+        #    qbr.value(SysQuery::value(_usageType));
+        #
+        #    // Add aggregate
+        #    qbds.fields().addField(fieldNum(McaCutlist, Qty), SelectionField::Sum);
+        #    qbds.fields().addField(fieldNum(McaCutlist, Pieces), SelectionField::Sum);
+        #
+        #    // add the grouping
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, ItemId));
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, Width));
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, Depth));
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, ShipToWarehouse));
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, Notes));
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, MoveToAreaId));
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, Pattern));
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, BluePrint));
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, WrkCtrId));
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, KitQty));
+        #
+        #    // sort by itemid, depth, width, and pattern
+        #    qbds.addSortField(fieldNum(McaCutlist, ItemId));
+        #    qbds.addSortField(fieldNum(McaCutlist, MoveToAreaId));
+        #    qbds.addSortField(fieldNum(McaCutlist, Depth), SortOrder::Descending);
+        #    qbds.addSortField(fieldNum(McaCutlist, Width), SortOrder::Descending);
+        #    qbds.addSortField(fieldNum(McaCutlist, Pattern));
+        #
+        #    queryRun = new QueryRun(query);
+        #    while (queryrun.next())
+        #    {
+        #        cutList = queryRun.get(tablenum(McaCutlist));
+        #
+        #        mcaCutlistTmp.clear();
+        #
+        #        mcaCutlistTmp.RawMatItemId = cutlist.ItemId;
+        #        mcaCutlistTmp.InventLocationId = cutlist.InventLocationId;
+        #        mcaCutlistTmp.Width = cutlist.Width;
+        #        mcaCutlistTmp.Depth = cutlist.Depth;
+        #        mcaCutlistTmp.ShipToWarehouse = cutlist.ShipToWarehouse;
+        #        mcaCutlistTmp.Notes = cutlist.Notes;
+        #        if (cutlist.MoveToAreaId)
+        #        {
+        #            mcaCutlistTmp.MoveToLocation = this.moveToDescription(cutList.MoveToAreaId);
+        #        }
+        #        mcaCutlistTmp.Pattern           = cutlist.Pattern;
+        #        mcaCutlistTmp.PrintNumberId     = cutlist.BluePrint;
+        #        mcaCutlistTmp.WrkCtrId          = cutlist.WrkCtrId;
+        #        mcaCutlistTmp.Pieces            = real2int(cutlist.Pieces * cutlist.KitQty);
+        #
+        #        mcaCutlistTmp.insert();
+        #    }
+        #
+        #    while select RawMatItemId, Width, Depth, ShipToWarehouse, Notes, MoveToLocation, Pattern, PrintNumberId, WrkCtrId, sum(Pieces) from mcaCutlistTmp
+        #        group by mcaCutlistTmp.RawMatItemId, mcaCutlistTmp.Width, mcaCutlistTmp.Depth, mcaCutlistTmp.ShipToWarehouse, mcaCutlistTmp.Notes,
+        #                 mcaCutlistTmp.MoveToLocation, mcaCutlistTmp.Pattern, mcaCutlistTmp.PrintNumberId, mcaCutlistTmp.WrkCtrId
+        #        order by mcaCutlistTmp.RawMatItemId, mcaCutlistTmp.MoveToLocation, mcaCutlistTmp.Depth desc, mcaCutlistTmp.Width desc, mcaCutlistTmp.Pattern
+        #    {
+        #        currentItemId = mcaCutlistTmp.RawMatItemId;
+        #
+        #        if ((currentItemId != lastItemId) && (_usageType == McaUsageType::Sheet))
+        #        {
+        #            if (fileCreated)
+        #            {
+        #                ++numFilesCreated;
+        #                textIo.finalize();
+        #                CodeAccessPermission::revertAssert();
+        #
+        #                info(strFmt("@MCA631", fileName, McaCutlistParameters::find().MachineFilePath));
+        #            }
+        #
+        #            // try to make the file name unique
+        #            cutlistMachineFileId = NumberSeq::newGetNum(McaCutlistParameters::numRefMcaCutlistMachineFileId()).num();
+        #            cutlistMachineFileId = subStr(cutlistMachineFileId, strLen(cutlistMachineFileId), -6);
+        #            fileName = cutlistMachineFileId + #FileExtensionPNX;
+        #
+        #            while (this.existsFile(fileName))
+        #            {
+        #                cutlistMachineFileId = NumberSeq::newGetNum(McaCutlistParameters::numRefMcaCutlistMachineFileId()).num();
+        #                cutlistMachineFileId = subStr(cutlistMachineFileId, strLen(cutlistMachineFileId), -6);
+        #                fileName = cutlistMachineFileId + #FileExtensionPNX;
+        #            }
+        #
+        #            textIo = this.createFile(fileName);
+        #        }
+        #
+        #        if (_usageType == McaUsageType::Linear && !fileName)
+        #        {
+        #            if (fileCreated)
+        #            {
+        #                ++numFilesCreated;
+        #                textIo.finalize();
+        #                CodeAccessPermission::revertAssert();
+        #
+        #                //info(strFmt(infoPrefix + "@MCA631", fileName, McaCutlistParameters::find().MachineFilePath));
+        #                info(strFmt("@MCA631", fileName, McaCutlistParameters::find().MachineFilePathLinear));
+        #            }
+        #
+        #            // try to make the file name unique
+        #            cutlistMachineFileId = NumberSeq::newGetNum(McaCutlistParameters::numRefMcaCutlistMachineFileId()).num();
+        #            cutlistMachineFileId = subStr(cutlistMachineFileId, strLen(cutlistMachineFileId), -6);
+        #            fileName = cutlistMachineFileId + #FileExtensionPNX;
+        #
+        #            while (this.existsFile(fileName))
+        #            {
+        #                cutlistMachineFileId = NumberSeq::newGetNum(McaCutlistParameters::numRefMcaCutlistMachineFileId()).num();
+        #                cutlistMachineFileId = subStr(cutlistMachineFileId, strLen(cutlistMachineFileId), -6);
+        #                fileName = cutlistMachineFileId + #FileExtensionPNX;
+        #            }
+        #
+        #            textIo = this.createFile(fileName);
+        #        }
+        #
+        #        // Element 1 - Blank
+        #        line += '';
+        #
+        #        // Element 2 - Raw material - 10 alpha
+        #        line += strLFix(strReplace(mcaCutlistTmp.RawMatItemId, ',', ''), 10, ' ');
+        #
+        #        if (_usageType == McaUsageType::Sheet) // sheet
+        #        {
+        #            // Element 3 - Width - 9 alhpa
+        #            line += strRFix(strfmt('%1', num2str(mcaCutlistTmp.Width, -1, 3, DecimalSeparator::Dot, ThousandSeparator::None)), 9, '0');
+        #
+        #            // Element 4 - Length - 9 alpha
+        #            line += strRFix(strfmt('%1', num2str(mcaCutlistTmp.Depth, -1, 3, DecimalSeparator::Dot, ThousandSeparator::None)), 9, '0');
+        #        }
+        #        else if (_usageType == McaUsageType::Linear) // linear
+        #        {
+        #            // Element 3 - Length - 9 alpha
+        #            line += strRFix(strfmt('%1', num2str(mcaCutlistTmp.Depth, -1, 3, DecimalSeparator::Dot, ThousandSeparator::None)), 9, '0');
+        #
+        #            // Element 4 - Width - 9 alpha
+        #            line += '';
+        #        }
+        #
+        #        // Element 5 - Qty - 5 alpha
+        #        line += strRFix(strfmt('%1', real2int(mcaCutlistTmp.Pieces)), 5, '0');
+        #
+        #        // Element 6 - Blank
+        #        line += '';
+        #
+        #        // Element 7 - Blank
+        #        line += '';
+        #
+        #        // Element 8 - Grain - 1 alpha
+        #        line += '0';
+        #
+        #        // Element 9 - Blank
+        #        line += '';
+        #
+        #        // Element 10 - Blank
+        #        line += '';
+        #
+        #        // Element 11 - Blank
+        #        line += '';
+        #
+        #        // Element 12 - Blank
+        #        line += '';
+        #
+        #        // Element 13 - Ship-To warehouse - 3 alpha
+        #        line += strLFix(strReplace(mcaCutlistTmp.ShipToWarehouse, ',', ''), 3, ' ');
+        #
+        #        // Element 14 - Model - 50 alpha
+        #        line += strLFix(strReplace(models, ',', ''), 50, ' ');
+        #
+        #        // Element 15 - Prefix - 50 alpha
+        #        line += strLFix(strReplace(prefixes, ',', ''), 50, ' ');
+        #
+        #        // Element 16 - Move to location - 40 alpha
+        #        line += strLFix(strReplace(mcaCutlistTmp.MoveToLocation, ',', ''), 40, ' ');
+        #
+        #        // Element 17 - Pattern - 8 alpha
+        #        line += strLFix(mcaCutlistTmp.Pattern, 8, ' ');
+        #
+        #        // Element 18 - Blueprint - 10 alpha
+        #        line += strLFix(mcaCutlistTmp.PrintNumberId, 10, ' ');
+        #
+        #        // Element 19 - Machine - 10 alpha
+        #        line += strLFix(mcaCutlistTmp.WrkCtrId, 10, ' ');
+        #
+        #        // Element 20 - Notes - 50 alpha
+        #        line += strLFix(mcaCutlistTmp.Notes, 50, ' ');
+        #
+        #        textIo.writeExp(line);
+        #
+        #        line        = connull();
+        #        fileCreated = true;
+        #
+        #        // Add the cutlist itemId to a map so we can assign them a filename
+        #        if (_usageType == McaUsageType::Sheet && !sheetMap.exists(mcaCutlistTmp.RawMatItemId))
+        #        {
+        #            sheetMap.insert(mcaCutlistTmp.RawMatItemId, fileName);
+        #            sheetMap.valueSet();
+        #        }
+        #        lastItemId = currentItemId;
+        #    }
+        #
+        #    if (fileCreated)
+        #    {
+        #        ++numFilesCreated;
+        #        textIo.finalize();
+        #        CodeAccessPermission::revertAssert();
+        #
+        #        info(strFmt("@MCA631", fileName, this.filePath()));
+        #    }
+        #
+        #    this.updateCutlistRecords(query, sheetMap, fileName);
+        #}
+        #
+      ENDSOURCE
+      SOURCE #createMachineFilesUsageType
+        #/// <summary>
+        #///     Creates all the cutting machine files.
+        #/// </summary>
+        #/// <param name="_usageType">
+        #///     a <c>McaUsageType</c> enum
+        #/// </param>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 05/23/2018 - Mca_CR009_CutlistEnhancements
+        #/// </remarks>
+        #private void createMachineFilesUsageType(McaUsageType _usageType)
+        #{
+        #    #File
+        #    Query                   query = contract.getQuery();
+        #    query                   querySaved = query;
+        #    QueryRun                queryRun;
+        #    QueryBuildRange         qbr;
+        #    QueryGroupByField       qgf;
+        #    QueryBuildDataSource    qbds;
+        #    container               line;
+        #    TextIo                  textIo;
+        #    McaCutlist              cutList;
+        #    str                     fileName;
+        #    boolean                 fileCreated = false;
+        #    ItemId                  currentItemId, lastItemId;
+        #    str                     models, prefixes;
+        #    Map                     sheetMap = new Map(Types::String, Types::String);
+        #    McaCutlistMachineFileId cutlistMachineFileId;
+        #
+        #    [models, prefixes] = McaCutlist::getModelPrefixes(new queryRun(query));
+        #
+        #    // reset vars
+        #    fileCreated = false;
+        #
+        #    // add the usageType as a range
+        #    qbds = query.dataSourceTable(tablenum(McaCutlist));
+        #    qbr  = SysQuery::findOrCreateRange(qbds, fieldnum(McaCutlist, UsageType));
+        #    qbr.value(SysQuery::value(_usageType));
+        #
+        #    // Add aggregate
+        #    qbds.fields().addField(fieldNum(McaCutlist, Qty), SelectionField::Sum);
+        #    qbds.fields().addField(fieldNum(McaCutlist, Pieces), SelectionField::Sum);
+        #
+        #    // add the grouping
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, ItemId));
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, InventLocationId));
+        #    // Mca Robert O'Berry 11 September 2020 Case 202006881 [SR89517] - Cut list/PNX - sorting and condensing of information begin
+        #    /*
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, PWSBuildScheduleId));
+        #    */
+        #    // Mca Robert O'Berry 11 September 2020 Case 202006881 [SR89517] - Cut list/PNX - sorting and condensing of information end
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, Width));
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, Depth));
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, ShipToWarehouse));
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, Notes));
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, MoveToAreaId));
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, Pattern));
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, BluePrint));
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, WrkCtrId));
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, KitQty));
+        #
+        #    // sort by prefix
+        #    //qbds.addSortField(fieldNum(McaCutlist, Prefix));
+        #    qbds.addSortField(fieldNum(McaCutlist, ItemId));
+        #    // Mca Robert O'Berry 11 September 2020 Case 202006881 [SR89517] - Cut list/PNX - sorting and condensing of information begin
+        #    /*
+        #    qbds.addSortField(fieldNum(McaCutlist, MoveToAreaId));
+        #    */
+        #    // Mca Robert O'Berry 11 September 2020 Case 202006881 [SR89517] - Cut list/PNX - sorting and condensing of information end
+        #    qbds.addSortField(fieldNum(McaCutlist, Depth), SortOrder::Descending);
+        #    qbds.addSortField(fieldNum(McaCutlist, Width), SortOrder::Descending);
+        #    qbds.addSortField(fieldNum(McaCutlist, Pattern));
+        #
+        #    // if we are regenerating the file, we can pull in all recordes regardless of IsCutlistProcessed
+        #    //if (!this.parmContract().parmRegenCutlistFile())
+        #    //{
+        #        //qbr  = SysQuery::findOrCreateRange(qbds, fieldnum(McaCutlist, IsCutlistProcessed));
+        #        //qbr.value(strFmt('%1', NoYes::No));
+        #    //}
+        #
+        #    queryRun = new QueryRun(query);
+        #
+        #    while (queryrun.next())
+        #    {
+        #        cutList         = queryRun.get(tablenum(McaCutlist));
+        #        currentItemId   = cutList.ItemId;
+        #
+        #        if ((currentItemId != lastItemId) && (_usageType == McaUsageType::Sheet))
+        #        {
+        #            if (fileCreated)
+        #            {
+        #                ++numFilesCreated;
+        #                textIo.finalize();
+        #                CodeAccessPermission::revertAssert();
+        #
+        #                info(strFmt("@MCA631", fileName, McaCutlistParameters::find().MachineFilePath));
+        #            }
+        #
+        #            // try to make the file name unique
+        #            cutlistMachineFileId = NumberSeq::newGetNum(McaCutlistParameters::numRefMcaCutlistMachineFileId()).num();
+        #            cutlistMachineFileId = subStr(cutlistMachineFileId, strLen(cutlistMachineFileId), -6);
+        #            fileName = cutlistMachineFileId + #FileExtensionPNX;
+        #
+        #            while (this.existsFile(fileName))
+        #            {
+        #                cutlistMachineFileId = NumberSeq::newGetNum(McaCutlistParameters::numRefMcaCutlistMachineFileId()).num();
+        #                cutlistMachineFileId = subStr(cutlistMachineFileId, strLen(cutlistMachineFileId), -6);
+        #                fileName = cutlistMachineFileId + #FileExtensionPNX;
+        #            }
+        #
+        #            textIo = this.createFile(fileName);
+        #        }
+        #
+        #        if (_usageType == McaUsageType::Linear && !fileName)
+        #        {
+        #            if (fileCreated)
+        #            {
+        #                ++numFilesCreated;
+        #                textIo.finalize();
+        #                CodeAccessPermission::revertAssert();
+        #
+        #                //info(strFmt(infoPrefix + "@MCA631", fileName, McaCutlistParameters::find().MachineFilePath));
+        #                info(strFmt("@MCA631", fileName, McaCutlistParameters::find().MachineFilePathLinear));
+        #            }
+        #
+        #            // try to make the file name unique
+        #            cutlistMachineFileId = NumberSeq::newGetNum(McaCutlistParameters::numRefMcaCutlistMachineFileId()).num();
+        #            cutlistMachineFileId = subStr(cutlistMachineFileId, strLen(cutlistMachineFileId), -6);
+        #            fileName = cutlistMachineFileId + #FileExtensionPNX;
+        #
+        #            while (this.existsFile(fileName))
+        #            {
+        #                cutlistMachineFileId = NumberSeq::newGetNum(McaCutlistParameters::numRefMcaCutlistMachineFileId()).num();
+        #                cutlistMachineFileId = subStr(cutlistMachineFileId, strLen(cutlistMachineFileId), -6);
+        #                fileName = cutlistMachineFileId + #FileExtensionPNX;
+        #            }
+        #
+        #            textIo = this.createFile(fileName);
+        #        }
+        #
+        #        line += '';                                                                 // comma
+        #        line += strLFix(strReplace(cutlist.ItemId, ',', ''), 10, ' ');              // Raw Material - 10 alpha
+        #
+        #        if (_usageType == McaUsageType::Sheet) // sheet
+        #        {
+        #            //line += strRFix(strReplace(strfmt('%1', decRound(cutlist.Depth, 3)), ',', ''), 9, '0');      // Length - 9 alpha
+        #            line += strRFix(strfmt('%1', num2str(cutlist.Width, -1, 3, DecimalSeparator::Dot, ThousandSeparator::None)), 9, '0');      // Width - 9 alpha
+        #            line += strRFix(strfmt('%1', num2str(cutlist.Depth, -1, 3, DecimalSeparator::Dot, ThousandSeparator::None)), 9, '0');      // Length - 9 alph
+        #            //line += strRFix(strReplace(strfmt('%1', decRound(cutlist.Width, 3)), ',', ''), 9, '0');      // Width - 9 alpha
+        #            //line += strRFix(strReplace(strfmt('%1', decRound(cutlist.Depth, 3)), ',', ''), 9, '0');      // Length - 9 alpha
+        #        }
+        #        else if (_usageType == McaUsageType::Linear) // linear
+        #        {
+        #            //line += strRFix(strReplace(strfmt('%1', decRound(cutlist.Depth, 3)), ',', ''), 9, '0');      // Length - 9 alpha
+        #            line += strRFix(strfmt('%1', num2str(cutlist.Depth, -1, 3, DecimalSeparator::Dot, ThousandSeparator::None)), 9, '0');      // Length - 9 alph
+        #            line += '';                                                             // Width - 9 alpha
+        #        }
+        #
+        #        line += strRFix(strfmt('%1', real2int(cutList.Pieces * cutList.KitQty)), 5, '0');            // Qty -    5 alpha
+        #        line += '';                                                                 // comma
+        #        line += '';                                                                 // comma
+        #        line += '0';                                                                // Grain - 1 alpha
+        #        line += '';                                                                 // comma
+        #        line += '';                                                                 // comma
+        #        line += '';                                                                 // comma
+        #        line += '';                                                                 // comma
+        #        line += strLFix(strReplace(cutlist.ShipToWarehouse, ',', ''), 3, ' ');      // Ship Whse - 3 alpha
+        #        line += strLFix(strReplace(models, ',', ''), 50, ' ');                      // Model - 50 alpha
+        #        line += strLFix(strReplace(prefixes, ',', ''), 50, ' ');                    // Prefix - 50 alpha
+        #        line += strLFix(strReplace(this.moveToDescription(cutlist.MoveToAreaId), ',', ''), 40, ' ');        // Move to 40 alpha
+        #        line += strLFix(cutlist.Pattern, 8, ' ');                                   // Pattern - 8 alpha
+        #        line += strLFix(cutlist.BluePrint, 10, ' ');                                // Print - 10 alpha blueprint
+        #        line += strLFix(cutlist.WrkCtrId, 10, ' ');                                 // Machine - 10 alpha blueprint
+        #        line += strLFix(cutList.Notes, 50, ' ');                                    // Cutlist notes - 50 alpha
+        #
+        #        textIo.writeExp(line);
+        #
+        #        line        = connull();
+        #        fileCreated = true;
+        #
+        #        // Add the cutlist itemId to a map so we can assign them a filename
+        #        if (_usageType == McaUsageType::Sheet)
+        #        {
+        #            if (!sheetMap.exists(cutList.ItemId))
+        #            {
+        #                sheetMap.insert(cutList.ItemId, fileName);
+        #                sheetMap.valueSet();
+        #            }
+        #        }
+        #        lastItemId = currentItemId;
+        #    }
+        #
+        #    if (fileCreated)
+        #    {
+        #        ++numFilesCreated;
+        #        textIo.finalize();
+        #        CodeAccessPermission::revertAssert();
+        #
+        #        info(strFmt("@MCA631", fileName, this.filePath()));
+        #    }
+        #
+        #   // if (!this.parmContract().parmRegenCutlistFile())
+        #    {
+        #        this.updateCutlistRecords(Query, sheetMap, fileName);
+        #    }
+        #}
+        #
+      ENDSOURCE
+      SOURCE #cutlistParameters
+        #/// <summary>
+        #///     Gets the <c>McaCutlistParameters</c>
+        #/// </summary>
+        #/// <returns>
+        #///     a <c>McaCutlistParameters</c> object
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 05/23/2018 - Mca_CR009_CutlistEnhancements
+        #/// </remarks>
+        #McaCutlistParameters cutlistParameters()
+        #{
+        #    if (!cutListParameters)
+        #    {
+        #        cutListParameters = McaCutlistParameters::find();
+        #    }
+        #
+        #    return cutListParameters;
+        #}
+      ENDSOURCE
+      SOURCE #existsFile
+        #/// <summary>
+        #///     Checks to see if the file exists
+        #/// </summary>
+        #/// <param name="_fileName">
+        #///     The name and path of the file.
+        #/// </param>
+        #/// <returns>
+        #///     true if file exists or false if file does not exist
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #private boolean existsFile(Filename _fileName)
+        #{
+        #    _fileName = System.IO.Path::Combine(this.filePath(), _fileName);
+        #
+        #    if (System.IO.File::Exists(_fileName))
+        #    {
+        #        return true;    
+        #    }   
+        #    return false;
+        #}
+      ENDSOURCE
+      SOURCE #filePath
+        #/// <summary>
+        #///     Sets the filePath
+        #/// </summary>
+        #/// <returns>
+        #///     a <c>FilePath</c> object
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 05/23/2018 - Mca_CR009_CutlistEnhancementss
+        #/// </remarks>
+        #private FilePath filePath()
+        #{
+        #    FilePath    filePath;
+        #
+        #    if (this.parmMcaUsageType() == McaUsageType::Sheet)
+        #    {
+        #        filePath = this.cutlistParameters().MachineFilePath;
+        #    }
+        #    else if (this.parmMcaUsageType() == McaUsageType::Linear)
+        #    {
+        #        filePath = this.cutlistParameters().MachineFilePathLinear;
+        #    }
+        #
+        #    return filePath;
+        #}
+      ENDSOURCE
+      SOURCE #markCutlistRecords
+        #/// <summary>
+        #///     Sets the <c>McaCutlist</c> records to processed based on the query object passed in.
+        #/// </summary>
+        #/// <param name="_query">
+        #///     a <c>Query</c> object
+        #/// </param>
+        #/// <remarks>
+        #///      mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #private void markCutlistRecords(Query _query)
+        #{
+        #    QueryRun                queryRun;
+        #    QueryBuildRange         qbr;
+        #    QueryBuildDataSource    qbds;
+        #    McaCutlist              cutList, cutlistUpdate;
+        #    WrkCtrTable             wrkCtrTable;
+        #
+        #    // remove grouping and ranges
+        #    _query.clearGroupBy();
+        #    _query.clearAllFields();
+        #    _query.dataSourceNo(1).clearRange(fieldNum(McaCutlist, WrkCtrId));
+        #
+        #    ttsBegin;
+        #    // Loop through all the Resources that are of type Machine
+        #    while select WrkCtrId from wrkCtrTable
+        #        where wrkCtrTable.WrkCtrType == WrkCtrType::Machine
+        #    {
+        #        // add the resource as a range
+        #        qbds = _query.dataSourceTable(tablenum(McaCutlist));
+        #        qbr  = SysQuery::findOrCreateRange(qbds, fieldnum(McaCutlist, WrkCtrId));
+        #        qbr.value(wrkCtrTable.WrkCtrId);
+        #
+        #        queryRun = new QueryRun(_query);
+        #
+        #        while (queryrun.next())
+        #        {
+        #            cutList         = queryRun.get(tablenum(McaCutlist));
+        #
+        #            cutlistUpdate = McaCutlist::findRecId(cutList.RecId, true);
+        #            cutlistUpdate.IsCutlistProcessed = true;
+        #            cutlistUpdate.doUpdate();
+        #        }
+        #    }
+        #    ttsCommit;
+        #}
+      ENDSOURCE
+      SOURCE #moveToDescription
+        #private Description moveToDescription(McaMoveToAreaId _moveToAreaId)
+        #{
+        #    //return strFmt('%1 %2', _moveToAreaId, McaCutlistMoveToAreas::find(_moveToAreaId).Description);
+        #    return McaCutlistMoveToAreas::find(_moveToAreaId).Description;
+        #}
+      ENDSOURCE
+      SOURCE #parmContract
+        #/// <summary>
+        #///     Get/Set the <c>McaCutlistFileContract</c>
+        #/// </summary>
+        #/// <param name="_contract">
+        #///     a <c>McaCutlistFileContract</c> object
+        #/// </param>
+        #/// <returns>
+        #///     a <c>McaCutlistFileContract</c> object
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #McaCutlistFileContract parmContract(McaCutlistFileContract _contract = contract)
+        #{
+        #    if (!prmisDefault(_contract))
+        #    {
+        #        contract = _contract;
+        #    }
+        #
+        #    return contract;
+        #}
+      ENDSOURCE
+      SOURCE #parmMcaUsageType
+        #/// <summary>
+        #///     Get/Set the <c>McaUsageType</c>
+        #/// </summary>
+        #/// <param name="_usageType">
+        #///     a <c>McaUsageType</c> object
+        #/// </param>
+        #/// <returns>
+        #///     a <c>McaUsageType</c> object
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 05/23/2018 - Mca_CR009_CutlistEnhancements
+        #/// </remarks>
+        #McaUsageType parmMcaUsageType(McaUsageType _usageType = usageType)
+        #{
+        #    if (!prmisDefault(_usageType))
+        #    {
+        #        usageType = _usageType;
+        #    }
+        #
+        #    return usageType;
+        #}
+      ENDSOURCE
+      SOURCE #run
+        #/// <summary>
+        #///     Runs the class logic
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #public void run()
+        #{
+        #    #OCCRetryCount
+        #
+        #    startLengthyOperation();
+        #
+        #    try
+        #    {
+        #        // mca - Ray Michalski - 05/23/2018 - Mca_CR009_CutlistEnhancements - start
+        #        //this.createMachineFiles();
+        #        this.cutlistParameters();
+        #        this.create();
+        #        // mca - Ray Michalski - 05/23/2018 - Mca_CR009_CutlistEnhancements - end
+        #    }
+        #    catch (Exception::Error)
+        #    {
+        #        throw error("@SYS21628"); //Update has been canceled because of an error.
+        #    }
+        #    catch (Exception::Deadlock)
+        #    {
+        #        retry;
+        #    }
+        #    catch (Exception::UpdateConflict)
+        #    {
+        #        if (appl.ttsLevel() == 0)
+        #        {
+        #            if (xSession::currentRetryCount() >= #RetryNum)
+        #            {
+        #                throw Exception::UpdateConflictNotRecovered;
+        #            }
+        #            else
+        #            {
+        #                retry;
+        #            }
+        #        }
+        #        else
+        #        {
+        #            throw Exception::UpdateConflict;
+        #        }
+        #    }
+        #    endLengthyOperation();
+        #}
+      ENDSOURCE
+      SOURCE #setInfologPrefix
+        #/// <summary>
+        #///     Sets the infolog prefix level
+        #/// </summary>
+        #/// <param name="_prefix">
+        #///     string value for the infolog prefix level
+        #/// </param>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #private void setInfologPrefix(str _prefix)
+        #{
+        #    setPrefix(_prefix);
+        #    infoPrefix = getPrefix() + '\t';
+        #}
+      ENDSOURCE
+      SOURCE #updateCutlistRecords
+        #/// <summary>
+        #///     Sets the <c>McaCutlist</c> records to processed based on the query object passed in.
+        #/// </summary>
+        #/// <param name="_query">
+        #///     a <c>Query</c> object
+        #/// </param>
+        #/// <param name="_map">
+        #///     a <c>Map</c> object holding the items and filenames they are in.
+        #/// </param>
+        #/// <param name="_fileName">
+        #///     a <c>FileName</c> object
+        #/// </param>
+        #/// <remarks>
+        #///      mca - Ray Michalski - 05/23/2018 - Mca_CR009_CutlistEnhancements
+        #/// </remarks>
+        #private void updateCutlistRecords(Query _query, Map _map, FileName _fileName)
+        #{
+        #    QueryRun                queryRun;
+        #    QueryBuildRange         qbr;
+        #    QueryBuildDataSource    qbds;
+        #    McaCutlist              cutList, cutlistUpdate;
+        #    MapEnumerator           me;
+        #    ItemId                  itemId;
+        #    Filename                fileName;
+        #
+        #    String50                MoveToArea;
+        #
+        #    // remove grouping and ranges
+        #    _query.clearGroupBy();
+        #    _query.clearAllFields();
+        #    _query.dataSourceNo(1).clearRange(fieldNum(McaCutlist, UsageType));
+        #
+        #    // add the usage type as a range
+        #    qbds = _query.dataSourceTable(tablenum(McaCutlist));
+        #    qbr  = SysQuery::findOrCreateRange(qbds, fieldnum(McaCutlist, UsageType));
+        #    qbr.value(SysQuery::value(this.parmMcaUsageType()));
+        #
+        #    if (this.parmMcaUsageType() == McaUsageType::Sheet)
+        #    {
+        #        me = new MapEnumerator(_map);
+        #
+        #        ttsBegin;
+        #        // Loop through the map
+        #        while (me.moveNext())
+        #        {
+        #            fileName = me.currentValue();
+        #            itemId   = me.currentKey();
+        #
+        #            qbr  = SysQuery::findOrCreateRange(qbds, fieldnum(McaCutlist, ItemId));
+        #            qbr.value(itemId);
+        #
+        #            queryRun = new QueryRun(_query);
+        #
+        #            while (queryrun.next())
+        #            {
+        #                cutList = queryRun.get(tablenum(McaCutlist));
+        #
+        #                cutlistUpdate = McaCutlist::findRecId(cutList.RecId, true);
+        #                //cutlistUpdate.IsCutlistProcessed = true;
+        #                cutlistUpdate.MachineFileName = fileName;
+        #                cutlistUpdate.doUpdate();
+        #            }
+        #        }
+        #        ttsCommit;
+        #    }
+        #    else if (this.parmMcaUsageType() == McaUsageType::Linear)
+        #    {
+        #        //orig
+        #        queryRun = new QueryRun(_query);
+        #
+        #        ttsBegin;
+        #        while (queryrun.next())
+        #        {
+        #            cutList = queryRun.get(tablenum(McaCutlist));
+        #            cutlistUpdate = McaCutlist::findRecId(cutList.RecId, true);
+        #            //cutlistUpdate.IsCutlistProcessed = true;
+        #
+        #            if (cutlistUpdate.MoveToAreaId)
+        #            {
+        #                MoveToArea = this.moveToDescription(cutlistUpdate.MoveToAreaId);
+        #
+        #                if(_map.exists(MoveToArea))
+        #                {
+        #                    fileName = _map.lookup(MoveToArea);
+        #                }
+        #            }
+        #
+        #            cutlistUpdate.MachineFileName = fileName;
+        #            cutlistUpdate.doUpdate();
+        #        }
+        #        ttsCommit;
+        #    }
+        #}
+      ENDSOURCE
+      SOURCE #newStandard
+        #/// <summary>
+        #///     Creates a new <c>McaCutlistFile</c> object.
+        #/// </summary>
+        #/// <param name="_contract">
+        #///     a <c>McaCutlistContract</c> object
+        #/// </param>
+        #/// <returns>
+        #///     a newly created <c>McaCutlistCreate</c> object.
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #static McaCutlistFile newStandard(McaCutlistFileContract _contract)
+        #{
+        #    McaCutlistFile cutlistFile = new McaCutlistFile();
+        #
+        #    cutlistFile.parmContract(_contract);
+        #
+        #    return cutlistFile;
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: END

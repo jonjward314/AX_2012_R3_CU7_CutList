@@ -1,0 +1,1138 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: FRM
+
+; Microsoft Dynamics AX Forms unloaded
+; --------------------------------------------------------------------------------
+FRMVERSION 12
+
+FORM #McaCutlistRecords
+  PROPERTIES
+    Name                #McaCutlistRecords
+    Origin              #{6761C97B-B8F0-4ECB-8E4C-D4912D35DC63}
+  ENDPROPERTIES
+  
+  METHODS
+    SOURCE #classDeclaration
+      #/// <summary>
+      #///     Viewing cutlist records
+      #/// </summary>
+      #/// <remarks>
+      #///      mca - Ray Michalski - 07/12/2017 - Mca_CR009_MilroomCutlists
+      #/// </remarks>
+      #public class FormRun extends ObjectRun
+      #{
+      #    PWSBuildSchedule    buildSchedule;
+      #    McaCutModuleId      cutModuleId;
+      #
+      #    //J_SR136452_UnscheduledCutList 12/1/2020 -->Begin
+      #    boolean             skipFilterValidation;
+      #    //J_SR136452_UnscheduledCutList 12/1/2020 <--End
+      #}
+    ENDSOURCE
+    SOURCE #deleteDialog
+      #public void deleteDialog(McaCutlistDeleteRecordsContract _contract)
+      #{
+      #    Dialog          dialog = new Dialog("@MCA1918");
+      #    DialogField     dlgfldPrefix;
+      #    DialogField     dlgfldModuleItemId;
+      #    DialogField     dlgfldBuildScheduleId;
+      #
+      #    dlgfldBuildScheduleId   = dialog.addField(extendedTypeStr(PWSBuildScheduleId));
+      #    dlgfldPrefix            = dialog.addField(extendedTypeStr(McaPrefix));
+      #    dlgfldModuleItemId      = dialog.addField(extendedTypeStr(ItemId), "@SYS9941");
+      #
+      #    dlgfldPrefix.value(_contract.parmPrefix());
+      #    dlgfldModuleItemId.value(_contract.parmModuleItemId());
+      #    dlgfldBuildScheduleId.value(_contract.parmPWSBuildScheduleId());
+      #
+      #    dialog.run();
+      #
+      #    if (dialog.closedOk())
+      #    {
+      #        _contract.parmPrefix(dlgfldPrefix.value());
+      #        _contract.parmModuleItemId(dlgfldModuleItemId.value());
+      #        _contract.parmPWSBuildScheduleId(dlgfldBuildScheduleId.value());
+      #
+      #        McaCutlistDeleteRecords::newStandard(_contract).run();
+      #    }
+      #}
+    ENDSOURCE
+    SOURCE #init
+      #public void init()
+      #{
+      #    //J_SR136452_UnscheduledCutList 12/1/2020 -->Begin
+      #    FormRun        caller;
+      #    //J_SR136452_UnscheduledCutList 12/1/2020 <--End
+      #
+      #    if (element.args().dataset())
+      #    {
+      #        switch (element.args().dataset())
+      #        {
+      #            case tableNum(PWSBuildSchedule):
+      #                buildSchedule = element.args().record();
+      #                break;
+      #        }
+      #    }
+      #
+      #    if (element.args().parm())
+      #    {
+      #        cutModuleId = element.args().parm();
+      #    }
+      #
+      #    //J_SR136452_UnscheduledCutList 12/1/2020 -->Begin
+      #    if(element.args().caller())
+      #    {
+      #        caller =  element.args().caller();
+      #
+      #        if (caller.args().name() == formstr(McaCutlistModule))
+      #        {
+      #          skipFilterValidation = true;
+      #        }
+      #    }
+      #    //J_SR136452_UnscheduledCutList 12/1/2020 <--End
+      #
+      #    super();
+      #
+      #    if (cutModuleId)
+      #    {
+      #        LoadRecords.visible(false);
+      #    }
+      #
+      #    ProcessedCheckBox.value(false);
+      #}
+    ENDSOURCE
+  ENDMETHODS
+  OBJECTBANK
+    PROPERTIES
+    ENDPROPERTIES
+    
+    DATASOURCE
+      OBJECTPOOL
+        PROPERTIES
+          Name                #McaCutlist
+          Table               #McaCutlist
+          InsertIfEmpty       #No
+        ENDPROPERTIES
+        
+        FIELDLIST
+          DATAFIELD IsCutlistProcessed
+            PROPERTIES
+              AllowEdit           #No
+            ENDPROPERTIES
+            
+            METHODS
+            ENDMETHODS
+          ENDDATAFIELD
+          
+        ENDFIELDLIST
+      ENDOBJECTPOOL
+      METHODS
+        SOURCE #executeQuery
+          #public void executeQuery()
+          #{
+          #    super();
+          #}
+        ENDSOURCE
+        SOURCE #init
+          #public void init()
+          #{
+          #    super();
+          #
+          #    this.query().dataSourceNo(1).addRange(fieldNum(McaCutlist, IsCutlistProcessed)).value(SysQuery::value(NoYes::No));
+          #
+          #    if (buildSchedule)
+          #    {
+          #        this.query().dataSourceNo(1).addRange(fieldNum(McaCutlist, PWSBuildScheduleId)).value(SysQuery::value(buildSchedule.BuildSchedule));
+          #    }
+          #    else if (cutModuleId)
+          #    {
+          #        this.query().dataSourceNo(1).addRange(fieldNum(McaCutlist, CutModuleId)).value(SysQuery::value(cutModuleId));
+          #    }
+          #
+          #}
+        ENDSOURCE
+      ENDMETHODS
+    ENDDATASOURCE
+  ENDOBJECTBANK
+  
+  REFERENCEDATASOURCES
+  ENDREFERENCEDATASOURCES
+  
+  JOINS
+  ENDJOINS
+  
+  PARTREFERENCES
+  ENDPARTREFERENCES
+  
+  DESIGN
+    PROPERTIES
+      Caption             #@MCA616
+    ENDPROPERTIES
+    
+    CONTAINER
+      CONTROL ACTIONPANE
+        PROPERTIES
+          Name                #ActionPane
+          ElementPosition     #715827882
+          Style               #Strip
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL ACTIONPANETAB
+        PROPERTIES
+          Name                #ActionPaneTab
+          ElementPosition     #1431655764
+          HierarchyParent     #ActionPane
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL BUTTONGROUP
+        PROPERTIES
+          Name                #ButtonGroup
+          ElementPosition     #1610612733
+          HierarchyParent     #ActionPaneTab
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL BUTTONGROUP
+        PROPERTIES
+          Name                #NewDeleteGroup
+          Visible             #No
+          ElementPosition     #1073741822
+          HierarchyParent     #ActionPaneTab
+          DataSource          #McaCutlist
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL GRID
+        PROPERTIES
+          Name                #GridCutlist
+          Width               #Column width
+          Height              #Column height
+          ElementPosition     #1431655764
+          HierarchyParent     #OverviewCutlist
+          DataSource          #McaCutlist
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL GROUP
+        PROPERTIES
+          Name                #InventInfo
+          ElementPosition     #1610612734
+          HierarchyParent     #GeneralCutlist
+          Columns             #2
+          ArrangeGuide        
+            ARRAY INDEX Columns 
+              #0
+              #0
+            ENDARRAY
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL GROUP
+        PROPERTIES
+          Name                #ModuleGroup
+          ElementPosition     #1145324610
+          HierarchyParent     #InventInfo
+          FrameType           #Thin
+          DataSource          #McaCutlist
+          DataGroup           #Module
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL GROUP
+        PROPERTIES
+          Name                #OrderGroup
+          ElementPosition     #858993458
+          HierarchyParent     #OrderInfo
+          FrameType           #Thin
+          Caption             #@SYS9923
+          DataSource          #McaCutlist
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL GROUP
+        PROPERTIES
+          Name                #OrderInfo
+          ElementPosition     #1073741822
+          HierarchyParent     #GeneralCutlist
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL GROUP
+        PROPERTIES
+          Name                #ProcessedGroup
+          ElementPosition     #1717986916
+          HierarchyParent     #OrderInfo
+          FrameType           #Thin
+          DataSource          #McaCutlist
+          DataGroup           #Processed
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL GROUP
+        PROPERTIES
+          Name                #PWSGroup
+          ElementPosition     #1288490187
+          HierarchyParent     #OrderInfo
+          FrameType           #Thin
+          DataSource          #McaCutlist
+          DataGroup           #PWS
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL GROUP
+        PROPERTIES
+          Name                #RawMaterialGroup
+          ElementPosition     #1717986916
+          HierarchyParent     #InventInfo
+          FrameType           #Thin
+          DataSource          #McaCutlist
+          Columns             #2
+          ArrangeGuide        
+            ARRAY INDEX Columns 
+              #0
+              #0
+            ENDARRAY
+          DataGroup           #Item
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL REFERENCEGROUP
+        PROPERTIES
+          Name                #ReferenceGroup
+          AllowEdit           #No
+          Width               #500
+          ElementPosition     #536870910
+          HierarchyParent     #GridCutlist
+          DataSource          #McaCutlist
+          ReferenceField      #SalesLineRefRecId
+          ReplacementFieldGroup #Identification
+          Label               #@SYS90573
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL REFERENCEGROUP
+        PROPERTIES
+          Name                #SalesLineReferenceGroup
+          AllowEdit           #No
+          ElementPosition     #409044504
+          HierarchyParent     #OrderGroup
+          DataSource          #McaCutlist
+          ReferenceField      #SalesLineRefRecId
+          ReplacementFieldGroup #Identification
+          Label               #@SYS90573
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL TAB
+        PROPERTIES
+          Name                #TabCutlistTable
+          Width               #Column width
+          Height              #Column height
+          ElementPosition     #1431655764
+          DataSource          #McaCutlist
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL TABPAGE
+        PROPERTIES
+          Name                #GeneralCutlist
+          ElementPosition     #1670265058
+          HierarchyParent     #TabCutlistTable
+          Caption             #@SYS35893
+          DataSource          #McaCutlist
+          Columns             #2
+          ArrangeGuide        
+            ARRAY INDEX Columns 
+              #0
+              #0
+            ENDARRAY
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL TABPAGE
+        PROPERTIES
+          Name                #OverviewCutlist
+          ElementPosition     #1193046470
+          HierarchyParent     #TabCutlistTable
+          Caption             #@SYS9039
+          DataSource          #McaCutlist
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL BUTTON
+        PROPERTIES
+          Name                #CreateFile
+          Visible             #No
+          HelpText            #@MCA639
+          ElementPosition     #1312351115
+          HierarchyParent     #ButtonGroup
+          Text                #@MCA639
+          ButtonDisplay       #Text & Image left
+          NormalImage         #808
+          ImageLocation       #EmbeddedResource
+        ENDPROPERTIES
+        
+        METHODS
+          SOURCE #clicked
+            #void clicked()
+            #{
+            #
+            #    Args    args  = new Args();
+            #    Query   query = new query(queryStr(McaCutlistQuery));
+            #
+            #    SysQuery::findOrCreateRange(SysQuery::findOrCreateDataSource(query, tablenum(McaCutlist)), fieldnum(McaCutlist, PWSBuildScheduleId)).value(buildSchedule.BuildSchedule);
+            #
+            #    args.parmObject(query);
+            #
+            #    new MenuFunction(menuitemActionStr(McaCutlistFileAction), MenuItemType::Action).run(args);
+            #
+            #    //ProcessedCheckBox.clicked();
+            #    McaCutlist_ds.research();
+            #    McaCutlist_ds.refreshEx();
+            #}
+          ENDSOURCE
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL BUTTON
+        PROPERTIES
+          Name                #DeleteRecords
+          HelpText            #@MCA1918
+          ElementPosition     #1093625928
+          HierarchyParent     #ButtonGroup
+          Text                #@MCA1919
+          ButtonDisplay       #Text & Image left
+          NormalImage         #1031
+          ImageLocation       #EmbeddedResource
+        ENDPROPERTIES
+        
+        METHODS
+          SOURCE #clicked
+            #void clicked()
+            #{
+            #    QueryFilter     qf;
+            #    QueryBuildRange qbr;
+            #    int             filterCount, i;
+            #    McaCutlistDeleteRecordsContract contract = new McaCutlistDeleteRecordsContract();
+            #
+            #    filterCount = mcaCutlist_ds.queryRun().query().queryFilterCount();
+            #
+            #    qbr = mcaCutlist_ds.query().dataSourceTable(tableNum(McaCutlist)).findRange(fieldNum(McaCutlist, PWSBuildScheduleId));
+            #
+            #    if (qbr)
+            #    {
+            #        contract.parmPWSBuildScheduleId(qbr.value());
+            #    }
+            #
+            #    for (i = 1; filterCount >= i; i++)
+            #    {
+            #        qf = mcaCutlist_ds.queryRun().query().queryFilter(i);
+            #
+            #        if (qf.field() == fieldId2name(tableNum(McaCutlist), fieldNum(McaCutlist, PWSBuildScheduleId)))
+            #        {
+            #            contract.parmPWSBuildScheduleId(qf.value());
+            #        }
+            #
+            #        if (qf.field() == fieldId2name(tableNum(McaCutlist), fieldNum(McaCutlist, Prefix)))
+            #        {
+            #            contract.parmPrefix(qf.value());
+            #        }
+            #
+            #        if (qf.field() == fieldId2name(tableNum(McaCutlist), fieldNum(McaCutlist, ModuleItemId)))
+            #        {
+            #            contract.parmModuleItemId(qf.value());
+            #        }
+            #    }
+            #
+            #    element.deleteDialog(contract);
+            #
+            #    McaCutlist_ds.research();
+            #    McaCutlist_ds.refreshEx();
+            #}
+          ENDSOURCE
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL BUTTON
+        PROPERTIES
+          Name                #FilesReports
+          HelpText            #@MCA639
+          ElementPosition     #1729917380
+          HierarchyParent     #ButtonGroup
+          Text                #@SYS88526
+          ButtonDisplay       #Text & Image left
+          NormalImage         #808
+          ImageLocation       #EmbeddedResource
+        ENDPROPERTIES
+        
+        METHODS
+          SOURCE #clicked
+            #void clicked()
+            #{
+            #
+            #    MenuFunction    menuFunction;
+            #    Args            args  = new Args();
+            #    Query           query = new query(queryStr(McaCutlistQuery));
+            #
+            #    SysQuery::findOrCreateRange(SysQuery::findOrCreateDataSource(query, tablenum(McaCutlist)), fieldnum(McaCutlist, PWSBuildScheduleId)).value(buildSchedule.BuildSchedule);
+            #
+            #    mcaCutlist_ds.queryRun().query().dataSourceTable(tableNum(McaCutlist)).clearDynalinks();
+            #
+            #
+            #
+            #    //J_SR136452_UnscheduledCutList 12/1/2020 <--end
+            #    args.parmObject(mcaCutlist_ds.queryRun().query());
+            #
+            #    if (mcaCutlist.CutModuleId)
+            #    {
+            #        args.parm(McaCutlist.CutModuleId);
+            #    }
+            #    //J_SR136452_UnscheduledCutList 12/1/2020 -->Begin
+            #    if(skipFilterValidation)
+            #    {
+            #        args.parmEnumType(EnumNum(NoYes));
+            #        args.parmEnum(NoYes::Yes);
+            #    }
+            #    //J_SR136452_UnscheduledCutList 12/1/2020 <--End
+            #
+            #    menufunction = new MenuFunction(menuitemActionStr(McaCutlistReportsFilesForm), MenuItemType::Action);
+            #
+            #    menuFunction.run(args);
+            #
+            #    //McaCutlistReports::markProcessed(mcaCutlist_ds.queryRun().query());
+            #
+            #    McaCutlist_ds.research();
+            #    McaCutlist_ds.refreshEx();
+            #}
+          ENDSOURCE
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL BUTTON
+        PROPERTIES
+          Name                #LoadRecords
+          AutoDeclaration     #Yes
+          HelpText            #@MCA643
+          ElementPosition     #874900742
+          HierarchyParent     #ButtonGroup
+          Text                #@MCA643
+          ButtonDisplay       #Text & Image left
+          NormalImage         #1223
+          ImageLocation       #EmbeddedResource
+        ENDPROPERTIES
+        
+        METHODS
+          SOURCE #clicked
+            #void clicked()
+            #{
+            #    Args            args = new Args();
+            #    Query           query = new Query(queryStr(McaCutlistCreateQuery));
+            #    QueryFilter     qf;
+            #    QueryBuildRange qbr;
+            #    int             filterCount, i;
+            #
+            #    //query.dataSourceTable(tablenum(PWSBuildSchedule)).clearRanges();
+            #    //query.dataSourceTable(tablenum(PWSBuildSchedule)).clearRange(fieldnum(PWSBuildSchedule, BuildSchedule));
+            #
+            #    filterCount = mcaCutlist_ds.queryRun().query().queryFilterCount();
+            #
+            #    if (!filterCount)
+            #    {
+            #        qbr = mcaCutlist_ds.query().dataSourceTable(tableNum(McaCutlist)).findRange(fieldNum(McaCutlist, PWSBuildScheduleId));
+            #
+            #        if (qbr)
+            #        {
+            #            SysQuery::findOrCreateRange(SysQuery::findOrCreateDataSource(query, tablenum(PWSBuildSchedule)), fieldnum(PWSBuildSchedule, BuildSchedule)).value(qbr.value());
+            #        }
+            #    }
+            #
+            #    for (i = 1; filterCount >= i; i++)
+            #    {
+            #        qf = mcaCutlist_ds.queryRun().query().queryFilter(i);
+            #
+            #        if (qf.field() == fieldId2name(tableNum(McaCutlist), fieldNum(McaCutlist, PWSBuildScheduleId)))
+            #        {
+            #            SysQuery::findOrCreateRange(SysQuery::findOrCreateDataSource(query, tablenum(PWSBuildSchedule)), fieldnum(PWSBuildSchedule, BuildSchedule)).value(qf.value());
+            #        }
+            #
+            #        if (qf.field() == fieldId2name(tableNum(McaCutlist), fieldNum(McaCutlist, Prefix)))
+            #        {
+            #            SysQuery::findOrCreateRange(SysQuery::findOrCreateDataSource(query, tablenum(PWSBuildSequenceOrder)), fieldnum(PWSBuildSequenceOrder, McaPrefix)).value(qf.value());
+            #        }
+            #
+            #        if (qf.field() == fieldId2name(tableNum(McaCutlist), fieldNum(McaCutlist, ModelItemId)))
+            #        {
+            #            SysQuery::findOrCreateRange(SysQuery::findOrCreateDataSource(query, tablenum(PWSBuildSequenceOrder)), fieldnum(PWSBuildSequenceOrder, ItemId)).value(qf.value());
+            #        }
+            #    }
+            #
+            #    args.parmObject(query);
+            #
+            #    new MenuFunction(menuitemActionStr(McaCutlistCreateAction), MenuItemType::Action).run(args);
+            #
+            #    McaCutlist_ds.executeQuery();
+            #    McaCutlist_ds.research();
+            #    McaCutlist_ds.refreshEx();
+            #}
+          ENDSOURCE
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL CHECKBOX
+        PROPERTIES
+          Name                #McaCutlist_IsCutlistProcessed
+          ElementPosition     #37675150
+          HierarchyParent     #GridCutlist
+          BackgroundColor     #Window background
+          DataSource          #McaCutlist
+          DataField           #IsCutlistProcessed
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL CHECKBOX
+        PROPERTIES
+          Name                #ProcessedCheckBox
+          AutoDeclaration     #Yes
+          HelpText            #@MCA666
+          ElementPosition     #1073741823
+          Label               #@MCA675
+        ENDPROPERTIES
+        
+        METHODS
+          SOURCE #clicked
+            #public void clicked()
+            #{
+            #    NoYesId              checked;
+            #    QueryBuildDataSource qbds = McaCutlist_ds.query().dataSourceTable(tablenum(McaCutlist));
+            #
+            #    super();
+            #    checked = this.checked();
+            #
+            #    if (checked)
+            #    {
+            #        qbds.clearRange(fieldnum(McaCutlist, IsCutlistProcessed));
+            #    }
+            #    else
+            #    {
+            #        SysQuery::findOrCreateRange(qbds, fieldnum(McaCutlist, IsCutlistProcessed)).value(strFmt('%1', checked));
+            #    }
+            #
+            #    McaCutlist_ds.executeQuery();
+            #    McaCutlist_ds.research();
+            #    McaCutlist_ds.refreshEx();
+            #}
+          ENDSOURCE
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL COMMANDBUTTON
+        PROPERTIES
+          Name                #DeleteButton
+          ElementPosition     #1610612734
+          HierarchyParent     #NewDeleteGroup
+          Text                #@sys14425
+          ButtonDisplay       #Text & Image left
+          NormalImage         #10121
+          ImageLocation       #EmbeddedResource
+          SaveRecord          #No
+          MultiSelect         #Yes
+          Primary             #Yes
+          Command             #2832
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL COMMANDBUTTON
+        PROPERTIES
+          Name                #NewButton
+          ElementPosition     #1073741822
+          HierarchyParent     #NewDeleteGroup
+          ButtonDisplay       #Text & Image left
+          NormalImage         #11045
+          ImageLocation       #EmbeddedResource
+          Primary             #Yes
+          Command             #260
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL DATEEDIT
+        PROPERTIES
+          Name                #McaCutlist_DateOffLine
+          ElementPosition     #75350300
+          HierarchyParent     #GridCutlist
+          DataSource          #McaCutlist
+          DataField           #DateOffLine
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL DATEEDIT
+        PROPERTIES
+          Name                #McaCutlist_DateOnLine
+          ElementPosition     #56512725
+          HierarchyParent     #GridCutlist
+          DataSource          #McaCutlist
+          DataField           #DateOnLine
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL INTEDIT
+        PROPERTIES
+          Name                #McaCutlist_Pieces
+          ElementPosition     #1299792732
+          HierarchyParent     #GridCutlist
+          DataSource          #McaCutlist
+          DataField           #Pieces
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL REALEDIT
+        PROPERTIES
+          Name                #McaCutlist_Depth
+          ElementPosition     #1130254550
+          HierarchyParent     #GridCutlist
+          DataSource          #McaCutlist
+          DataField           #Depth
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL REALEDIT
+        PROPERTIES
+          Name                #McaCutlist_Height
+          Visible             #No
+          ElementPosition     #847690912
+          HierarchyParent     #GridCutlist
+          DataSource          #McaCutlist
+          DataField           #Height
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL REALEDIT
+        PROPERTIES
+          Name                #McaCutlist_Qty
+          ElementPosition     #1243280005
+          HierarchyParent     #GridCutlist
+          DataSource          #McaCutlist
+          DataField           #Qty
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL REALEDIT
+        PROPERTIES
+          Name                #McaCutlist_Usage
+          ElementPosition     #1384561823
+          HierarchyParent     #GridCutlist
+          DataSource          #McaCutlist
+          DataField           #Usage
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL REALEDIT
+        PROPERTIES
+          Name                #McaCutlist_Width
+          ElementPosition     #1017229095
+          HierarchyParent     #GridCutlist
+          DataSource          #McaCutlist
+          DataField           #Width
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #McaCutlist_CutGroupId
+          ElementPosition     #607511820
+          HierarchyParent     #GridCutlist
+          DataSource          #McaCutlist
+          DataField           #CutGroupId
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #McaCutlist_InventSiteId
+          ElementPosition     #1582356370
+          HierarchyParent     #GridCutlist
+          DataSource          #McaCutlist
+          DataField           #InventSiteId
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #McaCutlist_ItemId
+          ElementPosition     #282563635
+          HierarchyParent     #GridCutlist
+          DataSource          #McaCutlist
+          DataField           #ItemId
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #McaCutlist_ModelItemId
+          ElementPosition     #169538181
+          HierarchyParent     #GridCutlist
+          DataSource          #McaCutlist
+          DataField           #ModelItemId
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #McaCutlist_ModuleItemId
+          ElementPosition     #226050908
+          HierarchyParent     #GridCutlist
+          DataSource          #McaCutlist
+          DataField           #ModuleItemId
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #McaCutlist_MoveToAreaId
+          ElementPosition     #1836663644
+          HierarchyParent     #GridCutlist
+          DataSource          #McaCutlist
+          DataField           #MoveToAreaId
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #McaCutlist_Notes
+          ElementPosition     #2090970918
+          HierarchyParent     #GridCutlist
+          DataSource          #McaCutlist
+          DataField           #Notes
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #McaCutlist_Prefix
+          ElementPosition     #339076365
+          HierarchyParent     #GridCutlist
+          DataSource          #McaCutlist
+          DataField           #Prefix
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #McaCutlist_PWSBuildScheduleId
+          ElementPosition     #466230001
+          HierarchyParent     #GridCutlist
+          DataSource          #McaCutlist
+          DataField           #PWSBuildScheduleId
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #McaCutlist_ShipToWarehouse
+          ElementPosition     #94187878
+          HierarchyParent     #GridCutlist
+          DataSource          #McaCutlist
+          DataField           #ShipToWarehouse
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #McaCutlist_WrkCtrId
+          ElementPosition     #678152730
+          HierarchyParent     #GridCutlist
+          DataSource          #McaCutlist
+          DataField           #WrkCtrId
+        ENDPROPERTIES
+        
+        METHODS
+          SOURCE #lookup
+            #public void lookup()
+            #{
+            #    McaCutlist::lookupMachineResource(this);
+            #}
+          ENDSOURCE
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #Order_PWSBuildScheduleId1
+          ElementPosition     #613566756
+          HierarchyParent     #OrderGroup
+          DataSource          #McaCutlist
+          DataField           #PWSBuildScheduleId
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #OrderGroup_ModelBOMId
+          ElementPosition     #1840700268
+          HierarchyParent     #OrderGroup
+          DataSource          #McaCutlist
+          DataField           #ModelBOMId
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #OrderGroup_ModelItemId
+          ElementPosition     #920350134
+          HierarchyParent     #OrderGroup
+          DataSource          #McaCutlist
+          DataField           #ModelItemId
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #OrderGroup_Prefix
+          ElementPosition     #1533916890
+          HierarchyParent     #OrderGroup
+          DataSource          #McaCutlist
+          DataField           #Prefix
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL UTCDATETIMEEDIT
+        PROPERTIES
+          Name                #CreatedDateTime
+          ElementPosition     #25116766
+          HierarchyParent     #GridCutlist
+          DataSource          #McaCutlist
+          DataField           #createdDateTime
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL UTCDATETIMEEDIT
+        PROPERTIES
+          Name                #OrderGroup_DueDateTime
+          ElementPosition     #1227133512
+          HierarchyParent     #OrderGroup
+          DataSource          #McaCutlist
+          DataField           #DueDateTime
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+    ENDCONTAINER
+    
+  ENDDESIGN
+  
+  PERMISSIONS #Permissions
+    PROPERTIES
+    ENDPROPERTIES
+    
+    PERMISSIONSET #Read
+      PROPERTIES
+      ENDPROPERTIES
+      
+      FORM #Controls
+      ENDFORM
+      
+    TABLES #Tables
+    ENDTABLES
+    
+  SERVERMETHODS #Server Methods
+  ENDSERVERMETHODS
+  
+ASSOCIATEDFORMS #Associated Forms
+ENDASSOCIATEDFORMS
+
+ENDPERMISSIONSET
+
+PERMISSIONSET #Update
+  PROPERTIES
+  ENDPROPERTIES
+  
+  FORM #Controls
+  ENDFORM
+  
+TABLES #Tables
+ENDTABLES
+
+SERVERMETHODS #Server Methods
+ENDSERVERMETHODS
+
+ASSOCIATEDFORMS #Associated Forms
+ENDASSOCIATEDFORMS
+
+ENDPERMISSIONSET
+
+PERMISSIONSET #Create
+  PROPERTIES
+  ENDPROPERTIES
+  
+  FORM #Controls
+  ENDFORM
+  
+TABLES #Tables
+ENDTABLES
+
+SERVERMETHODS #Server Methods
+ENDSERVERMETHODS
+
+ASSOCIATEDFORMS #Associated Forms
+ENDASSOCIATEDFORMS
+
+ENDPERMISSIONSET
+
+PERMISSIONSET #Delete
+  PROPERTIES
+  ENDPROPERTIES
+  
+  FORM #Controls
+  ENDFORM
+  
+TABLES #Tables
+ENDTABLES
+
+SERVERMETHODS #Server Methods
+ENDSERVERMETHODS
+
+ASSOCIATEDFORMS #Associated Forms
+ENDASSOCIATEDFORMS
+
+ENDPERMISSIONSET
+
+ENDPERMISSIONS
+
+ENDFORM
+
+
+***Element: END

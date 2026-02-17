@@ -1,0 +1,367 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: McaCutlistFileContract unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #McaCutlistFileContract
+    PROPERTIES
+      Name                #McaCutlistFileContract
+      Origin              #{548D1830-0D3F-4EDF-9053-80C7B3CFCA39}
+    ENDPROPERTIES
+    
+    METHODS
+      SOURCE #classDeclaration
+        #/// <summary>
+        #///     Contract class for the cutlist file creation
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #[
+        #    DataContractAttribute,
+        #    SysOperationGroupAttribute("@MCA637", "@MCA616", "1", FormArrangeMethod::Vertical),
+        #    SysOperationGroupAttribute("@MCA638", "@SYS6845", "2", FormArrangeMethod::Vertical)
+        #]
+        #class McaCutlistFileContract
+        #{
+        #    McaPackedQuery              packedQuery; //A passed in custom query
+        #    McaPrintCoverSheetReport    printCoverSheet;
+        #    McaPrintSummaryReport       printSummary;
+        #    McaPrintDetailReport        printDetail;
+        #    McaCreateCutlistFiles       createCutlistFiles;
+        #    McaRegenCutlistFile         regenCutlistFile;
+        #    McaPrintMedium              printMediumType;
+        #    PWSBuildScheduleId          buildScheduleId;
+        #    boolean                     printLabels;    // mca - Ray Michalski - 09/18/2018 - Mca_CR011_11_CounterTopLabels
+        #
+        #    //MCA Myrl Stadnick  J_SR107265_CutListCreation begin -->
+        #    McaPrefix                   McaPrefix;
+        #    McaCutGroupId               McaCutGroupId;
+        #    boolean                     skipValidation;
+        #    boolean                     RunReportBare;
+        #    //MCA Myrl Stadnick  J_SR107265_CutListCreation <-- end
+        #
+        #}
+      ENDSOURCE
+      SOURCE #getQuery
+        #/// <summary>
+        #///    Returns an initialized query object based on the query that is returned from the
+        #///    <c>packedQuery</c> method.
+        #/// </summary>
+        #/// <returns>
+        #///    A <c>Query</c> object.
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #public Query getQuery()
+        #{
+        #    return new Query(SysOperationHelper::base64Decode(packedQuery));
+        #}
+      ENDSOURCE
+      SOURCE #parmBuildScheduleId
+        #/// <summary>
+        #///     Get/Set the <c>PWSBuildScheduleId</c>
+        #/// </summary>
+        #/// <param name="_buildScheduleId">
+        #///     a <c>PWSBuildScheduleId</c> object
+        #/// </param>
+        #/// <returns>
+        #///     a <c>PWSBuildScheduleId</c> object
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #PWSBuildScheduleId parmBuildScheduleId(PWSBuildScheduleId _buildScheduleId = buildScheduleId)
+        #{
+        #    if (!prmisDefault(_buildScheduleId))
+        #    {
+        #        buildScheduleId = _buildScheduleId;
+        #    }
+        #
+        #    return buildScheduleId;
+        #}
+      ENDSOURCE
+      SOURCE #parmCoverSheet
+        #/// <summary>
+        #///     Sets the printCoverSheet boolean variable
+        #/// </summary>
+        #/// <param name="_printCoverSheet">
+        #///     a boolean value
+        #/// </param>
+        #/// <returns>
+        #///     printCoverSheet variable
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #[
+        #    DataMemberAttribute,
+        #    SysOperationGroupMemberAttribute("@MCA638"),
+        #    SysOperationDisplayOrderAttribute("2")
+        #]
+        #public McaPrintCoverSheetReport parmCoverSheet(McaPrintCoverSheetReport _printCoverSheet = printCoverSheet)
+        #{
+        #    printCoverSheet = _printCoverSheet;
+        #    return printCoverSheet;
+        #}
+      ENDSOURCE
+      SOURCE #parmCreateCutlistFiles
+        #/// <summary>
+        #///     Sets the createCutlistFiles boolean variable
+        #/// </summary>
+        #/// <param name="_createCutlistFiles">
+        #///     a boolean value
+        #/// </param>
+        #/// <returns>
+        #///     createCutlistFiles variable
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #[
+        #    DataMemberAttribute,
+        #    SysOperationGroupMemberAttribute("@MCA637"),
+        #    SysOperationDisplayOrderAttribute("1")
+        #]
+        #public McaCreateCutlistFiles parmCreateCutlistFiles(McaCreateCutlistFiles _createCutlistFiles = createCutlistFiles)
+        #{
+        #    createCutlistFiles = _createCutlistFiles;
+        #    return createCutlistFiles;
+        #}
+      ENDSOURCE
+      SOURCE #parmMcaCutGroupId
+        #/// <summary>
+        #///     Get/Set the <c>McaCutGroupId</c>
+        #/// </summary>
+        #/// <param name="_McaCutGroupId">
+        #///     a <c>McaCutGroupId</c> object
+        #/// </param>
+        #/// <returns>
+        #///     a <c>McaCutGroupId</c> object
+        #/// </returns>
+        #/// <remarks>
+        #///     //MCA Myrl Stadnick  J_SR107265_CutListCreation
+        #/// </remarks>
+        #McaCutGroupId parmMcaCutGroupId(McaCutGroupId _McaCutGroupId = McaCutGroupId)
+        #{
+        #    if (!prmisDefault(_McaCutGroupId))
+        #    {
+        #        McaCutGroupId = _McaCutGroupId;
+        #    }
+        #
+        #    return McaCutGroupId;
+        #}
+      ENDSOURCE
+      SOURCE #parmMCAPrefix
+        #/// <summary>
+        #///     Get/Set the <c>MCAPrefix</c>
+        #/// </summary>
+        #/// <param name="_MCAPrefix">
+        #///     a <c>MCAPrefix</c> object
+        #/// </param>
+        #/// <returns>
+        #///     a <c>MCAPrefix</c> object
+        #/// </returns>
+        #/// <remarks>
+        #///     //MCA Myrl Stadnick  J_SR107265_CutListCreation
+        #/// </remarks>
+        #MCAPrefix parmMCAPrefix(MCAPrefix _MCAPrefix = MCAPrefix)
+        #{
+        #    if (!prmisDefault(_MCAPrefix))
+        #    {
+        #        MCAPrefix = _MCAPrefix;
+        #    }
+        #
+        #    return MCAPrefix;
+        #}
+      ENDSOURCE
+      SOURCE #parmPrintDetail
+        #/// <summary>
+        #///     Sets the printDetail boolean variable
+        #/// </summary>
+        #/// <param name="_printDetail">
+        #///     a boolean value
+        #/// </param>
+        #/// <returns>
+        #///     printDetail variable
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #[
+        #    DataMemberAttribute,
+        #    SysOperationGroupMemberAttribute("@MCA638"),
+        #    SysOperationDisplayOrderAttribute("4")
+        #]
+        #public McaPrintDetailReport parmPrintDetail(McaPrintDetailReport _printDetail = printDetail)
+        #{
+        #    printDetail = _printDetail;
+        #    return printDetail;
+        #}
+      ENDSOURCE
+      SOURCE #parmPrintLabels
+        #/// <summary>
+        #///     Sets the printLabels boolean variable
+        #/// </summary>
+        #/// <param name="_printLabels">
+        #///     a boolean value
+        #/// </param>
+        #/// <returns>
+        #///     printLabels variable
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 09/18/2018 - Mca_CR011_11_CounterTopLabels
+        #/// </remarks>
+        #[
+        #    DataMemberAttribute,
+        #    SysOperationGroupMemberAttribute("@MCA638"),
+        #    SysOperationDisplayOrderAttribute("4")
+        #]
+        #public boolean parmPrintLabels(boolean _printLabels = printLabels)
+        #{
+        #    printLabels = _printLabels;
+        #    return printLabels;
+        #}
+      ENDSOURCE
+      SOURCE #parmPrintMediumType
+        #/// <summary>
+        #///     Sets the printMediumType boolean variable
+        #/// </summary>
+        #/// <param name="_printMediumType">
+        #///     a boolean value
+        #/// </param>
+        #/// <returns>
+        #///     printMediumType variable
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #[
+        #    DataMemberAttribute,
+        #    SysOperationGroupMemberAttribute("@MCA638"),
+        #    SysOperationDisplayOrderAttribute("1")
+        #]
+        #public McaPrintMedium parmPrintMediumType(McaPrintMedium _printMediumType = printMediumType)
+        #{
+        #    printMediumType = _printMediumType;
+        #    return printMediumType;
+        #}
+      ENDSOURCE
+      SOURCE #parmPrintSummary
+        #/// <summary>
+        #///     Sets the printSummary boolean variable
+        #/// </summary>
+        #/// <param name="_printSummary">
+        #///     a boolean value
+        #/// </param>
+        #/// <returns>
+        #///     printSummary variable
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #[
+        #    DataMemberAttribute,
+        #    SysOperationGroupMemberAttribute("@MCA638"),
+        #    SysOperationDisplayOrderAttribute("3")
+        #]
+        #public McaPrintSummaryReport parmPrintSummary(McaPrintSummaryReport _printSummary = printSummary)
+        #{
+        #    printSummary = _printSummary;
+        #    return printSummary;
+        #}
+      ENDSOURCE
+      SOURCE #parmQuery
+        #/// <summary>
+        #///     Sets the packedQuery variable
+        #/// </summary>
+        #/// <param name="_packedQuery">
+        #///     a packed query
+        #/// </param>
+        #/// <returns>
+        #///     packedQuery variable
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #[
+        #    DataMemberAttribute,
+        #    AifQueryTypeAttribute('_packedQuery', querystr(McaCutlistQuery))
+        #]
+        #public str parmQuery(McaPackedQuery _packedQuery = packedQuery)
+        #{
+        #    packedQuery = _packedQuery;
+        #    return packedQuery;
+        #}
+      ENDSOURCE
+      SOURCE #parmRegenCutlistFile
+        #/// <summary>
+        #///     Sets the regenCutlistFile boolean variable
+        #/// </summary>
+        #/// <param name="_regenCutlistFile">
+        #///     a boolean value
+        #/// </param>
+        #/// <returns>
+        #///     regenCutlistFile variable
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #[
+        #    DataMemberAttribute,
+        #    SysOperationGroupMemberAttribute("@MCA637"),
+        #    SysOperationDisplayOrderAttribute("2")
+        #]
+        #public McaRegenCutlistFile parmRegenCutlistFile(McaRegenCutlistFile _regenCutlistFile = regenCutlistFile)
+        #{
+        #    regenCutlistFile = _regenCutlistFile;
+        #    return regenCutlistFile;
+        #}
+      ENDSOURCE
+      SOURCE #parmSkipValidation
+        #//J_SR136452_UnscheduledCutList
+        #public boolean parmSkipValidation(Boolean _skipValidation = skipValidation)
+        #{
+        #    skipValidation = _skipValidation;
+        #    return skipValidation;
+        #}
+      ENDSOURCE
+      SOURCE #setFromContract
+        #/// <summary>
+        #///     Set the class variables from a <c>McaCutlistCreateContract</c> contract
+        #/// </summary>
+        #/// <param name="_contract">
+        #///     a <c>McaCutlistCreateContract</c> contract
+        #/// </param>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #void setFromContract(McaCutlistCreateContract _contract)
+        #{
+        #    this.parmQuery(_contract.parmQuery());
+        #}
+      ENDSOURCE
+      SOURCE #setQuery
+        #/// <summary>
+        #///     Sets the packedQuery <c>Query</c> object variable after packing
+        #/// </summary>
+        #/// <param name="_query">
+        #///     A <c>Query</c> object.
+        #/// </param>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #public void setQuery(Query _query)
+        #{
+        #     packedQuery = SysOperationHelper::base64Encode(_query.pack());
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: END

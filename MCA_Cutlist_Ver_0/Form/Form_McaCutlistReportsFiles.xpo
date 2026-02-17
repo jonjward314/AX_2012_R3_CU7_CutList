@@ -1,0 +1,558 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: FRM
+
+; Microsoft Dynamics AX Forms unloaded
+; --------------------------------------------------------------------------------
+FRMVERSION 12
+
+FORM #McaCutlistReportsFiles
+  PROPERTIES
+    Name                #McaCutlistReportsFiles
+    Origin              #{FF5E5F4E-305A-4A15-A579-0E42DE2A330C}
+  ENDPROPERTIES
+  
+  METHODS
+    SOURCE #classDeclaration
+      #public class FormRun extends ObjectRun
+      #{
+      #    McaCutlistReportsFilesForm        reportsFilesForm;
+      #}
+    ENDSOURCE
+    SOURCE #closeCancel
+      #public void closeCancel()
+      #{
+      #    super();
+      #}
+    ENDSOURCE
+    SOURCE #closeOk
+      #void closeOk()
+      #{
+      #    DialogRunbase dialog = element.args().caller();
+      #;
+      #    dialog.updateServer();
+      #    if (reportsFilesForm.checkCloseDialog())
+      #        super();
+      #}
+      #
+    ENDSOURCE
+    SOURCE #editCoverSheet
+      #//BP Deviation Documented
+      #edit McaPrintCoverSheetReport editCoverSheet(
+      #    boolean                      _set,
+      #    McaPrintCoverSheetReport     _mcaPrintCoverSheetReport
+      #    )
+      #{
+      #    if (_set)
+      #        reportsFilesForm.parmCoverSheet(_mcaPrintCoverSheetReport);
+      #
+      #    return reportsFilesForm.parmCoverSheet();
+      #}
+    ENDSOURCE
+    SOURCE #editCreateCutlistFiles
+      #//BP Deviation Documented
+      #edit McaCreateCutlistFiles editCreateCutlistFiles(
+      #    boolean                   _set,
+      #    McaCreateCutlistFiles     _mcaCreateCutlistFiles
+      #    )
+      #{
+      #    if (_set)
+      #        reportsFilesForm.parmCreateCutlistFiles(_mcaCreateCutlistFiles);
+      #
+      #    return reportsFilesForm.parmCreateCutlistFiles();
+      #}
+    ENDSOURCE
+    SOURCE #editCustAccount
+      #//BP Deviation Documented
+      #edit CustAccount editCustAccount(
+      #    boolean         _set,
+      #    CustAccount     _custAccount
+      #    )
+      #{
+      #    if (_set)
+      #        reportsFilesForm.parmCustAccount(_custAccount);
+      #
+      #    return reportsFilesForm.parmCustAccount();
+      #}
+    ENDSOURCE
+    SOURCE #editPrintDetail
+      #//BP Deviation Documented
+      #// mca - Ray Michalski - 09/18/2018 - Mca_CR011_11_CounterTopLabels
+      #edit McaPrintDetailReport editPrintDetail(
+      #    boolean                   _set,
+      #    McaPrintDetailReport      _mcaPrintDetailReport
+      #    )
+      #{
+      #    if (_set)
+      #        reportsFilesForm.parmPrintDetail(_mcaPrintDetailReport);
+      #
+      #    return reportsFilesForm.parmPrintDetail();
+      #}
+    ENDSOURCE
+    SOURCE #editPrintLabels
+      #//BP Deviation Documented
+      #edit boolean editPrintLabels(
+      #    boolean                   _set,
+      #    boolean                   _printLabels
+      #    )
+      #{
+      #    if (_set)
+      #        reportsFilesForm.parmPrintLabels(_printLabels);
+      #
+      #    return reportsFilesForm.parmPrintLabels();
+      #}
+    ENDSOURCE
+    SOURCE #editPrintMedium
+      #//BP Deviation Documented
+      #edit McaPrintMedium editPrintMedium(
+      #    boolean                   _set,
+      #    McaPrintMedium            _mcaPrintMedium
+      #    )
+      #{
+      #    if (_set)
+      #        reportsFilesForm.parmPrintMediumType(_mcaPrintMedium);
+      #
+      #    return reportsFilesForm.parmPrintMediumType();
+      #}
+    ENDSOURCE
+    SOURCE #editPrintSummary
+      #//BP Deviation Documented
+      #edit McaPrintSummaryReport editPrintSummary(
+      #    boolean                   _set,
+      #    McaPrintSummaryReport     _mcaPrintSummaryReport
+      #    )
+      #{
+      #    if (_set)
+      #        reportsFilesForm.parmPrintSummary(_mcaPrintSummaryReport);
+      #
+      #    return reportsFilesForm.parmPrintSummary();
+      #}
+    ENDSOURCE
+    SOURCE #editRegenCutlistFiles
+      #//BP Deviation Documented
+      #edit McaRegenCutlistFile editRegenCutlistFiles(
+      #    boolean                   _set,
+      #    McaRegenCutlistFile       _mcaRegenCutlistFile
+      #    )
+      #{
+      #    if (_set)
+      #        reportsFilesForm.parmRegenCutlistFile(_mcaRegenCutlistFile);
+      #
+      #    return reportsFilesForm.parmRegenCutlistFile();
+      #}
+    ENDSOURCE
+    SOURCE #init
+      #public void init()
+      #{
+      #    if (!element.args().caller())
+      #        throw error("@MCR36040");
+      #
+      #    reportsFilesForm =  element.args().caller().runbase();
+      #
+      #    super();
+      #
+      #    // mca - Ray Michalski - 09/18/2018 - Mca_CR011_11_CounterTopLabels - start
+      #    if (reportsFilesForm.parmPrintLabels())
+      #    {
+      #        CheckBoxLabels.visible(true);
+      #        element.editPrintLabels(true, false);
+      #        element.editCreateCutlistFiles(true, false);
+      #        element.editCoverSheet(true, false);
+      #        element.editPrintDetail(true, false);
+      #        element.editPrintSummary(true, false);
+      #        // Mca Robert O'Berry 11 September 2020 Case 202006881 [SR89517] - Cut list/PNX - sorting and condensing of information begin
+      #        /*
+      #        element.editPrintMedium(true, McaPrintMedium::Screen);
+      #        */
+      #        // Mca Robert O'Berry 11 September 2020 Case 202006881 [SR89517] - Cut list/PNX - sorting and condensing of information end
+      #    }
+      #    else
+      #    {
+      #        element.editCreateCutlistFiles(true, true);
+      #        element.editCoverSheet(true, true);
+      #        element.editPrintDetail(true, true);
+      #        element.editPrintSummary(true, true);
+      #        // Mca Robert O'Berry 11 September 2020 Case 202006881 [SR89517] - Cut list/PNX - sorting and condensing of information begin
+      #        /*
+      #        element.editPrintMedium(true, McaPrintMedium::FilePrinter);
+      #        */
+      #        // Mca Robert O'Berry 11 September 2020 Case 202006881 [SR89517] - Cut list/PNX - sorting and condensing of information end
+      #    }
+      #    // mca - Ray Michalski - 09/18/2018 - Mca_CR011_11_CounterTopLabels - end
+      #
+      #    // Mca Robert O'Berry 11 September 2020 Case 202006881 [SR89517] - Cut list/PNX - sorting and condensing of information begin
+      #    element.editPrintMedium(true, McaPrintMedium::File);
+      #    // Mca Robert O'Berry 11 September 2020 Case 202006881 [SR89517] - Cut list/PNX - sorting and condensing of information end
+      #}
+    ENDSOURCE
+    SOURCE #runBase
+      #//AOSRunMode::Client
+      #RunBase runBase()
+      #{
+      #    return reportsFilesForm;
+      #}
+      #
+    ENDSOURCE
+    SOURCE #saveUserSetting
+      #public void saveUserSetting()
+      #{
+      #    super();
+      #}
+    ENDSOURCE
+  ENDMETHODS
+  OBJECTBANK
+    PROPERTIES
+    ENDPROPERTIES
+    
+  ENDOBJECTBANK
+  
+  REFERENCEDATASOURCES
+  ENDREFERENCEDATASOURCES
+  
+  JOINS
+  ENDJOINS
+  
+  PARTREFERENCES
+  ENDPARTREFERENCES
+  
+  DESIGN
+    PROPERTIES
+      Caption             #@MCA639
+    ENDPROPERTIES
+    
+    CONTAINER
+      CONTROL BUTTONGROUP
+        PROPERTIES
+          Name                #BottomButtonGrp
+          Left                #Auto (right)
+          Top                 #Bottom edge
+          ElementPosition     #1431655764
+          ArrangeMethod       #Horizontal, flush right
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL BUTTONGROUP
+        PROPERTIES
+          Name                #RightButtonGrp
+          ElementPosition     #1533916890
+          HierarchyParent     #TabPage
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL GROUP
+        PROPERTIES
+          Name                #CutlistGroup
+          ElementPosition     #1073741822
+          HierarchyParent     #GroupFilesReports
+          FrameType           #Thin
+          Caption             #@MCA616
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL GROUP
+        PROPERTIES
+          Name                #dialogStartGrp
+          ElementPosition     #920350134
+          HierarchyParent     #TabPage
+          FrameType           #None
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL GROUP
+        PROPERTIES
+          Name                #Group
+          ElementPosition     #1840700268
+          HierarchyParent     #TabPage
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL GROUP
+        PROPERTIES
+          Name                #GroupFilesReports
+          ElementPosition     #613566756
+          HierarchyParent     #TabPage
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL GROUP
+        PROPERTIES
+          Name                #ReportsGroup
+          ElementPosition     #1610612733
+          HierarchyParent     #GroupFilesReports
+          FrameType           #Thin
+          Caption             #@SYS6845
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL TAB
+        PROPERTIES
+          Name                #Tab
+          Width               #Column width
+          ElementPosition     #715827882
+          Tabs                #1
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL TABPAGE
+        PROPERTIES
+          Name                #TabPage
+          Width               #Column width
+          ElementPosition     #1431655764
+          HierarchyParent     #Tab
+          Caption             #@SYS2952
+          Columns             #3
+          ArrangeGuide        
+            ARRAY INDEX Columns 
+              #0
+              #0
+              #0
+            ENDARRAY
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL CHECKBOX
+        PROPERTIES
+          Name                #CheckBoxCover
+          AutoDeclaration     #Yes
+          ElementPosition     #1073741823
+          HierarchyParent     #ReportsGroup
+          DataMethod          #editCoverSheet
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL CHECKBOX
+        PROPERTIES
+          Name                #CheckBoxCreateFiles
+          AutoDeclaration     #Yes
+          ElementPosition     #1073741822
+          HierarchyParent     #CutlistGroup
+          DataMethod          #editCreateCutlistFiles
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL CHECKBOX
+        PROPERTIES
+          Name                #CheckBoxLabels
+          AutoDeclaration     #Yes
+          Visible             #No
+          ElementPosition     #1968526675
+          HierarchyParent     #ReportsGroup
+          Label               #@MCA908
+          DataMethod          #editPrintLabels
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL CHECKBOX
+        PROPERTIES
+          Name                #CheckBoxOrders
+          AutoDeclaration     #Yes
+          ElementPosition     #1789569705
+          HierarchyParent     #ReportsGroup
+          DataMethod          #editPrintDetail
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL CHECKBOX
+        PROPERTIES
+          Name                #CheckBoxRegenFiles
+          AutoDeclaration     #Yes
+          Visible             #No
+          ElementPosition     #1610612734
+          HierarchyParent     #CutlistGroup
+          DataMethod          #editRegenCutlistFiles
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL CHECKBOX
+        PROPERTIES
+          Name                #CheckBoxSummary
+          AutoDeclaration     #Yes
+          ElementPosition     #1431655764
+          HierarchyParent     #ReportsGroup
+          DataMethod          #editPrintSummary
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL COMBOBOX
+        PROPERTIES
+          Name                #ComboBox
+          AutoDeclaration     #Yes
+          ElementPosition     #715827882
+          HierarchyParent     #ReportsGroup
+          DataMethod          #editPrintMedium
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL COMMANDBUTTON
+        PROPERTIES
+          Name                #CommandButtonCancel
+          ElementPosition     #1610612733
+          HierarchyParent     #BottomButtonGrp
+          Command             #264
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL COMMANDBUTTON
+        PROPERTIES
+          Name                #CommandButtonOK
+          ElementPosition     #1073741822
+          HierarchyParent     #BottomButtonGrp
+          DefaultButton       #Yes
+          Command             #263
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #editCustAccount
+          Visible             #No
+          ElementPosition     #1227133512
+          HierarchyParent     #TabPage
+          DataMethod          #editCustAccount
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+    ENDCONTAINER
+    
+  ENDDESIGN
+  
+  PERMISSIONS #Permissions
+    PROPERTIES
+    ENDPROPERTIES
+    
+    PERMISSIONSET #Read
+      PROPERTIES
+      ENDPROPERTIES
+      
+      FORM #Controls
+      ENDFORM
+      
+    TABLES #Tables
+    ENDTABLES
+    
+  SERVERMETHODS #Server Methods
+  ENDSERVERMETHODS
+  
+ASSOCIATEDFORMS #Associated Forms
+ENDASSOCIATEDFORMS
+
+ENDPERMISSIONSET
+
+PERMISSIONSET #Update
+  PROPERTIES
+  ENDPROPERTIES
+  
+  FORM #Controls
+  ENDFORM
+  
+TABLES #Tables
+ENDTABLES
+
+SERVERMETHODS #Server Methods
+ENDSERVERMETHODS
+
+ASSOCIATEDFORMS #Associated Forms
+ENDASSOCIATEDFORMS
+
+ENDPERMISSIONSET
+
+PERMISSIONSET #Create
+  PROPERTIES
+  ENDPROPERTIES
+  
+  FORM #Controls
+  ENDFORM
+  
+TABLES #Tables
+ENDTABLES
+
+SERVERMETHODS #Server Methods
+ENDSERVERMETHODS
+
+ASSOCIATEDFORMS #Associated Forms
+ENDASSOCIATEDFORMS
+
+ENDPERMISSIONSET
+
+PERMISSIONSET #Delete
+  PROPERTIES
+  ENDPROPERTIES
+  
+  FORM #Controls
+  ENDFORM
+  
+TABLES #Tables
+ENDTABLES
+
+SERVERMETHODS #Server Methods
+ENDSERVERMETHODS
+
+ASSOCIATEDFORMS #Associated Forms
+ENDASSOCIATEDFORMS
+
+ENDPERMISSIONSET
+
+ENDPERMISSIONS
+
+ENDFORM
+
+
+***Element: END

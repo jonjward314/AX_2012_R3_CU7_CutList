@@ -1,0 +1,173 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: QUE
+
+; Microsoft Dynamics AX Query: McaCutlistCreateQuery unloaded
+; --------------------------------------------------------------------------------
+VERSION 31
+
+QUERY #McaCutlistCreateQuery
+  PROPERTIES
+    Name                #McaCutlistCreateQuery
+    Title               #@MCA643
+    Version             #78
+    NextUniqueId        #1006
+    Origin              #{51098589-EA8D-4226-9A7A-8435441EE78C}
+  ENDPROPERTIES
+  
+  METHODS
+    SOURCE #classDeclaration
+      #public class QueryRun extends ObjectRun
+      #{
+      #}
+    ENDSOURCE
+  ENDMETHODS
+  BLOCKS
+    BLOCK #PWSBuildSchedule
+      PROPERTIES
+        Name                #PWSBuildSchedule
+        Table               #PWSBuildSchedule
+        UniqueId            #1000
+        FetchMode           #1:1
+      ENDPROPERTIES
+      
+      FIELDLIST
+        PROPERTIES
+        ENDPROPERTIES
+        
+      ENDFIELDLIST
+      SORTING
+      ENDSORTING
+      LINES
+      ENDLINES
+      BLOCKS
+        BLOCK #PWSBuildSequenceOrder
+          PROPERTIES
+            Name                #PWSBuildSequenceOrder
+            Table               #PWSBuildSequenceOrder
+            UniqueId            #1001
+            Relations           #Yes
+          ENDPROPERTIES
+          
+          FIELDLIST
+            PROPERTIES
+            ENDPROPERTIES
+            
+          ENDFIELDLIST
+          SORTING
+          ENDSORTING
+          LINES
+            LINE #DateOnLine
+            PROPERTIES
+              Name                #DateOnLine
+              Table               #PWSBuildSequenceOrder
+              Field               #DateOnLine
+            ENDPROPERTIES
+            
+          ENDLINES
+          BLOCKS
+            BLOCK #SalesLine
+              PROPERTIES
+                Name                #SalesLine
+                Table               #SalesLine
+                UniqueId            #1002
+                FetchMode           #1:1
+              ENDPROPERTIES
+              
+              FIELDLIST
+                PROPERTIES
+                ENDPROPERTIES
+                
+              ENDFIELDLIST
+              SORTING
+              ENDSORTING
+              LINES
+              ENDLINES
+              BLOCKS
+                BLOCK #InventTable
+                  PROPERTIES
+                    Name                #InventTable
+                    Table               #InventTable
+                    UniqueId            #1004
+                    FetchMode           #1:1
+                    Relations           #Yes
+                  ENDPROPERTIES
+                  
+                  FIELDLIST
+                    PROPERTIES
+                    ENDPROPERTIES
+                    
+                  ENDFIELDLIST
+                  SORTING
+                  ENDSORTING
+                  LINES
+                  ENDLINES
+                  BLOCKS
+                  ENDBLOCKS
+                  ASSOCIATIONS
+                    ASSOCIATION
+                      FOREIGNKEYRELATION #InventTable
+                  ENDASSOCIATIONS
+                ENDBLOCK
+                BLOCK #InventDim
+                  PROPERTIES
+                    Name                #InventDim
+                    Table               #InventDim
+                    UniqueId            #1005
+                    FetchMode           #1:1
+                    Relations           #Yes
+                  ENDPROPERTIES
+                  
+                  FIELDLIST
+                    PROPERTIES
+                    ENDPROPERTIES
+                    
+                  ENDFIELDLIST
+                  SORTING
+                  ENDSORTING
+                  LINES
+                  ENDLINES
+                  BLOCKS
+                  ENDBLOCKS
+                  ASSOCIATIONS
+                    ASSOCIATION
+                      FOREIGNKEYRELATION #InventDim
+                  ENDASSOCIATIONS
+                ENDBLOCK
+              ENDBLOCKS
+              ASSOCIATIONS
+                ASSOCIATION
+                  JOINDATASOURCE #PWSBuildSequenceOrder
+                  MASTERFIELD  #SalesLineNum
+                  DETAILSFIELD #LineNum
+                ASSOCIATION
+                  JOINDATASOURCE #PWSBuildSequenceOrder
+                  MASTERFIELD  #SalesId
+                  DETAILSFIELD #SalesId
+              ENDASSOCIATIONS
+            ENDBLOCK
+          ENDBLOCKS
+          ASSOCIATIONS
+            ASSOCIATION
+              MASTERFIELD  #BuildSchedule
+              DETAILSFIELD #BuildScheduleId
+          ENDASSOCIATIONS
+        ENDBLOCK
+      ENDBLOCKS
+      GROUPBY
+      ENDGROUPBY
+      HAVING
+      ENDHAVING
+      ORDERBY
+      ENDORDERBY
+    ENDBLOCK
+  ENDBLOCKS
+  DEPENDENTS
+  ENDDEPENDENTS
+  COMPOSITEQUERIES
+  ENDCOMPOSITEQUERIES
+ENDQUERY
+
+
+***Element: END

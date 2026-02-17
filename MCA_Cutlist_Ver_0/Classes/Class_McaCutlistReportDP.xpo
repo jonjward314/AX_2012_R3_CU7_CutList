@@ -1,0 +1,404 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: McaCutlistReportDP unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #McaCutlistReportDP
+    PROPERTIES
+      Name                #McaCutlistReportDP
+      Extends             #SrsReportDataProviderPreProcessTempDB
+      RunOn               #Server
+      Origin              #{EB8436D0-D143-4054-8ABC-923C1B41E687}
+    ENDPROPERTIES
+    
+    METHODS
+      SOURCE #classDeclaration
+        #/// <summary>
+        #///    The <c>McaCutlistReportDP</c> class provides data to the <c>McaCutlistReport</c> SQL Server
+        #///    Reporting Services (SSRS) report.
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #[
+        #    SRSReportQueryAttribute(querystr(McaCutlistQuery)),
+        #    SRSReportParameterAttribute(classstr(McaCutlistReportContract))
+        #]
+        #//class McaCutlistReportDP extends SRSReportDataProviderBase
+        #class McaCutlistReportDP extends SrsReportDataProviderPreProcessTempDB // use this extension to be able to debug this data provider
+        #{
+        #    McaCutlistTmp    mcaCutlistTmp;
+        #}
+        #
+      ENDSOURCE
+      SOURCE #filename
+        #public FileName filename(Filename _fileName)
+        #{
+        #    Filename    filepath, filename, fileType;
+        #
+        #    [filepath, filename, fileType] = fileNameSplit(_fileName);
+        #
+        #    return filename;
+        #}
+      ENDSOURCE
+      SOURCE #getMcaCutlistTmp
+        #/// <summary>
+        #///    Retrieves the data from the <c>McaCutlistTmp</c> temporary table.
+        #/// </summary>
+        #/// <returns>
+        #///    The data from the <c>McaCutlistTmp</c> table.
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #[SRSReportDataSetAttribute(tablestr(McaCutlistTmp))]
+        #public McaCutlistTmp getMcaCutlistTmp()
+        #{
+        #    select * from mcaCutlistTmp;
+        #    return mcaCutlistTmp;
+        #}
+      ENDSOURCE
+      SOURCE #getModelPrefixes
+        #private container getModelPrefixes()
+        #{
+        #    return McaCutlist::getModelPrefixes(this.getQueryRun());
+        #}
+      ENDSOURCE
+      SOURCE #getQueryRun
+        #/// <summary>
+        #///    Returns a <c>queryRun</c> object.
+        #/// </summary>
+        #/// <returns>
+        #///    The <c>queryRun</c> object.
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #private QueryRun getQueryRun()
+        #{
+        #    QueryRun qr;
+        #    Query    query = this.parmQuery();
+        #
+        #    if (!query)
+        #    {
+        #        query = new query(queryStr(McaCutlistQuery));
+        #    }
+        #
+        #    qr = new QueryRun(query);
+        #
+        #    return qr;
+        #}
+      ENDSOURCE
+      SOURCE #processCoverReport
+        #/// <summary>
+        #///    Processes the SQL Server Reporting Services (SSRS) report business logic.
+        #/// </summary>
+        #/// <remarks>
+        #///    This method provides the ability to write the report business logic.This method will be called by
+        #///    SSRS at runtime.The method should compute data and populate the data tables that will be returned
+        #///    to SSRS.
+        #///     mca - Ray M - 05/17/2018 - Mca_CR009_CutlistEnhancements
+        #/// </remarks>
+        #public void processCoverReport()
+        #{
+        #    Query                       query;
+        #    QueryRun                    qr;
+        #    QueryBuildDataSource        qbds;
+        #    McaCutlist                  cutlist;
+        #    SalesLine                   salesLine;
+        #    String30                    cutGroups = McaCutlist::getCutGroups(this.getQueryRun());
+        #    str                         models, prefixes;
+        #
+        #    [models, prefixes] = this.getModelPrefixes();
+        #
+        #    qr      = this.getQueryRun();
+        #    query   = qr.query();
+        #    qbds    = query.dataSourceTable(tableNum(McaCutlist));
+        #
+        #    // add the grouping
+        #    SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, ModelItemId));
+        #    SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, ModuleItemId));
+        #    SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, Prefix));
+        #    SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, InventSiteId));
+        #    SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, MoveToAreaId));
+        #    SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, ShipToWarehouse));
+        #    SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, SalesLineRefRecId));
+        #    SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, DueDateTime));
+        #    SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, KitQty));
+        #
+        #    // add the sort
+        #    qbds.addOrderByField(fieldNum(McaCutlist, DueDateTime));
+        #
+        #    while (qr.next())
+        #    {
+        #        cutlist = qr.get(tablenum(McaCutlist));
+        #
+        #        salesLine = SalesLine::findRecId(cutlist.SalesLineRefRecId);
+        #
+        #        mcaCutlistTmp.clear();
+        #        mcaCutlistTmp.KanbanId          = salesLine.SalesId;
+        #        mcaCutlistTmp.WMSLocationId     = cutlist.WMSLocationId;
+        #        mcaCutlistTmp.InventLocationId  = cutlist.InventLocationId;
+        #        mcaCutlistTmp.InventSiteId      = cutlist.InventSiteId;
+        #        mcaCutlistTmp.ModelItemId       = cutlist.ModelItemId;
+        #
+        #        if (cutlist.MoveToAreaId)
+        #        {
+        #            mcaCutlistTmp.MoveToLocation = McaCutlistMoveToAreas::find(cutlist.MoveToAreaId).Description;
+        #        }
+        #
+        #        mcaCutlistTmp.ComponentItemId   = cutlist.ModuleItemId;
+        #        mcaCutlistTmp.ComponentName     = InventTable::find(cutlist.ModuleItemId).productName(CompanyInfo::languageId());
+        #        mcaCutlistTmp.Pattern           = cutlist.Pattern;
+        #        mcaCutlistTmp.UsageType         = cutlist.UsageType;
+        #        mcaCutlistTmp.MachineFilename   = cutlist.MachineFilename;
+        #        mcaCutlistTmp.Depth             = cutlist.Depth;
+        #        mcaCutlistTmp.Width             = cutlist.Width;
+        #        mcaCutlistTmp.Height            = cutlist.Height;
+        #        mcaCutlistTmp.Qty               = cutlist.Qty;
+        #        mcaCutlistTmp.Prefix            = cutlist.Prefix;
+        #        mcaCutlistTmp.WrkCtrId          = cutlist.WrkCtrId;
+        #        mcaCutlistTmp.DueDateTime       = cutlist.DueDateTime;
+        #        mcaCutlistTmp.ShipToWarehouse   = cutlist.ShipToWarehouse;
+        #        mcaCutlistTmp.Usage             = cutlist.Usage;
+        #        mcaCutlistTmp.UnitId            = cutlist.UnitId;
+        #        mcaCutlistTmp.KitQty            = cutlist.KitQty;
+        #        mcaCutlistTmp.CutGroupId        = cutGroups;
+        #        mcaCutlistTmp.Pieces            = cutlist.Pieces;
+        #        mcaCutlistTmp.Notes             = cutlist.Notes;
+        #        mcaCutlistTmp.PrintNumberId     = cutlist.BluePrint;
+        #        mcaCutlistTmp.Models            = models;
+        #        mcaCutlistTmp.Prefixes          = prefixes;
+        #
+        #        // create a grouping filed to use on the Cover sheet report
+        #        mcaCutlistTmp.NewPageGroupBy    = strFmt('%1%2%3%4%5'  , cutlist.ModelItemId
+        #                                                               , cutlist.Prefix
+        #                                                               , cutlist.InventSiteId
+        #                                                               , cutlist.MoveToLocation
+        #                                                               , DateTimeUtil::date(cutlist.DueDateTime));
+        #
+        #        mcaCutlistTmp.insert();
+        #    }
+        #}
+      ENDSOURCE
+      SOURCE #processDetailReport
+        #/// <summary>
+        #///    Processes the SQL Server Reporting Services (SSRS) report business logic.
+        #/// </summary>
+        #/// <remarks>
+        #///    This method provides the ability to write the report business logic.This method will be called by
+        #///    SSRS at runtime.The method should compute data and populate the data tables that will be returned
+        #///    to SSRS.
+        #///    Ray M - 05/17/2018 - Mca_CR009_CutlistEnhancements
+        #/// </remarks>
+        #public void processDetailReport()
+        #{
+        #    QueryRun                    qr;
+        #    McaCutlist                  cutlist;
+        #    SalesLine                   salesLine;
+        #    str                         models, prefixes;
+        #
+        #    qr = this.getQueryRun();
+        #
+        #    [models, prefixes] = this.getModelPrefixes();
+        #
+        #    while (qr.next())
+        #    {
+        #        cutlist = qr.get(tablenum(McaCutlist));
+        #
+        #        salesLine = SalesLine::findRecId(cutlist.SalesLineRefRecId);
+        #
+        #        mcaCutlistTmp.clear();
+        #        mcaCutlistTmp.KanbanId          = salesLine.SalesId;
+        #        mcaCutlistTmp.WMSLocationId     = cutlist.WMSLocationId;
+        #        mcaCutlistTmp.InventLocationId  = cutlist.InventLocationId;
+        #        mcaCutlistTmp.InventSiteId      = cutlist.InventSiteId;
+        #        mcaCutlistTmp.ModelItemId       = cutlist.ModelItemId;
+        #
+        #        if (cutlist.MoveToAreaId)
+        #        {
+        #            mcaCutlistTmp.MoveToLocation = McaCutlistMoveToAreas::find(cutlist.MoveToAreaId).Description;
+        #        }
+        #
+        #        mcaCutlistTmp.RawMatItemId      = cutlist.ItemId;
+        #        mcaCutlistTmp.RawMatName        = InventTable::find(mcaCutlistTmp.RawMatItemId).productName(CompanyInfo::languageId());
+        #        mcaCutlistTmp.DepthString       = McaCutlist::real2FractionStr(cutlist.Depth);
+        #        mcaCutlistTmp.WidthString       = McaCutlist::real2FractionStr(cutlist.Width);
+        #        mcaCutlistTmp.HeightString      = McaCutlist::real2FractionStr(cutlist.Height);
+        #        mcaCutlistTmp.ComponentItemId   = cutlist.ModuleItemId;
+        #        mcaCutlistTmp.ComponentName     = InventTable::find(cutlist.ModuleItemId).productName(CompanyInfo::languageId());
+        #
+        #        if (cutlist.Width > 0)
+        #        {
+        #            mcaCutlistTmp.CutSizeSeperator = 'x';
+        #        }
+        #
+        #        mcaCutlistTmp.Pattern           = cutlist.Pattern;
+        #        mcaCutlistTmp.Models            = models;
+        #        mcaCutlistTmp.Prefixes          = prefixes;
+        #        mcaCutlistTmp.UsageType         = cutlist.UsageType;
+        #        mcaCutlistTmp.MachineFilename   = this.filename(cutlist.MachineFilename);
+        #        mcaCutlistTmp.Depth             = cutlist.Depth;
+        #        mcaCutlistTmp.Width             = cutlist.Width;
+        #        mcaCutlistTmp.Height            = cutlist.Height;
+        #        mcaCutlistTmp.Qty               = cutlist.Qty;
+        #        mcaCutlistTmp.Prefix            = cutlist.Prefix;
+        #        mcaCutlistTmp.WrkCtrId          = cutlist.WrkCtrId;
+        #        mcaCutlistTmp.DueDateTime       = cutlist.DueDateTime;
+        #        mcaCutlistTmp.ShipToWarehouse   = cutlist.ShipToWarehouse;
+        #        //mcaCutlistTmp.Usage             = cutlist.Usage;
+        #        mcaCutlistTmp.Usage             = cutlist.usageCalcRounding();
+        #        // Mca David Park 30 May 2024 Mca_Case202403995_UOMonCutlistDetailRepo begin
+        #        //mcaCutlistTmp.UnitId            = cutlist.UnitId;
+        #        mcaCutlistTmp.UnitId            = InventTableModule::find(cutlist.ItemId, ModuleInventPurchSales::Invent).UnitId;
+        #        // Mca David Park 30 May 2024 Mca_Case202403995_UOMonCutlistDetailRepo end
+        #        mcaCutlistTmp.KitQty            = cutlist.KitQty;
+        #        mcaCutlistTmp.CutGroupId        = cutlist.CutGroupId;
+        #        mcaCutlistTmp.Pieces            = real2int(cutlist.Pieces * cutlist.KitQty);
+        #        mcaCutlistTmp.Notes             = cutlist.Notes;
+        #        mcaCutlistTmp.PrintNumberId     = cutlist.BluePrint;
+        #        // Mca Robert O'Berry 11 September 2020 Case 202006881 [SR89517] - Cut list/PNX - sorting and condensing of information begin
+        #        /*
+        #        mcaCutlistTmp.NewWOPageGroupBy  = strFmt('%1%2%3', cutlist.ShipToWarehouse
+        #                                                         , cutlist.ItemId
+        #                                                         , cutlist.MoveToAreaId);
+        #        */
+        #        //mcaCutlistTmp.NewWOPageGroupBy  = strFmt('%1%2%3', cutlist.ItemId
+        #        //                                                 , cutlist.ShipToWarehouse
+        #        //                                                 , mcaCutlistTmp.MoveToLocation);
+        #        // Mca Robert O'Berry 11 September 2020 Case 202006881 [SR89517] - Cut list/PNX - sorting and condensing of information end
+        #
+        #        //Start-SR346152-1497-mca202404318-Change PNX Detail Report PDF File for Linear Parts to have PNX file name/number in correct sequence
+        #        If(cutlist.UsageType == McaUsageType::Linear)
+        #        {
+        #            mcaCutlistTmp.NewWOPageGroupBy  = strFmt('%1%2%3%4', cutlist.ShipToWarehouse
+        #                                                        , mcaCutlistTmp.MoveToLocation
+        #                                                        , mcaCutlistTmp.MachineFilename
+        #                                                        , cutlist.ItemId);
+        #        }
+        #        If(cutlist.UsageType == McaUsageType::Sheet)
+        #        {
+        #            mcaCutlistTmp.NewWOPageGroupBy  = strFmt('%1%2%3', cutlist.ItemId
+        #                                                             , cutlist.ShipToWarehouse
+        #                                                             , mcaCutlistTmp.MoveToLocation);
+        #        }
+        #
+        #        //End-SR346152-1497-mca202404318-Change PNX Detail Report PDF File for Linear Parts to have PNX file name/number in correct sequence
+        #        mcaCutlistTmp.insert();
+        #    }
+        #}
+      ENDSOURCE
+      SOURCE #processReport
+        #/// <summary>
+        #///    Processes the SQL Server Reporting Services (SSRS) report business logic.
+        #/// </summary>
+        #/// <remarks>
+        #///    This method provides the ability to write the report business logic.This method will be called by
+        #///    SSRS at runtime.The method should compute data and populate the data tables that will be returned
+        #///    to SSRS.
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #[SysEntryPointAttribute(false)]
+        #public void processReport()
+        #{
+        #    McaCutlistReportContract contract = this.parmDataContract() as McaCutlistReportContract;
+        #
+        #    if (contract.parmQuery())
+        #    {
+        #        this.parmQuery(contract.getQuery());
+        #    }
+        #
+        #    if (contract.parmCoverSheet())
+        #    {
+        #        this.processCoverReport();
+        #    }
+        #
+        #    if (contract.parmPrintDetail())
+        #    {
+        #        this.processDetailReport();
+        #    }
+        #
+        #    if (contract.parmPrintSummary())
+        #    {
+        #        this.processSummaryReport();
+        #    }
+        #}
+      ENDSOURCE
+      SOURCE #processSummaryReport
+        #/// <summary>
+        #///    Processes the SQL Server Reporting Services (SSRS) report business logic.
+        #/// </summary>
+        #/// <remarks>
+        #///    This method provides the ability to write the report business logic.This method will be called by
+        #///    SSRS at runtime.The method should compute data and populate the data tables that will be returned
+        #///    to SSRS.
+        #///     Ray M - 05/17/2018 - Mca_CR009_CutlistEnhancements
+        #/// </remarks>
+        #public void processSummaryReport()
+        #{
+        #    Query                       query;
+        #    QueryRun                    qr;
+        #    QueryBuildDataSource        qbds;
+        #    McaCutlist                  cutlist;
+        #    SalesLine                   salesLine;
+        #    str                         models, prefixes;
+        #
+        #    [models, prefixes] = this.getModelPrefixes();
+        #
+        #    qr      = this.getQueryRun();
+        #    query   = qr.query();
+        #    qbds    = query.dataSourceTable(tableNum(McaCutlist));
+        #
+        #    // add the grouping
+        #    SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, ModelItemId));
+        #    SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, ModuleItemId));
+        #    SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, CutGroupId));
+        #    SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, InventSiteId));
+        #    //SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, MoveToAreaId));
+        #    SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, ShipToWarehouse));
+        #    SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, SalesLineRefRecId));
+        #    SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, DueDateTime));
+        #    SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, KitQty));
+        #
+        #    // add the sort
+        #    qbds.addOrderByField(fieldNum(McaCutlist, DueDateTime));
+        #
+        #    while (qr.next())
+        #    {
+        #        cutlist = qr.get(tablenum(McaCutlist));
+        #
+        #        salesLine = SalesLine::findRecId(cutlist.SalesLineRefRecId);
+        #
+        #        mcaCutlistTmp.clear();
+        #        mcaCutlistTmp.KanbanId          = salesLine.SalesId;
+        #        mcaCutlistTmp.WMSLocationId     = cutlist.WMSLocationId;
+        #        mcaCutlistTmp.InventLocationId  = cutlist.InventLocationId;
+        #        mcaCutlistTmp.InventSiteId      = cutlist.InventSiteId;
+        #        mcaCutlistTmp.ModelItemId       = cutlist.ModelItemId;
+        #        mcaCutlistTmp.ComponentItemId   = cutlist.ModuleItemId;
+        #        mcaCutlistTmp.ComponentName     = InventTable::find(cutlist.ModuleItemId).productName(CompanyInfo::languageId());
+        #        mcaCutlistTmp.Qty               = cutlist.Qty;
+        #        mcaCutlistTmp.Prefix            = cutlist.Prefix;
+        #        mcaCutlistTmp.WrkCtrId          = cutlist.WrkCtrId;
+        #        mcaCutlistTmp.DueDateTime       = cutlist.DueDateTime;
+        #        mcaCutlistTmp.ShipToWarehouse   = cutlist.ShipToWarehouse;
+        #        mcaCutlistTmp.Usage             = cutlist.Usage;
+        #        mcaCutlistTmp.UnitId            = cutlist.UnitId;
+        #        mcaCutlistTmp.KitQty            = cutlist.KitQty;
+        #        mcaCutlistTmp.CutGroupId        = cutlist.CutGroupId;
+        #        mcaCutlistTmp.Pieces            = cutlist.Pieces;
+        #        mcaCutlistTmp.Models            = models;
+        #        mcaCutlistTmp.Prefixes          = prefixes;
+        #
+        #        mcaCutlistTmp.insert();
+        #    }
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: END

@@ -1,0 +1,121 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: McaCutlistCreateService unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #McaCutlistCreateService
+    PROPERTIES
+      Name                #McaCutlistCreateService
+      Extends             #SysOperationServiceBase
+      RunOn               #Server
+      Origin              #{AA2A8ECA-9756-485A-837A-6A47D8059182}
+    ENDPROPERTIES
+    
+    METHODS
+      SOURCE #classDeclaration
+        #/// <summary>
+        #///     The service class for the Cutlist creation reoccuring batch job
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #class McaCutlistCreateService extends SysOperationServiceBase
+        #{
+        #}
+      ENDSOURCE
+      SOURCE #process
+        #/// <summary>
+        #///     Service operation to process cutlist records
+        #/// </summary>
+        #/// <param name="_contract">
+        #///     a <c>McaCutlistCreateContract</c> object
+        #/// </param>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #[SysEntryPointAttribute(false)]
+        #public void process(McaCutlistCreateContract _contract)
+        #{
+        #    setPrefix('Creating cutlist records and assigning prefixes');
+        #
+        #    try
+        #    {
+        #        this.processCutlist(_contract);
+        #        this.processAssignPrefix(_contract);
+        #    }
+        #    catch
+        #    {
+        #        error("@SYS21628"); //Update has been canceled because of an error.
+        #    }
+        #}
+      ENDSOURCE
+      SOURCE #processAssignPrefix
+        #/// <summary>
+        #///     Call the run method of the <c>McaCutlistAssignPrefix</c> class
+        #/// </summary>
+        #/// <param name="_contract">
+        #///     a <c>McaCutlistCreateContract</c> object
+        #/// </param>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #[SysEntryPointAttribute(false)]
+        #public void processAssignPrefix(McaCutlistCreateContract _contract)
+        #{
+        #    McaCutlistAssignPrefix  mcaCutlistAssignPrefix;
+        #    McaCutlistFileContract  mcaCutlistFileContract;
+        #    Query                   query;
+        #
+        #    if (_contract.parmAssignPrefix())
+        #    {
+        #        mcaCutlistFileContract  = new McaCutlistFileContract();
+        #        query                   = new Query(queryStr(McaCutlistQuery));
+        #
+        #        mcaCutlistFileContract.setQuery(query);
+        #
+        #        mcaCutlistAssignPrefix = McaCutlistAssignPrefix::newStandard(mcaCutlistFileContract);
+        #        mcaCutlistAssignPrefix.run();
+        #    }
+        #}
+      ENDSOURCE
+      SOURCE #processCutlist
+        #/// <summary>
+        #///     Call the run method of the <c>McaCutlistCreate</c> class
+        #/// </summary>
+        #/// <param name="_contract">
+        #///     a <c>McaCutlistCreateContract</c> object
+        #/// </param>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #[SysEntryPointAttribute(false)]
+        #public void processCutlist(McaCutlistCreateContract _contract)
+        #{
+        #    McaCutlistCreate mcaCutlistCreate;
+        #
+        #    mcaCutlistCreate = McaCutlistCreate::newStandard(_contract);
+        #
+        #    // Ray M - 2/14/2019 - Mca_TASK118324_CutlistMultiThread - start
+        #    //mcaCutlistCreate.updateStats();
+        #
+        #    if (this.isExecutingInBatch())
+        #    {
+        #        mcaCutlistCreate.parmBatchHeader(this.getCurrentBatchHeader());
+        #        mcaCutlistCreate.parmBatch(this.getCurrentBatchTask());
+        #        mcaCutlistCreate.createMultiTasks();
+        #    }
+        #    else
+        #    {
+        #        mcaCutlistCreate.run();
+        #    }
+        #    // Ray M - 2/14/2019 - Mca_TASK118324_CutlistMultiThread - end
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: END

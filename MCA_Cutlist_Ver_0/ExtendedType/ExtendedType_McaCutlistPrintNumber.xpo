@@ -1,0 +1,33 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: UTE
+
+; Microsoft Dynamics AX Enum: McaCutlistPrintNumber unloaded
+; --------------------------------------------------------------------------------
+  USERTYPEVERSION 6
+  
+  USERTYPE #McaCutlistPrintNumber
+  ENUM
+    PROPERTIES
+      Name                #McaCutlistPrintNumber
+      Label               #@SYS920
+      HelpText            #@MCA319
+      Origin              #{F5786CD0-15A1-4FAA-8C2C-27FFCC211D63}
+      Extends             #NoYesId
+      EnumType            #NoYes
+    ENDPROPERTIES
+    
+    TYPEELEMENTS
+    ENDTYPEELEMENTS
+    
+    TYPEREFERENCES
+    ENDTYPEREFERENCES
+    
+    TYPELOOKUPS
+    ENDTYPELOOKUPS
+    
+  ENDUSERTYPE
+  
+
+***Element: END

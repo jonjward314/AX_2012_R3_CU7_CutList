@@ -1,0 +1,99 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: McaCutlistCreateController unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #McaCutlistCreateController
+    PROPERTIES
+      Name                #McaCutlistCreateController
+      Extends             #SysOperationServiceController
+      Origin              #{5662D8FC-DA07-4ED9-8A9F-7325B34536D0}
+    ENDPROPERTIES
+    
+    METHODS
+      SOURCE #caption
+        #/// <summary>
+        #///     The description for the class
+        #/// </summary>
+        #/// <returns>
+        #///     the <c>ClassDescription</c>
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #public ClassDescription caption()
+        #{
+        #    return "@MCA643";
+        #}
+      ENDSOURCE
+      SOURCE #classDeclaration
+        #/// <summary>
+        #///     Controller class for the cutlist creation reoccuring batch job
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #[SysOperationJournaledParametersAttribute(true)]
+        #class McaCutlistCreateController extends SysOperationServiceController
+        #{
+        #}
+      ENDSOURCE
+      SOURCE #new
+        #public void new(IdentifierName _className = classStr(McaCutlistCreateService), IdentifierName _methodName = methodStr(McaCutlistCreateService, process), SysOperationExecutionMode _executionMode = SysOperationExecutionMode::Synchronous)
+        #{
+        #    super(_className, _methodName, _executionMode);
+        #}
+      ENDSOURCE
+      SOURCE #main
+        #///<summary>
+        #///     Provides an entry point for the <c>McaCutlistCreateController</c> class when it is called from a menu item.
+        #///</summary>
+        #///<param name="args">
+        #///     The arguments for the <c>McaCutlistCreateController</c> class.
+        #///</param>
+        #///<remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #///</remarks>
+        #public static void main(Args args)
+        #{
+        #    McaCutlistCreateController   controller;   
+        #    IdentifierName               className;       
+        #    IdentifierName               methodName;
+        #    SysOperationExecutionMode    executionMode;
+        #    McaCutlistCreateContract     contract;
+        #
+        #    [className, methodName, executionMode] =
+        #        SysOperationServiceController::parseServiceInfo(args);
+        #
+        #    controller =
+        #        new McaCutlistCreateController(className, methodName, executionMode);
+        #
+        #    controller.parmDialogCaption("@MCA643");
+        #
+        #    contract = controller.getBaseDataContract() as McaCutlistCreateContract;
+        #
+        #    if (!contract)
+        #    {
+        #        contract = new McaCutlistCreateContract();
+        #    }
+        #
+        #    if (args.parmObject())
+        #    {
+        #        contract.setQuery(args.parmObject());
+        #        //contract.parmPrintDetail(true);
+        #    }
+        #
+        #    if (controller.prompt())
+        #    {
+        #        controller.run();
+        #    }
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: END

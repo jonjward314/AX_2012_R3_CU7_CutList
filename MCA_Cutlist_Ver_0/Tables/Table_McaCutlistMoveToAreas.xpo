@@ -1,0 +1,167 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: DBT
+
+; Microsoft Dynamics AX Table : McaCutlistMoveToAreas unloaded
+; --------------------------------------------------------------------------------
+  TABLEVERSION 1
+  
+  TABLE #McaCutlistMoveToAreas
+    EnforceFKRelation 1
+    PROPERTIES
+      Name                #McaCutlistMoveToAreas
+      Label               #@MCA1583
+      TitleField1         #MoveToAreaId
+      TitleField2         #Description
+      TableContents       #Default data
+      CacheLookup         #EntireTable
+      CreateRecIdIndex    #Yes
+      TableGroup          #Group
+      PrimaryIndex        #SurrogateKey
+      ClusterIndex        #MoveToAreaIdx
+      DeveloperDocumentation  #@MCA1584
+      Origin              #{14E79E9B-2610-4291-BB0C-09B22A9D1298}
+    ENDPROPERTIES
+    
+    FIELDS
+      FIELD #Description
+        STRING
+        PROPERTIES
+          Name                #Description
+          Table               #McaCutlistMoveToAreas
+          Origin              #{59EBEA92-A0BD-40B4-834F-C90DC66AA699}
+          ExtendedDataType    #Description
+          StringSize          #60
+        ENDPROPERTIES
+        
+      FIELD #MoveToAreaId
+        STRING
+        PROPERTIES
+          Name                #MoveToAreaId
+          Table               #McaCutlistMoveToAreas
+          Origin              #{7D40DBD8-9E61-49EB-BE45-10D6522C9583}
+          ExtendedDataType    #McaMoveToAreaId
+        ENDPROPERTIES
+        
+    ENDFIELDS
+    GROUPS
+      GROUP #AutoReport
+        PROPERTIES
+          Name                #AutoReport
+        ENDPROPERTIES
+        
+        GROUPFIELDS
+          #MoveToAreaId
+          #Description
+        ENDGROUPFIELDS
+      ENDGROUP
+      GROUP #Grid
+        PROPERTIES
+          Name                #Grid
+          Label               #@SYS26263
+        ENDPROPERTIES
+        
+        GROUPFIELDS
+          #MoveToAreaId
+          #Description
+        ENDGROUPFIELDS
+      ENDGROUP
+    ENDGROUPS
+    
+    INDICES
+      #MoveToAreaIdx
+      PROPERTIES
+        Name                #MoveToAreaIdx
+        AllowDuplicates     #No
+        AlternateKey        #Yes
+        Origin              #{F074B5BC-3A11-4D86-8540-B3AE8A3725AF}
+      ENDPROPERTIES
+      
+      INDEXFIELDS
+        #MoveToAreaId
+      ENDINDEXFIELDS
+      
+    ENDINDICES
+    FULLTEXTINDICES
+    ENDFULLTEXTINDICES
+    REFERENCES
+    ENDREFERENCES
+    
+    DELETEACTIONS
+    ENDDELETEACTIONS
+    
+    METHODS
+      SOURCE #find
+        #/// <summary>
+        #///     Find method
+        #/// </summary>
+        #/// <param name="_moveToAreaId">
+        #///     a <c>McaMoveToAreaId</c> parameter
+        #/// </param>
+        #/// <param name="_update">
+        #///     a <c>boolean</c> parameter
+        #/// </param>
+        #/// <returns>
+        #///     a <c>McaCutlistMoveToAreas</c> record, if exists.
+        #/// </returns>
+        #/// <remarks>
+        #///      mca - Ray Michalski - 01/24/2018 - Mca_CR009_BUG67640
+        #/// </remarks>
+        #public static McaCutlistMoveToAreas find(
+        #    McaMoveToAreaId _moveToAreaId,
+        #    boolean         _update = false
+        #    )
+        #{
+        #    McaCutlistMoveToAreas area;
+        #
+        #    if (_moveToAreaId)
+        #    {
+        #        area.selectForUpdate(_update);
+        #
+        #        select area
+        #            where area.MoveToAreaId == _moveToAreaId;
+        #    }
+        #
+        #    return area;
+        #}
+      ENDSOURCE
+      SOURCE #findRecId
+        #/// <summary>
+        #///     Find method
+        #/// </summary>
+        #/// <param name="_recId">
+        #///     a <c>recId</c> parameter
+        #/// </param>
+        #/// <param name="_update">
+        #///     a <c>boolean</c> parameter
+        #/// </param>
+        #/// <returns>
+        #///     a <c>McaCutlistMoveToAreas</c> record, if exists.
+        #/// </returns>
+        #/// <remarks>
+        #///      mca - Ray Michalski - 01/24/2018 - Mca_CR009_BUG67640
+        #/// </remarks>
+        #public static McaCutlistMoveToAreas findRecId(
+        #    recId       _recId,
+        #    boolean     _update = false
+        #    )
+        #{
+        #    McaCutlistMoveToAreas area;
+        #
+        #    if (_recId)
+        #    {
+        #        area.selectForUpdate(_update);
+        #
+        #        select area
+        #            where area.RecId == _recId;
+        #    }
+        #
+        #    return area;
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDTABLE
+  
+
+***Element: END

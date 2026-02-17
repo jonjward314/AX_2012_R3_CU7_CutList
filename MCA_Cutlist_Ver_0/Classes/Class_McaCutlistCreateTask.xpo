@@ -1,0 +1,206 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: McaCutlistCreateTask unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #McaCutlistCreateTask
+    PROPERTIES
+      Name                #McaCutlistCreateTask
+      Extends             #RunBaseBatch
+      Origin              #{8A27633D-A576-480C-B86E-DBDC0783A6EE}
+    ENDPROPERTIES
+    
+    METHODS
+      SOURCE #canGoBatchJournal
+        #/// <summary>
+        #///    Indicates whether the batch task can be seen in the batch journal.
+        #/// </summary>
+        #/// <returns>
+        #///    Always returns true.
+        #/// </returns>
+        #/// <remarks>
+        #///     Ray M - 2/14/2019 - Mca_TASK118324_CutlistMultiThread
+        #/// </remarks>
+        #public boolean canGoBatchJournal()
+        #{
+        #    return true;
+        #}
+      ENDSOURCE
+      SOURCE #caption
+        #/// <summary>
+        #/// Returns a description of the class instance.
+        #/// </summary>
+        #/// <returns>
+        #/// A description of the class instance
+        #/// </returns>
+        #/// <remarks>
+        #///     Ray M - 2/14/2019 - Mca_TASK118324_CutlistMultiThread
+        #/// </remarks>
+        #public ClassDescription caption()
+        #{
+        #    return strFmt("@SYS320716", McaCutlistCreateTask::description(), "@SYS123519", SalesLine::findRecId(this.parmSalesLineRecId()).SalesId);
+        #}
+      ENDSOURCE
+      SOURCE #classDeclaration
+        #/// <summary>
+        #///    The <c>McaCutlistCreateTask</c> class is used to create cutlist records
+        #/// </summary>
+        #/// <remarks>
+        #///     Ray M - 2/14/2019 - Mca_TASK118324_CutlistMultiThread
+        #/// </remarks>
+        #class McaCutlistCreateTask extends RunBaseBatch
+        #{
+        #    RecId   salesLineRecId;
+        #
+        #    #DEFINE.CurrentVersion(1)
+        #    #LOCALMACRO.CurrentList
+        #        salesLineRecId
+        #    #Endmacro
+        #}
+      ENDSOURCE
+      SOURCE #new
+        #protected void new()
+        #{
+        #    super();
+        #}
+      ENDSOURCE
+      SOURCE #pack
+        #/// <summary>
+        #/// Returns a <c>container</c> with a packed version of the class.
+        #/// </summary>
+        #/// <returns>
+        #/// A packed version of the class.
+        #/// </returns>
+        #/// <remarks>
+        #///     Ray M - 2/14/2019 - Mca_TASK118324_CutlistMultiThread
+        #/// </remarks>
+        #public container pack()
+        #{
+        #    return [#CurrentVersion,#CurrentList];
+        #}
+      ENDSOURCE
+      SOURCE #parmSalesLineRecId
+        #/// <summary>
+        #///     Sets the <c>salesLineRecId</c> variable
+        #/// </summary>
+        #/// <param name="_salesLineRecId">
+        #///     a <c>salesLineRecId</c> parameter
+        #/// </param>
+        #/// <returns>
+        #///     <c>salesLineRecId</c> variable
+        #/// </returns>
+        #/// <remarks>
+        #///     Ray M - 2/14/2019 - Mca_TASK118324_CutlistMultiThread
+        #/// </remarks>
+        #public RecId parmSalesLineRecId(RecId _salesLineRecId = salesLineRecId)
+        #{
+        #    salesLineRecId = _salesLineRecId;
+        #    return salesLineRecId;
+        #}
+      ENDSOURCE
+      SOURCE #run
+        #/// <summary>
+        #///    Contains the code that does the actual job of the class.
+        #/// </summary>
+        #/// <remarks>
+        #///     Ray M - 2/14/2019 - Mca_TASK118324_CutlistMultiThread
+        #/// </remarks>
+        #public void run()
+        #{
+        #    McaCutlistCreate            mcaCutlistCreate;
+        #    McaCutlistCreateContract    contract = new McaCutlistCreateContract();
+        #
+        #    contract.parmSalesLineRecId(salesLineRecId);
+        #
+        #    mcaCutlistCreate = McaCutlistCreate::newStandard(contract);
+        #    mcaCutlistCreate.runMultiTask();
+        #}
+        #
+      ENDSOURCE
+      SOURCE #runsImpersonated
+        #/// <summary>
+        #///    Determines whether the batch task is run on the server or on a client.
+        #/// </summary>
+        #/// <returns>
+        #///    Always returns true.
+        #/// </returns>
+        #public boolean runsImpersonated()
+        #{
+        #    return true;
+        #}
+      ENDSOURCE
+      SOURCE #unpack
+        #/// <summary>
+        #///     Unpacks the values in the <c>Container</c> parameter.
+        #/// </summary>
+        #/// <param name="_packedClass">
+        #///     A <c>container</c> with a packed version of the class.
+        #/// </param>
+        #/// <returns>
+        #///     true if the class was unpacked using the container; otherwise, false.
+        #/// </returns>
+        #public boolean unpack(container _packedClass)
+        #{
+        #    Integer version = RunBase::getVersion(_packedClass);
+        #
+        #    switch (version)
+        #    {
+        #        case #CurrentVersion:
+        #            [version, #CurrentList] = _packedClass;
+        #            break;
+        #
+        #        default:
+        #            return false;
+        #    }
+        #
+        #    return true;
+        #}
+      ENDSOURCE
+      SOURCE #construct
+        #private static server McaCutlistCreateTask construct()
+        #{
+        #    return new McaCutlistCreateTask();
+        #}
+      ENDSOURCE
+      SOURCE #description
+        #/// <summary>
+        #///     Returns a description of what the class does.
+        #/// </summary>
+        #/// <returns>
+        #///     A description of what the class does.
+        #/// </returns>
+        #client server static ClassDescription description()
+        #{
+        #    return strFmt("@MCA643");
+        #}
+      ENDSOURCE
+      SOURCE #newStandard
+        #/// <summary>
+        #///     Creates a new <c>McaCutlistCreateTask</c> object.
+        #/// </summary>
+        #/// <param name="_salesLineRecId">
+        #///     a <c>RecId</c> object
+        #/// </param>
+        #/// <returns>
+        #///     a newly created <c>McaCutlistCreateTask</c> object.
+        #/// </returns>
+        #/// <remarks>
+        #///     Ray M - 2/14/2019 - Mca_TASK118324_CutlistMultiThread
+        #/// </remarks>
+        #public static server McaCutlistCreateTask newStandard(RecId _salesLineRecId)
+        #{
+        #    McaCutlistCreateTask mcaCutlistCreateTask = new McaCutlistCreateTask();
+        #
+        #    mcaCutlistCreateTask.parmSalesLineRecId(_salesLineRecId);
+        #
+        #    return mcaCutlistCreateTask;
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: END

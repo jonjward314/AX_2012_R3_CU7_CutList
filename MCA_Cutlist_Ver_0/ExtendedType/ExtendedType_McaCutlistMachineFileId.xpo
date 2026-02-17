@@ -1,0 +1,31 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: UTS
+
+; Microsoft Dynamics AX String: McaCutlistMachineFileId unloaded
+; --------------------------------------------------------------------------------
+  USERTYPEVERSION 6
+  
+  USERTYPE #McaCutlistMachineFileId
+  STRING
+    PROPERTIES
+      Name                #McaCutlistMachineFileId
+      Label               #@MCA1888
+      HelpText            #@MCA1889
+      Origin              #{1F5EB901-FE7F-4D0A-AB52-059637111FD9}
+    ENDPROPERTIES
+    
+    TYPEELEMENTS
+    ENDTYPEELEMENTS
+    
+    TYPEREFERENCES
+    ENDTYPEREFERENCES
+    
+    TYPELOOKUPS
+    ENDTYPELOOKUPS
+    
+  ENDUSERTYPE
+  
+
+***Element: END
