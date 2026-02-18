@@ -799,6 +799,19 @@ FORM #McaCutlistRecords
       
       CONTROL REALEDIT
         PROPERTIES
+          Name                #McaCutlist_Per_Series
+          ElementPosition     #1243280006
+          HierarchyParent     #GridCutlist
+          DataSource          #McaCutlist
+          DataField           #Per_Series
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL REALEDIT
+        PROPERTIES
           Name                #McaCutlist_Usage
           ElementPosition     #1384561823
           HierarchyParent     #GridCutlist

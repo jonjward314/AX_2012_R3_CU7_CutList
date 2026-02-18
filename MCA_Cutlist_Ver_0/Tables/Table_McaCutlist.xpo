@@ -327,7 +327,16 @@ Formatversion: 1
           Origin              #{36A8302A-26BE-43AF-9F33-D76665E5B59A}
           ExtendedDataType    #BOMQty
         ENDPROPERTIES
-        
+
+      FIELD #Per_Series
+        REAL
+        PROPERTIES
+          Name                #Per_Series
+          Table               #McaCutlist
+          Origin              #{28445DCA-7E90-4B93-874A-254A8D4985DE}
+          ExtendedDataType    #BOMQtySerie
+        ENDPROPERTIES
+
       FIELD #SalesLineRefRecId
         INT64
         PROPERTIES

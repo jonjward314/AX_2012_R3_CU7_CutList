@@ -160,6 +160,7 @@ Formatversion: 1
         #        mcaCutlistTmp.Width             = cutlist.Width;
         #        mcaCutlistTmp.Height            = cutlist.Height;
         #        mcaCutlistTmp.Qty               = cutlist.Qty;
+        #        mcaCutlistTmp.Per_Series        = cutlist.Per_Series;
         #        mcaCutlistTmp.Prefix            = cutlist.Prefix;
         #        mcaCutlistTmp.WrkCtrId          = cutlist.WrkCtrId;
         #        mcaCutlistTmp.DueDateTime       = cutlist.DueDateTime;
@@ -246,6 +247,7 @@ Formatversion: 1
         #        mcaCutlistTmp.Width             = cutlist.Width;
         #        mcaCutlistTmp.Height            = cutlist.Height;
         #        mcaCutlistTmp.Qty               = cutlist.Qty;
+        #        mcaCutlistTmp.Per_Series        = cutlist.Per_Series;
         #        mcaCutlistTmp.Prefix            = cutlist.Prefix;
         #        mcaCutlistTmp.WrkCtrId          = cutlist.WrkCtrId;
         #        mcaCutlistTmp.DueDateTime       = cutlist.DueDateTime;
@@ -382,6 +384,7 @@ Formatversion: 1
         #        mcaCutlistTmp.ComponentItemId   = cutlist.ModuleItemId;
         #        mcaCutlistTmp.ComponentName     = InventTable::find(cutlist.ModuleItemId).productName(CompanyInfo::languageId());
         #        mcaCutlistTmp.Qty               = cutlist.Qty;
+        #        mcaCutlistTmp.Per_Series        = cutlist.Per_Series;
         #        mcaCutlistTmp.Prefix            = cutlist.Prefix;
         #        mcaCutlistTmp.WrkCtrId          = cutlist.WrkCtrId;
         #        mcaCutlistTmp.DueDateTime       = cutlist.DueDateTime;
