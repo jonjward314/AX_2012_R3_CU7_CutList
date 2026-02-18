@@ -1,0 +1,1347 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:cl="http://schemas.microsoft.com/sqlserver/reporting/2010/01/componentdefinition" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/reportdefinition">
+  <AutoRefresh>0</AutoRefresh>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Tablix Name="Tablix1">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.99987in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.62487in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.87488in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.34036in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.29836in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.2303in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.29153in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.19167in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox107">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>WHS</Value>
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Normal</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox107</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox112">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Component</Value>
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Normal</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox112</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox113">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Description</Value>
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Normal</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox113</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox126">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Normal</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox126</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <ColSpan>2</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox130">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <TextDecoration>Underline</TextDecoration>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox130</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox111">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Quantity</Value>
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Normal</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox111</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox118">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Cut Group</Value>
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Normal</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox111</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.19167in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="ShipToWarehouse">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!ShipToWarehouse.Value</Value>
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <TextDecoration>None</TextDecoration>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>ShipToWarehouse</rd:DefaultName>
+                          <CustomProperties>
+                            <CustomProperty>
+                              <Name>AXDataType</Name>
+                              <Value><![CDATA[String]]></Value>
+                            </CustomProperty>
+                            <CustomProperty>
+                              <Name>AXEDTFormat</Name>
+                              <Value><![CDATA[McaCutlistTmp.ShipToWarehouse]]></Value>
+                            </CustomProperty>
+                            <CustomProperty>
+                              <Name>AXEDTTextAlign</Name>
+                              <Value><![CDATA[McaCutlistTmp.ShipToWarehouse]]></Value>
+                            </CustomProperty>
+                            <CustomProperty>
+                              <Name>AXEDTDirection</Name>
+                              <Value><![CDATA[McaCutlistTmp.ShipToWarehouse]]></Value>
+                            </CustomProperty>
+                          </CustomProperties>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="ComponentItemId">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!ComponentItemId.Value</Value>
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <TextDecoration>None</TextDecoration>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>ComponentItemId</rd:DefaultName>
+                          <CustomProperties>
+                            <CustomProperty>
+                              <Name>AXDataType</Name>
+                              <Value><![CDATA[String]]></Value>
+                            </CustomProperty>
+                            <CustomProperty>
+                              <Name>AXEDTFormat</Name>
+                              <Value><![CDATA[McaCutlistTmp.ComponentItemId]]></Value>
+                            </CustomProperty>
+                            <CustomProperty>
+                              <Name>AXEDTTextAlign</Name>
+                              <Value><![CDATA[McaCutlistTmp.ComponentItemId]]></Value>
+                            </CustomProperty>
+                            <CustomProperty>
+                              <Name>AXEDTDirection</Name>
+                              <Value><![CDATA[McaCutlistTmp.ComponentItemId]]></Value>
+                            </CustomProperty>
+                          </CustomProperties>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="ComponentName">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!ComponentName.Value</Value>
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <TextDecoration>None</TextDecoration>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>ComponentName</rd:DefaultName>
+                          <CustomProperties>
+                            <CustomProperty>
+                              <Name>AXDataType</Name>
+                              <Value><![CDATA[String]]></Value>
+                            </CustomProperty>
+                            <CustomProperty>
+                              <Name>AXEDTFormat</Name>
+                              <Value><![CDATA[McaCutlistTmp.ComponentName]]></Value>
+                            </CustomProperty>
+                            <CustomProperty>
+                              <Name>AXEDTTextAlign</Name>
+                              <Value><![CDATA[McaCutlistTmp.ComponentName]]></Value>
+                            </CustomProperty>
+                            <CustomProperty>
+                              <Name>AXEDTDirection</Name>
+                              <Value><![CDATA[McaCutlistTmp.ComponentName]]></Value>
+                            </CustomProperty>
+                          </CustomProperties>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <ColSpan>4</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="KitQty">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!KitQty.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <TextDecoration>None</TextDecoration>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>KitQty</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="CutGroupId">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!CutGroupId.Value</Value>
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <TextDecoration>None</TextDecoration>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>CutGroupId</rd:DefaultName>
+                          <CustomProperties>
+                            <CustomProperty>
+                              <Name>AXDataType</Name>
+                              <Value><![CDATA[String]]></Value>
+                            </CustomProperty>
+                            <CustomProperty>
+                              <Name>AXEDTFormat</Name>
+                              <Value><![CDATA[McaCutlistTmp.CutGroupId]]></Value>
+                            </CustomProperty>
+                            <CustomProperty>
+                              <Name>AXEDTTextAlign</Name>
+                              <Value><![CDATA[McaCutlistTmp.CutGroupId]]></Value>
+                            </CustomProperty>
+                            <CustomProperty>
+                              <Name>AXEDTDirection</Name>
+                              <Value><![CDATA[McaCutlistTmp.CutGroupId]]></Value>
+                            </CustomProperty>
+                          </CustomProperties>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <Group Name="Details">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!ShipToWarehouse.Value</GroupExpression>
+                    </GroupExpressions>
+                    <PageBreak>
+                      <BreakLocation>Between</BreakLocation>
+                    </PageBreak>
+                  </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Fields!DueDateTime.Value</Value>
+                    </SortExpression>
+                  </SortExpressions>
+                  <TablixMembers>
+                    <TablixMember>
+                      <Visibility>
+                        <Hidden>true</Hidden>
+                      </Visibility>
+                      <KeepWithGroup>After</KeepWithGroup>
+                      <RepeatOnNewPage>true</RepeatOnNewPage>
+                    </TablixMember>
+                    <TablixMember>
+                      <TablixMembers>
+                        <TablixMember>
+                          <Group Name="ComponentItemId">
+                            <GroupExpressions>
+                              <GroupExpression>=Fields!ComponentItemId.Value</GroupExpression>
+                              <GroupExpression>=Fields!CutGroupId.Value</GroupExpression>
+                            </GroupExpressions>
+                          </Group>
+                          <SortExpressions>
+                            <SortExpression>
+                              <Value>=Fields!CutGroupId.Value</Value>
+                            </SortExpression>
+                            <SortExpression>
+                              <Value>=Fields!ComponentItemId.Value</Value>
+                            </SortExpression>
+                          </SortExpressions>
+                        </TablixMember>
+                      </TablixMembers>
+                    </TablixMember>
+                  </TablixMembers>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <RepeatColumnHeaders>true</RepeatColumnHeaders>
+            <DataSetName>McaCutlistTmp</DataSetName>
+            <Top>0.06944in</Top>
+            <Left>0.1325in</Left>
+            <Height>0.38334in</Height>
+            <Width>9.66017in</Width>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+        </ReportItems>
+        <Height>3in</Height>
+        <Style />
+      </Body>
+      <Width>10.00991in</Width>
+      <Page>
+        <PageHeader>
+          <Height>1.53in</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>true</PrintOnLastPage>
+          <ReportItems>
+            <Textbox Name="Textbox1">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>="Work order summary cut modules"</Value>
+                      <Style>
+                        <FontFamily>Segoe UI</FontFamily>
+                        <FontSize>16pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox1</rd:DefaultName>
+              <Top>0.07514in</Top>
+              <Left>2.79167in</Left>
+              <Height>0.35069in</Height>
+              <Width>4.47916in</Width>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox2">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=Labels!@SYS177298 &amp; ": " &amp; Microsoft.Dynamics.Framework.Reports.DataMethodUtility.ConvertUtcToAxUserTimeZoneForUser(Parameters!AX_CompanyName.Value,Parameters!AX_UserContext.Value, System.DateTime.UtcNow, "d", Parameters!AX_RenderingCulture.Value)</Value>
+                      <Style>
+                        <FontFamily>Segoe UI</FontFamily>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox2</rd:DefaultName>
+              <Top>0.14458in</Top>
+              <Left>8.68166in</Left>
+              <Height>0.18056in</Height>
+              <Width>1.15625in</Width>
+              <ZIndex>1</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox4">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=System.String.Format(Labels!@SYS182565, Globals!PageNumber &amp; space(2) &amp; Labels!@sys26401 &amp; space(2) &amp; Globals!TotalPages)</Value>
+                      <Style>
+                        <FontFamily>Segoe UI</FontFamily>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox4</rd:DefaultName>
+              <Top>0.32514in</Top>
+              <Left>8.68166in</Left>
+              <Height>0.18056in</Height>
+              <Width>1.15625in</Width>
+              <ZIndex>2</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox10">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Model:</Value>
+                      <Style>
+                        <FontFamily>Segoe UI</FontFamily>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox10</rd:DefaultName>
+              <Top>0.52778in</Top>
+              <Left>0.0875in</Left>
+              <Height>0.17708in</Height>
+              <Width>0.575in</Width>
+              <ZIndex>3</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox13">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Prefix:</Value>
+                      <Style>
+                        <FontFamily>Segoe UI</FontFamily>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox13</rd:DefaultName>
+              <Top>0.74653in</Top>
+              <Left>0.0875in</Left>
+              <Height>0.16667in</Height>
+              <Width>0.575in</Width>
+              <ZIndex>4</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Models">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=Fields!Models.Value</Value>
+                      <Style>
+                        <FontFamily>Courier New</FontFamily>
+                        <FontSize>12pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Models</rd:DefaultName>
+              <Top>0.53348in</Top>
+              <Left>0.6625in</Left>
+              <Height>0.17708in</Height>
+              <Width>9.09988in</Width>
+              <ZIndex>5</ZIndex>
+              <CustomProperties>
+                <CustomProperty>
+                  <Name>AXDataType</Name>
+                  <Value>String</Value>
+                </CustomProperty>
+              </CustomProperties>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Prefixes">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=Fields!Prefixes.Value</Value>
+                      <Style>
+                        <FontFamily>Courier New</FontFamily>
+                        <FontSize>12pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Prefixes</rd:DefaultName>
+              <Top>0.74653in</Top>
+              <Left>0.6625in</Left>
+              <Height>0.16667in</Height>
+              <Width>9.09389in</Width>
+              <ZIndex>6</ZIndex>
+              <CustomProperties>
+                <CustomProperty>
+                  <Name>AXDataType</Name>
+                  <Value>String</Value>
+                </CustomProperty>
+              </CustomProperties>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox18">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>WHS</Value>
+                      <Style />
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox18</rd:DefaultName>
+              <Top>1.12375in</Top>
+              <Left>0.11333in</Left>
+              <Height>0.25in</Height>
+              <Width>1in</Width>
+              <ZIndex>7</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox19">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Component</Value>
+                      <Style />
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox19</rd:DefaultName>
+              <Top>1.12375in</Top>
+              <Left>1.14111in</Left>
+              <Height>0.25in</Height>
+              <Width>0.97737in</Width>
+              <ZIndex>8</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox20">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Description</Value>
+                      <Style />
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox20</rd:DefaultName>
+              <Top>1.12375in</Top>
+              <Left>2.13237in</Left>
+              <Height>0.25in</Height>
+              <Width>5.13846in</Width>
+              <ZIndex>9</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox21">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Quantity</Value>
+                      <Style />
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox21</rd:DefaultName>
+              <Top>1.12375in</Top>
+              <Left>7.27083in</Left>
+              <Height>0.25in</Height>
+              <Width>1.23031in</Width>
+              <ZIndex>10</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox22">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Cut Group</Value>
+                      <Style />
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox22</rd:DefaultName>
+              <Top>1.12375in</Top>
+              <Left>8.50114in</Left>
+              <Height>0.25in</Height>
+              <Width>0.80733in</Width>
+              <ZIndex>11</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+          </ReportItems>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+          </Style>
+        </PageHeader>
+        <PageHeight>8.5in</PageHeight>
+        <PageWidth>11in</PageWidth>
+        <InteractiveHeight>11in</InteractiveHeight>
+        <InteractiveWidth>8.5in</InteractiveWidth>
+        <LeftMargin>0.25in</LeftMargin>
+        <RightMargin>0.25in</RightMargin>
+        <TopMargin>0.5in</TopMargin>
+        <BottomMargin>0.5in</BottomMargin>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <Language>en-US</Language>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+  <rd:ExpressionDialog>Microsoft.Dynamics.Framework.Design.Reports.ExpressionEditor.ExpressionEditorDialog, Microsoft.Dynamics.Framework.Design.Reports</rd:ExpressionDialog>
+  <rd:ReportID>cedcec6d-4a90-49db-86f0-df97dd9ba246</rd:ReportID>
+  <DataSources>
+    <DataSource Name="AutoGen__ReportDataProvider">
+      <Transaction>false</Transaction>
+      <ConnectionProperties>
+        <DataProvider>AXREPORTDATAPROVIDER</DataProvider>
+        <ConnectString />
+        <IntegratedSecurity>true</IntegratedSecurity>
+      </ConnectionProperties>
+      <rd:DataSourceID>53ba47c3-8971-430e-a502-0d4e88312421</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="McaCutlistTmp">
+      <Fields>
+        <Field Name="ComponentItemId">
+          <DataField>McaCutlistTmp.1.ComponentItemId</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ComponentName">
+          <DataField>McaCutlistTmp.1.ComponentName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CutGroupId">
+          <DataField>McaCutlistTmp.1.CutGroupId</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CutSizeSeperator">
+          <DataField>McaCutlistTmp.1.CutSizeSeperator</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Depth">
+          <DataField>McaCutlistTmp.1.Depth</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="DepthString">
+          <DataField>McaCutlistTmp.1.DepthString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DueDateTime">
+          <DataField>McaCutlistTmp.1.DueDateTime</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="Height">
+          <DataField>McaCutlistTmp.1.Height</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="HeightString">
+          <DataField>McaCutlistTmp.1.HeightString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="InventLocationId">
+          <DataField>McaCutlistTmp.1.InventLocationId</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="InventSiteId">
+          <DataField>McaCutlistTmp.1.InventSiteId</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="KanbanId">
+          <DataField>McaCutlistTmp.1.KanbanId</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="KitQty">
+          <DataField>McaCutlistTmp.1.KitQty</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="MachineFilename">
+          <DataField>McaCutlistTmp.1.MachineFilename</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ModelItemId">
+          <DataField>McaCutlistTmp.1.ModelItemId</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Models">
+          <DataField>McaCutlistTmp.1.Models</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="MoveToLocation">
+          <DataField>McaCutlistTmp.1.MoveToLocation</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NewPageGroupBy">
+          <DataField>McaCutlistTmp.1.NewPageGroupBy</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NewWOPageGroupBy">
+          <DataField>McaCutlistTmp.1.NewWOPageGroupBy</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Notes">
+          <DataField>McaCutlistTmp.1.Notes</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Pattern">
+          <DataField>McaCutlistTmp.1.Pattern</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Pieces">
+          <DataField>McaCutlistTmp.1.Pieces</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Prefix">
+          <DataField>McaCutlistTmp.1.Prefix</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Prefixes">
+          <DataField>McaCutlistTmp.1.Prefixes</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PrintNumberId">
+          <DataField>McaCutlistTmp.1.PrintNumberId</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Qty">
+          <DataField>McaCutlistTmp.1.Qty</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="RawMatItemId">
+          <DataField>McaCutlistTmp.1.RawMatItemId</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RawMatName">
+          <DataField>McaCutlistTmp.1.RawMatName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ShipToWarehouse">
+          <DataField>McaCutlistTmp.1.ShipToWarehouse</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="UnitId">
+          <DataField>McaCutlistTmp.1.UnitId</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Usage">
+          <DataField>McaCutlistTmp.1.Usage</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="UsageType">
+          <DataField>McaCutlistTmp.1.UsageType:LABEL(McaUsageType)</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="UsageType1">
+          <DataField>McaCutlistTmp.1.UsageType:NAME(McaUsageType)</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="WMSLocationId">
+          <DataField>McaCutlistTmp.1.WMSLocationId</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Width">
+          <DataField>McaCutlistTmp.1.Width</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="WidthString">
+          <DataField>McaCutlistTmp.1.WidthString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="WrkCtrId">
+          <DataField>McaCutlistTmp.1.WrkCtrId</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <Query>
+        <QueryParameters>
+          <QueryParameter Name="AX_PartitionKey">
+            <Value>=Parameters!AX_PartitionKey.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="AX_CompanyName">
+            <Value>=Parameters!AX_CompanyName.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="AX_UserContext">
+            <Value>=Parameters!AX_UserContext.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="AX_RenderingCulture">
+            <Value>=Parameters!AX_RenderingCulture.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="AX_ReportContext">
+            <Value>=Parameters!AX_ReportContext.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="AX_RdpPreProcessedId">
+            <Value>=Parameters!AX_RdpPreProcessedId.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="parmCoverSheet">
+            <Value>=Parameters!McaCutlistTmp_parmCoverSheet.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="parmPrintDetail">
+            <Value>=Parameters!McaCutlistTmp_parmPrintDetail.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="parmPrintSummary">
+            <Value>=Parameters!McaCutlistTmp_parmPrintSummary.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="parmQuery">
+            <Value>=Parameters!McaCutlistTmp_parmQuery.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="McaCutlistReportDP_DynamicParameter">
+            <Value>=Parameters!McaCutlistReportDP_DynamicParameter.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <DataSourceName>AutoGen__ReportDataProvider</DataSourceName>
+        <CommandType>Text</CommandType>
+        <CommandText>SELECT * FROM McaCutlistReportDP.McaCutlistTmp</CommandText>
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <rd:DataSetInfo>
+        <rd:TableAdapterGetDataMethod>GetData</rd:TableAdapterGetDataMethod>
+        <rd:DataSetName>McaCutlistTmp</rd:DataSetName>
+        <rd:TableAdapterFillMethod>Fill</rd:TableAdapterFillMethod>
+        <rd:TableAdapterName>FieldsTableAdapter</rd:TableAdapterName>
+        <rd:TableName>Fields</rd:TableName>
+      </rd:DataSetInfo>
+    </DataSet>
+  </DataSets>
+  <ReportParameters>
+    <ReportParameter Name="AX_PartitionKey">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Hidden>true</Hidden>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>AX_PartitionKey</Prompt>
+      <MultiValue>false</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="AX_UserContext">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Hidden>true</Hidden>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>AX_UserContext</Prompt>
+      <MultiValue>false</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="AX_CompanyName">
+      <DataType>String</DataType>
+      <Nullable>false</Nullable>
+      <Hidden>true</Hidden>
+      <DefaultValue>
+        <Values>
+          <Value>=Microsoft.Dynamics.Framework.Reports.BuiltInMethods.GetUserCompany(Parameters!AX_UserContext.Value)</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>false</AllowBlank>
+      <Prompt>AX_CompanyName</Prompt>
+      <MultiValue>false</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="AX_RenderingCulture">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Hidden>true</Hidden>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>AX_RenderingCulture</Prompt>
+      <MultiValue>false</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="AX_ReportContext">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Hidden>true</Hidden>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>AX_ReportContext</Prompt>
+      <MultiValue>false</MultiValue>
+      <UsedInQuery>True</UsedInQuery>
+    </ReportParameter>
+    <ReportParameter Name="AX_RdpPreProcessedId">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Hidden>true</Hidden>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>AX_RdpPreProcessedId</Prompt>
+      <MultiValue>false</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="McaCutlistTmp_parmQuery">
+      <DataType>String</DataType>
+      <Nullable>false</Nullable>
+      <Hidden>true</Hidden>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Packed query</Prompt>
+      <MultiValue>false</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="McaCutlistReportDP_DynamicParameter">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Hidden>true</Hidden>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>McaCutlistReportDP_DynamicParameter</Prompt>
+      <MultiValue>false</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="McaCutlistTmp_parmCoverSheet">
+      <DataType>String</DataType>
+      <Nullable>false</Nullable>
+      <Hidden>true</Hidden>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Cutlist work orders cover sheet report</Prompt>
+      <MultiValue>false</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="McaCutlistTmp_parmPrintDetail">
+      <DataType>String</DataType>
+      <Nullable>false</Nullable>
+      <Hidden>true</Hidden>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Cutlist work orders report</Prompt>
+      <MultiValue>false</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="McaCutlistTmp_parmPrintSummary">
+      <DataType>String</DataType>
+      <Nullable>false</Nullable>
+      <Hidden>true</Hidden>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Cutlist work order summary report</Prompt>
+      <MultiValue>false</MultiValue>
+    </ReportParameter>
+  </ReportParameters>
+  <Code />
+</Report>
