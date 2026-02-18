@@ -295,7 +295,16 @@ Formatversion: 1
           Origin              #{DD9F4CE1-073E-47F1-A853-51D0FB2C3B47}
           ExtendedDataType    #BOMQty
         ENDPROPERTIES
-        
+
+      FIELD #Per_Series
+        REAL
+        PROPERTIES
+          Name                #Per_Series
+          Table               #McaCutlistTmp
+          Origin              #{E254E07E-CF19-486D-BAA8-13CE40BCAF0F}
+          ExtendedDataType    #BOMQtySerie
+        ENDPROPERTIES
+
       FIELD #RawMatItemId
         STRING
         PROPERTIES

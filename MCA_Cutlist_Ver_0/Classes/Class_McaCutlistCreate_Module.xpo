@@ -66,6 +66,7 @@ Formatversion: 1
         #    cutlist.Width               = bomRawMaterial.Width;
         #    cutlist.Depth               = bomRawMaterial.Depth;
         #    cutlist.Qty                 = bomRawMaterial.BOMQty;
+        #    cutlist.Per_Series          = bomRawMaterial.BOMQtySerie;
         #    cutlist.Pieces              = bomRawMaterial.McaPieces;
         #    cutlist.WrkCtrId            = bomRawMaterial.McaMachine;
         #    cutlist.Usage               = bomRawMaterial.mcaUsage();
@@ -91,6 +92,13 @@ Formatversion: 1
         #    if (cutlist.validateWrite())
         #    {
         #        cutlist.insert();
+        #        info(strFmt('UAT PerSeries Validation [Module] BomRecId=%1 BOMQty=%2 BOMQtySerie=%3 CutlistQty=%4 CutlistKitQty=%5 Per_Series=%6',
+        #                    bomRawMaterial.RecId,
+        #                    bomRawMaterial.BOMQty,
+        #                    bomRawMaterial.BOMQtySerie,
+        #                    cutlist.Qty,
+        #                    cutlist.KitQty,
+        #                    cutlist.Per_Series));
         #        recCount++;
         #    }
         #    else
@@ -113,7 +121,7 @@ Formatversion: 1
         #            join InventDimId, InventSiteId from inventDimBomVersion
         #                where inventDimBomVersion.inventDimId   == bomVersion.InventDimId
         #                   && inventDimBomVersion.InventSiteId  == cutlistModuleTmp.InventSiteId
-        #            join ItemId, UnitId, Height, Width, Depth, BOMQty,
+        #            join ItemId, UnitId, Height, Width, Depth, BOMQty, BOMQtySerie,
         #                 McaPieces, McaMachine, McaPattern, InventDimId,
         #                 RecId, dataAreaId, TableId, McaCutlistPrintNumber, McaMoveToAreaId  from  bomRawMaterial
         #                where bomRawMaterial.BOMId     == bomVersion.BOMId
