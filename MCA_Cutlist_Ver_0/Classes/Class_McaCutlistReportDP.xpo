@@ -65,7 +65,88 @@ Formatversion: 1
       SOURCE #getModelPrefixes
         #private container getModelPrefixes()
         #{
-        #    return McaCutlist::getModelPrefixes(this.getQueryRun());
+        #    return McaCutlist::getModelPrefixes(new QueryRun(this.getSafeQueryCopy()));
+        #}
+      ENDSOURCE
+      SOURCE #getUnitCountByModelPrefix
+        #private int getUnitCountByModelPrefix(Map _unitCountsByModelPrefix, ItemId _modelItemId, McaPrefix _prefix)
+        #{
+        #    Map prefixMap;
+        #    Set salesLineSet;
+        #
+        #    if (_unitCountsByModelPrefix && _unitCountsByModelPrefix.exists(_modelItemId))
+        #    {
+        #        prefixMap = _unitCountsByModelPrefix.lookup(_modelItemId);
+        #
+        #        if (prefixMap && prefixMap.exists(_prefix))
+        #        {
+        #            salesLineSet = prefixMap.lookup(_prefix);
+        #
+        #            if (salesLineSet)
+        #            {
+        #                return salesLineSet.elements();
+        #            }
+        #        }
+        #    }
+        #
+        #    return 0;
+        #}
+      ENDSOURCE
+      SOURCE #getSafeQueryCopy
+        #private Query getSafeQueryCopy()
+        #{
+        #    Query query = this.parmQuery();
+        #
+        #    if (!query)
+        #    {
+        #        query = new Query(queryStr(McaCutlistQuery));
+        #    }
+        #
+        #    return new Query(query.pack());
+        #}
+      ENDSOURCE
+      SOURCE #buildUnitCountsByModelPrefix
+        #private Map buildUnitCountsByModelPrefix()
+        #{
+        #    QueryRun     qr = new QueryRun(this.getSafeQueryCopy());
+        #    McaCutlist   cutlist;
+        #    Map          unitCountsByModelPrefix = new Map(Types::String, Types::Class);
+        #    Map          prefixMap;
+        #    Set          salesLineSet;
+        #
+        #    while (qr.next())
+        #    {
+        #        cutlist = qr.get(tablenum(McaCutlist));
+        #
+        #        if (!cutlist.SalesLineRefRecId)
+        #        {
+        #            continue;
+        #        }
+        #
+        #        if (unitCountsByModelPrefix.exists(cutlist.ModelItemId))
+        #        {
+        #            prefixMap = unitCountsByModelPrefix.lookup(cutlist.ModelItemId);
+        #        }
+        #        else
+        #        {
+        #            prefixMap = new Map(Types::String, Types::Class);
+        #            unitCountsByModelPrefix.insert(cutlist.ModelItemId, prefixMap);
+        #        }
+        #
+        #        if (prefixMap.exists(cutlist.Prefix))
+        #        {
+        #            salesLineSet = prefixMap.lookup(cutlist.Prefix);
+        #        }
+        #        else
+        #        {
+        #            salesLineSet = new Set(Types::Int64);
+        #            prefixMap.insert(cutlist.Prefix, salesLineSet);
+        #        }
+        #
+        #        salesLineSet.add(cutlist.SalesLineRefRecId);
+        #    }
+        #
+        #    return unitCountsByModelPrefix;
         #}
       ENDSOURCE
       SOURCE #getQueryRun
@@ -80,17 +161,7 @@ Formatversion: 1
         #/// </remarks>
         #private QueryRun getQueryRun()
         #{
-        #    QueryRun qr;
-        #    Query    query = this.parmQuery();
-        #
-        #    if (!query)
-        #    {
-        #        query = new query(queryStr(McaCutlistQuery));
-        #    }
-        #
-        #    qr = new QueryRun(query);
-        #
-        #    return qr;
+        #    return new QueryRun(this.getSafeQueryCopy());
         #}
       ENDSOURCE
       SOURCE #processCoverReport
@@ -110,7 +181,8 @@ Formatversion: 1
         #    QueryBuildDataSource        qbds;
         #    McaCutlist                  cutlist;
         #    SalesLine                   salesLine;
-        #    String30                    cutGroups = McaCutlist::getCutGroups(this.getQueryRun());
+        #    String30                    cutGroups = McaCutlist::getCutGroups(new QueryRun(this.getSafeQueryCopy()));
+        #    Map                         unitCountsByModelPrefix = this.buildUnitCountsByModelPrefix();
         #    str                         models, prefixes;
         #
         #    [models, prefixes] = this.getModelPrefixes();
@@ -174,6 +246,7 @@ Formatversion: 1
         #        mcaCutlistTmp.PrintNumberId     = cutlist.BluePrint;
         #        mcaCutlistTmp.Models            = models;
         #        mcaCutlistTmp.Prefixes          = prefixes;
+        #        mcaCutlistTmp.UnitCounts        = this.getUnitCountByModelPrefix(unitCountsByModelPrefix, cutlist.ModelItemId, cutlist.Prefix);
         #
         #        // create a grouping filed to use on the Cover sheet report
         #        mcaCutlistTmp.NewPageGroupBy    = strFmt('%1%2%3%4%5'  , cutlist.ModelItemId
@@ -201,6 +274,7 @@ Formatversion: 1
         #    QueryRun                    qr;
         #    McaCutlist                  cutlist;
         #    SalesLine                   salesLine;
+        #    Map                         unitCountsByModelPrefix = this.buildUnitCountsByModelPrefix();
         #    str                         models, prefixes;
         #
         #    qr = this.getQueryRun();
@@ -263,6 +337,7 @@ Formatversion: 1
         #        mcaCutlistTmp.Pieces            = real2int(cutlist.Pieces * cutlist.KitQty);
         #        mcaCutlistTmp.Notes             = cutlist.Notes;
         #        mcaCutlistTmp.PrintNumberId     = cutlist.BluePrint;
+        #        mcaCutlistTmp.UnitCounts        = this.getUnitCountByModelPrefix(unitCountsByModelPrefix, cutlist.ModelItemId, cutlist.Prefix);
         #        // Mca Robert O'Berry 11 September 2020 Case 202006881 [SR89517] - Cut list/PNX - sorting and condensing of information begin
         #        /*
         #        mcaCutlistTmp.NewWOPageGroupBy  = strFmt('%1%2%3', cutlist.ShipToWarehouse
@@ -347,6 +422,7 @@ Formatversion: 1
         #    QueryBuildDataSource        qbds;
         #    McaCutlist                  cutlist;
         #    SalesLine                   salesLine;
+        #    Map                         unitCountsByModelPrefix = this.buildUnitCountsByModelPrefix();
         #    str                         models, prefixes;
         #
         #    [models, prefixes] = this.getModelPrefixes();
@@ -396,6 +472,7 @@ Formatversion: 1
         #        mcaCutlistTmp.Pieces            = cutlist.Pieces;
         #        mcaCutlistTmp.Models            = models;
         #        mcaCutlistTmp.Prefixes          = prefixes;
+        #        mcaCutlistTmp.UnitCounts        = this.getUnitCountByModelPrefix(unitCountsByModelPrefix, cutlist.ModelItemId, cutlist.Prefix);
         #
         #        mcaCutlistTmp.insert();
         #    }
