@@ -246,7 +246,7 @@ Formatversion: 1
         #        mcaCutlistTmp.PrintNumberId     = cutlist.BluePrint;
         #        mcaCutlistTmp.Models            = models;
         #        mcaCutlistTmp.Prefixes          = prefixes;
-        #        mcaCutlistTmp.UnitCounts        = int2str(this.getUnitCountByModelPrefix(unitCountsByModelPrefix, cutlist.ModelItemId, cutlist.Prefix));
+        #        mcaCutlistTmp.UnitCounts        = this.getUnitCountByModelPrefix(unitCountsByModelPrefix, cutlist.ModelItemId, cutlist.Prefix);
         #
         #        // create a grouping filed to use on the Cover sheet report
         #        mcaCutlistTmp.NewPageGroupBy    = strFmt('%1%2%3%4%5'  , cutlist.ModelItemId
@@ -337,7 +337,7 @@ Formatversion: 1
         #        mcaCutlistTmp.Pieces            = real2int(cutlist.Pieces * cutlist.KitQty);
         #        mcaCutlistTmp.Notes             = cutlist.Notes;
         #        mcaCutlistTmp.PrintNumberId     = cutlist.BluePrint;
-        #        mcaCutlistTmp.UnitCounts        = int2str(this.getUnitCountByModelPrefix(unitCountsByModelPrefix, cutlist.ModelItemId, cutlist.Prefix));
+        #        mcaCutlistTmp.UnitCounts        = this.getUnitCountByModelPrefix(unitCountsByModelPrefix, cutlist.ModelItemId, cutlist.Prefix);
         #        // Mca Robert O'Berry 11 September 2020 Case 202006881 [SR89517] - Cut list/PNX - sorting and condensing of information begin
         #        /*
         #        mcaCutlistTmp.NewWOPageGroupBy  = strFmt('%1%2%3', cutlist.ShipToWarehouse
@@ -472,7 +472,7 @@ Formatversion: 1
         #        mcaCutlistTmp.Pieces            = cutlist.Pieces;
         #        mcaCutlistTmp.Models            = models;
         #        mcaCutlistTmp.Prefixes          = prefixes;
-        #        mcaCutlistTmp.UnitCounts        = int2str(this.getUnitCountByModelPrefix(unitCountsByModelPrefix, cutlist.ModelItemId, cutlist.Prefix));
+        #        mcaCutlistTmp.UnitCounts        = this.getUnitCountByModelPrefix(unitCountsByModelPrefix, cutlist.ModelItemId, cutlist.Prefix);
         #
         #        mcaCutlistTmp.insert();
         #    }
