@@ -1,698 +1,435 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SR423365 — Software &amp; Data Flow</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SR423365 — Cutlist System Deep Dive</title>
   <style>
     :root {
-      --blue:    #1e4d8c;
-      --blue-lt: #e8f0fb;
-      --green:   #1a6e3c;
-      --green-lt:#e6f4ec;
-      --amber:   #7a4f00;
-      --amber-lt:#fff3cd;
-      --red:     #8c1a1a;
-      --red-lt:  #fdecea;
-      --gray:    #444;
-      --border:  #cdd5e0;
-      --bg:      #f7f9fc;
-      --new:     #1a6e3c;
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --line: #d8e0ef;
+      --text: #1f2937;
+      --muted: #556070;
+      --brand: #1f4f8e;
+      --brand-soft: #eaf1fb;
+      --good: #1f7a43;
+      --warn: #8a5a00;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; }
 
     body {
-      font-family: Segoe UI, system-ui, sans-serif;
-      font-size: 14px;
-      line-height: 1.6;
-      color: #222;
+      margin: 0;
+      font-family: "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
       background: var(--bg);
-      padding: 0 0 60px;
+      line-height: 1.55;
     }
 
-    /* ── Header ── */
     header {
-      background: var(--blue);
+      background: linear-gradient(135deg, #1f4f8e 0%, #163868 100%);
       color: #fff;
-      padding: 28px 40px 20px;
+      padding: 30px 24px 24px;
     }
-    header h1 { font-size: 22px; font-weight: 700; letter-spacing: .3px; }
-    header .subtitle { font-size: 13px; opacity: .85; margin-top: 6px; }
-    header .meta {
-      display: flex; gap: 24px; margin-top: 14px; flex-wrap: wrap;
-    }
-    header .meta span {
-      background: rgba(255,255,255,.15);
-      border-radius: 4px;
-      padding: 3px 10px;
-      font-size: 12px;
-    }
-    header .meta span strong { font-weight: 600; }
 
-    /* ── Nav ── */
+    header h1 { margin: 0; font-size: 1.6rem; }
+    header p { margin: 10px 0 0; max-width: 900px; opacity: .95; }
+
+    .meta {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: .85rem;
+    }
+
+    .meta span {
+      background: rgba(255,255,255,.14);
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
     nav {
       background: #fff;
-      border-bottom: 1px solid var(--border);
-      padding: 0 40px;
+      border-bottom: 1px solid var(--line);
+      padding: 0 16px;
       display: flex;
-      gap: 0;
+      gap: 10px;
       overflow-x: auto;
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
+
     nav a {
-      display: inline-block;
-      padding: 11px 16px;
-      font-size: 13px;
-      color: var(--blue);
       text-decoration: none;
-      border-bottom: 3px solid transparent;
+      color: var(--brand);
+      padding: 12px 8px;
+      font-size: .9rem;
       white-space: nowrap;
+      border-bottom: 3px solid transparent;
     }
-    nav a:hover { border-bottom-color: var(--blue); background: var(--blue-lt); }
 
-    /* ── Layout ── */
-    main { max-width: 1100px; margin: 0 auto; padding: 32px 40px 0; }
+    nav a:hover { border-bottom-color: var(--brand); }
 
-    section { margin-bottom: 44px; }
+    main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 24px 18px 64px;
+    }
+
+    section { margin-bottom: 26px; }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 18px;
+    }
 
     h2 {
-      font-size: 17px;
-      font-weight: 700;
-      color: var(--blue);
-      border-left: 4px solid var(--blue);
-      padding-left: 12px;
-      margin-bottom: 16px;
-      scroll-margin-top: 16px;
+      margin: 0 0 10px;
+      color: var(--brand);
+      font-size: 1.2rem;
     }
+
     h3 {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--gray);
-      margin: 20px 0 10px;
+      margin: 14px 0 8px;
+      font-size: 1rem;
+      color: #263447;
     }
 
-    p { margin-bottom: 10px; color: #333; }
+    p { margin: 8px 0; }
 
-    /* ── Tables ── */
-    .table-wrap { overflow-x: auto; margin: 10px 0 16px; }
+    .callout {
+      border-left: 4px solid var(--brand);
+      background: var(--brand-soft);
+      padding: 10px 12px;
+      border-radius: 0 8px 8px 0;
+      margin-top: 10px;
+      color: #173e70;
+      font-size: .92rem;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 13px;
+      margin-top: 8px;
+      font-size: .9rem;
       background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      overflow: hidden;
-    }
-    thead tr { background: var(--blue); color: #fff; }
-    thead th { padding: 9px 13px; text-align: left; font-weight: 600; }
-    tbody tr:nth-child(even) { background: var(--blue-lt); }
-    tbody tr:hover { background: #dde8f8; }
-    td { padding: 8px 13px; border-top: 1px solid var(--border); vertical-align: top; }
-    td code, th code { background: rgba(255,255,255,.2); border-radius: 3px; padding: 1px 5px; font-family: Consolas, monospace; font-size: 12px; }
-    tbody td code { background: #edf2fb; color: #1e4d8c; }
-
-    .badge-new {
-      display: inline-block;
-      background: var(--green);
-      color: #fff;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 1px 7px;
-      border-radius: 10px;
-      margin-left: 4px;
-    }
-    .badge-warn {
-      display: inline-block;
-      background: var(--amber);
-      color: #fff;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 1px 7px;
-      border-radius: 10px;
-      margin-left: 4px;
     }
 
-    /* ── Code / Pre ── */
+    th, td {
+      border: 1px solid var(--line);
+      padding: 8px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--brand);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    code {
+      font-family: Consolas, "Courier New", monospace;
+      background: #eef3fb;
+      color: #1a3f74;
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-size: .86rem;
+    }
+
     pre {
-      background: #1e2533;
-      color: #cdd9f5;
-      font-family: Consolas, 'Courier New', monospace;
-      font-size: 12.5px;
-      line-height: 1.55;
-      padding: 18px 20px;
-      border-radius: 6px;
-      overflow-x: auto;
-      margin: 10px 0 16px;
-    }
-    code.inline {
-      background: #edf2fb;
-      color: #1e3a6e;
-      font-family: Consolas, monospace;
-      font-size: 12.5px;
-      padding: 1px 6px;
-      border-radius: 3px;
-    }
-
-    /* ── Callout boxes ── */
-    .callout {
-      border-left: 4px solid;
-      border-radius: 0 6px 6px 0;
-      padding: 12px 16px;
-      margin: 14px 0;
-      font-size: 13px;
-    }
-    .callout.info  { border-color: var(--blue);  background: var(--blue-lt);  color: var(--blue); }
-    .callout.warn  { border-color: #c8860a;       background: var(--amber-lt); color: var(--amber); }
-    .callout.danger{ border-color: #b22020;       background: var(--red-lt);   color: var(--red); }
-    .callout.ok    { border-color: #1a6e3c;       background: var(--green-lt); color: var(--green); }
-    .callout strong { font-weight: 700; }
-
-    /* ── Flow diagram ── */
-    .flow {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      align-items: flex-start;
-      margin: 14px 0;
-    }
-    .flow-node {
-      background: #fff;
-      border: 2px solid var(--blue);
+      margin: 8px 0;
+      background: #0f172a;
+      color: #d6e1ff;
       border-radius: 8px;
-      padding: 10px 20px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--blue);
-      min-width: 300px;
-      text-align: center;
-    }
-    .flow-node.source { border-color: #1a6e3c; color: #1a6e3c; }
-    .flow-node.output { border-color: #6b3fa0; color: #6b3fa0; }
-    .flow-node.report { border-color: #c8860a; color: #7a4f00; }
-    .flow-node.ui     { border-color: #1a6e3c; color: #1a6e3c; }
-    .flow-node.table  { border-color: #1e4d8c; color: #1e4d8c; background: var(--blue-lt); }
-    .flow-arrow {
-      align-self: center;
-      font-size: 20px;
-      color: #888;
-      line-height: 1;
-      margin: 2px 0;
-    }
-    .flow-label {
-      font-size: 11px;
-      color: #666;
-      align-self: center;
-      font-style: italic;
-      margin: 0;
-    }
-    .flow-split {
-      display: flex;
-      gap: 20px;
-      align-items: flex-start;
-      margin: 2px 0;
-    }
-    .flow-branch {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0;
+      padding: 12px;
+      overflow-x: auto;
+      font-size: .82rem;
+      line-height: 1.45;
     }
 
-    /* ── Component file list ── */
-    .file-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin: 10px 0;
-    }
-    .file-list li {
-      display: flex;
-      align-items: baseline;
-      gap: 12px;
+    .flow { display: grid; gap: 8px; margin-top: 10px; }
+
+    .node {
       background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 9px 14px;
-      font-size: 13px;
-    }
-    .file-list li .fname {
-      font-family: Consolas, monospace;
-      font-size: 12px;
-      color: var(--blue);
+      border: 2px solid var(--brand);
+      border-radius: 8px;
+      padding: 8px 10px;
       font-weight: 600;
-      min-width: 310px;
+      color: var(--brand);
     }
-    .file-list li .fdesc { color: #444; }
 
-    /* ── Section divider ── */
-    hr { border: none; border-top: 1px solid var(--border); margin: 36px 0; }
+    .node.secondary { border-color: #3a7f49; color: #256138; }
+    .node.report { border-color: #8a5a00; color: #6b4700; }
+    .node.output { border-color: #6b42a0; color: #5a3190; }
 
-    /* ── Footer ── */
+    .arrow { color: #77839a; text-align: center; }
+
+    .badge {
+      display: inline-block;
+      font-size: .75rem;
+      font-weight: 700;
+      border-radius: 999px;
+      padding: 2px 8px;
+      margin-left: 6px;
+      color: #fff;
+      background: var(--good);
+    }
+
     footer {
       text-align: center;
-      font-size: 12px;
-      color: #888;
-      margin-top: 48px;
-      padding-top: 20px;
-      border-top: 1px solid var(--border);
+      color: #7a8799;
+      margin-top: 24px;
+      font-size: .82rem;
     }
   </style>
 </head>
 <body>
-
-<header>
-  <h1>SR423365 &mdash; Software &amp; Data Flow</h1>
-  <p class="subtitle">Enhance Cutsheet PDFs &mdash; Add Per-Series Quantity &amp; Piece Count Tracking</p>
-  <div class="meta">
-    <span><strong>Jayco Change ID:</strong> 1560</span>
-    <span><strong>Author:</strong> Ward, Jonathon</span>
-    <span><strong>Documented:</strong> 2026-04-14</span>
-    <span><strong>Status:</strong> Step 6 &mdash; DEV Testing</span>
-  </div>
-</header>
-
-<nav>
-  <a href="#overview">1. Overview</a>
-  <a href="#components">2. Components</a>
-  <a href="#schema">3. Schema Changes</a>
-  <a href="#dataflow">4. Data Flow</a>
-  <a href="#ui">5. UI Changes</a>
-  <a href="#debug">6. Debug</a>
-  <a href="#deps">7. Dependencies</a>
-  <a href="#gap">8. Gap</a>
-  <a href="#tfs">9. TFS History</a>
-</nav>
-
-<main>
-
-  <!-- ══════════════════════════════════════════════════════ -->
-  <section id="overview">
-    <h2>1. Overview</h2>
-
-    <p>SR423365 adds two new fields &mdash; <code class="inline">Per_Series</code> and
-    <code class="inline">Pieces</code> &mdash; to the cutlist subsystem so that the SSRS
-    cutsheet report can calculate and display per-series quantities for manufacturing orders.</p>
-
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr><th>New Field</th><th>Source BOM Field</th><th>Type</th><th>Purpose</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code>Per_Series</code> <span class="badge-new">NEW</span></td>
-            <td><code>BOM.BOMQtySerie</code></td>
-            <td>REAL</td>
-            <td>Quantity produced per manufacturing series</td>
-          </tr>
-          <tr>
-            <td><code>Pieces</code> <span class="badge-new">NEW</span></td>
-            <td><code>BOM.McaPieces</code></td>
-            <td>INT</td>
-            <td>Number of pieces per BOM line</td>
-          </tr>
-        </tbody>
-      </table>
+  <header>
+    <h1>SR423365 — How the Cutlist System Works (Production Code View)</h1>
+    <p>
+      This page explains the end-to-end cutlist workflow by tracing <code>SR423365/code/Production Code</code>.
+      It is written as an operational guide so developers, analysts, and support can quickly understand creation,
+      file generation, reporting, and marking records as processed.
+    </p>
+    <div class="meta">
+      <span><strong>Scope:</strong> Production Code only</span>
+      <span><strong>Folder:</strong> SR423365/code/Production Code</span>
+      <span><strong>Updated:</strong> 2026-04-17</span>
     </div>
+  </header>
 
-    <p>The key calculated report expression added to the SSRS report:</p>
-    <pre>Ceiling( Sum(Pieces &times; KitQty) / Per_Series )</pre>
-    <p>Rounded up, with <code class="inline">Per_Series = 0</code> handled as <strong>1</strong> (safe divide).</p>
-  </section>
+  <nav>
+    <a href="#overview">1. System Overview</a>
+    <a href="#entry">2. Entry Points</a>
+    <a href="#create">3. Create Flow</a>
+    <a href="#outputs">4. Files &amp; Reports</a>
+    <a href="#data">5. Core Data Objects</a>
+    <a href="#logic">6. Important Logic Notes</a>
+    <a href="#trace">7. Troubleshooting Trace</a>
+  </nav>
 
-  <hr>
+  <main>
+    <section id="overview" class="card">
+      <h2>1) System Overview</h2>
+      <p>
+        The cutlist subsystem is centered on table <code>McaCutlist</code>. Records are created from BOM context,
+        enriched with shop-floor routing metadata (machine, move-to area, cut group, blueprint, etc.), then reused
+        by machine-file generation and SSRS reports.
+      </p>
+      <p>
+        This write-up is intentionally based on <strong>Production Code</strong> artifacts only (not Current Dev Code),
+        so behavior described here matches what is deployed in this snapshot.
+      </p>
 
-  <!-- ══════════════════════════════════════════════════════ -->
-  <section id="components">
-    <h2>2. Component Map</h2>
-    <p>All source files are in <code class="inline">P:\Repository\SRs\SR423365\code\</code></p>
-
-    <ul class="file-list">
-      <li>
-        <span class="fname">Table_McaCutlist.xpo</span>
-        <span class="fdesc">Persistent cutlist records &mdash; stores one row per raw-material BOM line <span class="badge-new">+Per_Series +Pieces</span></span>
-      </li>
-      <li>
-        <span class="fname">Table_McaCutlistTmp.xpo</span>
-        <span class="fdesc">TempDB staging table used by the Report Data Provider <span class="badge-new">+Per_Series +Pieces</span></span>
-      </li>
-      <li>
-        <span class="fname">Class_McaCutlistCreate.xpo</span>
-        <span class="fdesc">Base creation class &mdash; sales-order path; reads BOM and inserts McaCutlist records</span>
-      </li>
-      <li>
-        <span class="fname">Class_McaCutlistCreate_Module.xpo</span>
-        <span class="fdesc">Subclass for the module path; simplified query, adds Pieces <span class="badge-warn">Per_Series gap &mdash; see &sect;8</span></span>
-      </li>
-      <li>
-        <span class="fname">Class_McaCutlistReportDP.xpo</span>
-        <span class="fdesc">SSRS Report Data Provider &mdash; queries McaCutlist and populates McaCutlistTmp</span>
-      </li>
-      <li>
-        <span class="fname">Form_McaCutlistRecords.xpo</span>
-        <span class="fdesc">UI grid form &mdash; view/edit cutlist records <span class="badge-new">+Per_Series (read-only) +Pieces columns</span></span>
-      </li>
-      <li>
-        <span class="fname">SSRSReport_McaCutlistBaseReport.xpo</span>
-        <span class="fdesc">SSRS RDL report &mdash; cutsheet PDF output <span class="badge-new">+Per_Series +Pieces +calc expressions</span></span>
-      </li>
-      <li>
-        <span class="fname">VSProject_AXModel_McaCutlistReport.xpo</span>
-        <span class="fdesc">Visual Studio reporting project configuration (.NET 4.5 Dynamics Reporting Library)</span>
-      </li>
-    </ul>
-  </section>
-
-  <hr>
-
-  <!-- ══════════════════════════════════════════════════════ -->
-  <section id="schema">
-    <h2>3. Table Schema Changes</h2>
-
-    <h3>3.1 McaCutlist &mdash; Persistent Table</h3>
-
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr><th>Field</th><th>EDT</th><th>Type</th><th>SR423365 Change</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code>Per_Series</code></td>
-            <td><code>BOMQtySerie</code></td>
-            <td>REAL</td>
-            <td><strong style="color:var(--green)">Added</strong></td>
-          </tr>
-          <tr>
-            <td><code>Pieces</code></td>
-            <td><code>McaPieces</code></td>
-            <td>INT</td>
-            <td><strong style="color:var(--green)">Added</strong></td>
-          </tr>
-          <tr><td colspan="4" style="color:#888;font-style:italic">All other fields unchanged &mdash; key pre-existing fields shown below for reference</td></tr>
-          <tr><td><code>SalesLineRefRecId</code></td><td>&mdash;</td><td>INT64</td><td>Reference to sales order line</td></tr>
-          <tr><td><code>CutModuleId</code></td><td>&mdash;</td><td>STRING</td><td>Module identifier (module path)</td></tr>
-          <tr><td><code>ModelItemId</code></td><td>&mdash;</td><td>STRING</td><td>Parent model item</td></tr>
-          <tr><td><code>ComponentItemId</code></td><td>&mdash;</td><td>STRING</td><td>Raw material component item</td></tr>
-          <tr><td><code>ItemId</code></td><td>&mdash;</td><td>STRING</td><td>Active variant item ID</td></tr>
-          <tr><td><code>Height / Width / Depth</code></td><td>&mdash;</td><td>REAL</td><td>Cut dimensions</td></tr>
-          <tr><td><code>Qty</code></td><td>&mdash;</td><td>REAL</td><td>Total quantity</td></tr>
-          <tr><td><code>KitQty</code></td><td>&mdash;</td><td>REAL</td><td>Kit (model-level) quantity</td></tr>
-          <tr><td><code>WrkCtrId</code></td><td>&mdash;</td><td>STRING</td><td>Machine / work center</td></tr>
-          <tr><td><code>CutGroupId</code></td><td>&mdash;</td><td>STRING</td><td>Cut group classification</td></tr>
-          <tr><td><code>IsCutlistProcessed</code></td><td>NoYes</td><td>ENUM</td><td>Processing status flag</td></tr>
-          <tr><td><code>PWSBuildScheduleId</code></td><td>&mdash;</td><td>STRING</td><td>Production schedule ID</td></tr>
-          <tr><td><code>InventSiteId / InventLocationId</code></td><td>&mdash;</td><td>STRING</td><td>Site and warehouse</td></tr>
-          <tr><td><code>DueDateTime / DateOffLine / DateOnLine</code></td><td>&mdash;</td><td>DATE/DATETIME</td><td>Schedule dates</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <h3>3.2 McaCutlistTmp &mdash; TempDB Report Staging</h3>
-    <p>Mirrors McaCutlist plus additional report-specific calculated fields:</p>
-
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr><th>Field</th><th>Notes</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><code>Per_Series</code> <span class="badge-new">NEW</span></td><td>Copied from McaCutlist</td></tr>
-          <tr><td><code>Pieces</code> <span class="badge-new">NEW</span></td><td>Copied from McaCutlist</td></tr>
-          <tr><td><code>DepthString / HeightString / WidthString</code></td><td>Formatted dimension strings</td></tr>
-          <tr><td><code>Models / Prefixes / UnitCounts</code></td><td>Aggregated display values</td></tr>
-          <tr><td><code>ComponentName / RawMatName</code></td><td>Item names</td></tr>
-          <tr><td><code>NewPageGroupBy / NewWOPageGroupBy</code></td><td>Report group-break keys</td></tr>
-          <tr><td><code>CutSizeSeperator</code></td><td>Dimension separator for formatted output</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <hr>
-
-  <!-- ══════════════════════════════════════════════════════ -->
-  <section id="dataflow">
-    <h2>4. Data Flow</h2>
-
-    <h3>4.1 High-Level Flow</h3>
-
-    <div class="flow">
-      <div class="flow-node source">BOM Table<br><small style="font-weight:400">BOMQtySerie &rarr; Per_Series &nbsp;|&nbsp; McaPieces &rarr; Pieces</small></div>
-      <div class="flow-arrow">&#8595;</div>
-      <div class="flow-node">McaCutlistCreate / McaCutlistCreate_Module<br><small style="font-weight:400">Creation classes &mdash; build and insert McaCutlist records</small></div>
-      <div class="flow-arrow">&#8595;</div>
-      <div class="flow-node table">McaCutlist (Persistent Table)</div>
-      <div class="flow-arrow">&#8595;</div>
-      <div class="flow-split">
-        <div class="flow-branch">
-          <div class="flow-arrow">&darr;</div>
-          <div class="flow-node ui">Form: McaCutlistRecords<br><small style="font-weight:400">UI view &amp; edit</small></div>
-        </div>
-        <div class="flow-branch">
-          <div class="flow-arrow">&darr;</div>
-          <div class="flow-node report">McaCutlistReportDP<br><small style="font-weight:400">Report Data Provider</small></div>
-          <div class="flow-arrow">&darr;</div>
-          <div class="flow-node table">McaCutlistTmp<br><small style="font-weight:400">TempDB staging</small></div>
-          <div class="flow-arrow">&darr;</div>
-          <div class="flow-node report">McaCutlistBaseReport (SSRS)</div>
-          <div class="flow-arrow">&darr;</div>
-          <div class="flow-node output">Printed / PDF Cutsheet</div>
-        </div>
+      <div class="flow">
+        <div class="node secondary">SalesLine + exploded BOM context (via <code>McaBOMSearchCutlist</code>)</div>
+        <div class="arrow">↓</div>
+        <div class="node">Create engine: <code>McaCutlistCreate</code> / <code>McaCutlistCreate_Module</code></div>
+        <div class="arrow">↓</div>
+        <div class="node">Persistent table: <code>McaCutlist</code></div>
+        <div class="arrow">↓</div>
+        <div class="node report">Report DP: <code>McaCutlistReportDP</code> → TempDB <code>McaCutlistTmp</code> → SSRS PDF</div>
+        <div class="arrow">↓</div>
+        <div class="node output">File/Report orchestrator: <code>McaCutlistFilesReports</code> + <code>McaCutlistFile</code> + <code>McaCutlistReports</code></div>
       </div>
-    </div>
 
-    <h3>4.2 Sales-Order Path &mdash; McaCutlistCreate</h3>
-    <p><code class="inline">doCutlistItems()</code> builds an 8-table join query per sales line, then calls
-    <code class="inline">createCutlistRecord()</code> for each BOM raw-material line found.</p>
+      <div class="callout">
+        <strong>Important:</strong> In the current Production Code snapshot, <code>Pieces</code> is actively used across create/report/file paths.
+        A field named <code>Per_Series</code> is not present in these Production Code table/class definitions.
+      </div>
+    </section>
 
-    <pre>SalesLine (RecId, InventDimId, DueDate...)
-    &boxv;
-    &boxur;&boxh; doCutlistItems() &mdash; 8-table join
-            &boxv;
-            &boxvr;&boxh; ReqItemTable       (item coverage &rarr; site/location)
-            &boxvr;&boxh; InventLocation     (warehouse)
-            &boxvr;&boxh; InventDim [1]      (site, location, WMS)
-            &boxvr;&boxh; BOMVersion         (model BOM header)
-            &boxvr;&boxh; InventDim [2]      (BOM version dims)
-            &boxvr;&boxh; BOM raw-material line
-            &boxv;     &boxvr;&boxh; BOMQty       &rarr; Qty
-            &boxv;     &boxvr;&boxh; BOMQtySerie  &rarr; Per_Series  &lt;&lt;&lt; SR423365
-            &boxv;     &boxvr;&boxh; McaPieces    &rarr; Pieces       &lt;&lt;&lt; SR423365
-            &boxv;     &boxvr;&boxh; Height / Width / Depth
-            &boxv;     &boxvr;&boxh; McaMachine   &rarr; WrkCtrId
-            &boxv;     &boxur;&boxh; McaPattern   &rarr; Pattern
-            &boxvr;&boxh; InventDim [3]      (raw material dims)
-            &boxur;&boxh; InventTable        (McaUsageType, UnitId)
+    <section id="entry" class="card">
+      <h2>2) Entry Points (Controllers &amp; Services)</h2>
+      <table>
+        <thead>
+          <tr><th>Action</th><th>Controller</th><th>Service</th><th>What it triggers</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Create cutlist records</td>
+            <td><code>McaCutlistCreateController</code></td>
+            <td><code>McaCutlistCreateService.process()</code></td>
+            <td>Runs cutlist creation, then optional prefix assignment.</td>
+          </tr>
+          <tr>
+            <td>Generate files/reports</td>
+            <td><code>McaCutlistFileController</code></td>
+            <td><code>McaCutlistFileService.process()</code></td>
+            <td>Delegates to <code>McaCutlistFilesReports</code> orchestration.</td>
+          </tr>
+          <tr>
+            <td>Delete records</td>
+            <td><code>McaCutlistDeleteController</code></td>
+            <td><code>McaCutlistDeleteService.process()</code></td>
+            <td>Deletes selected <code>McaCutlist</code> rows in TTS transaction.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
 
-    Per BOM line &rarr; createCutlistRecord():
-        &boxvr;&boxh; DocuRef lookup     (notes)
-        &boxvr;&boxh; InventDim lookup   (site/location)
-        &boxvr;&boxh; CutGroupId         (McaCutlist::lookupCutGroup)
-        &boxvr;&boxh; MoveToAreaId       (McaCutlist::lookupMoveToArea)
-        &boxvr;&boxh; BluePrint          (McaEcoResProductPrints if PrintNumber set)
-        &boxur;&boxh; McaCutlist.insert()</pre>
+    <section id="create" class="card">
+      <h2>3) Record Creation Flow (Most Important)</h2>
 
-    <p><strong>Date filtering on BOM lines:</strong></p>
-    <pre>(BOM.fromDate &lt;= DateOffLine  OR  !BOM.fromDate)
+      <h3>3.1 Orchestration path</h3>
+      <pre>McaCutlistCreateService.process(contract)
+  -> processCutlist(contract)
+      -> McaCutlistCreate.run() or createMultiTasks() (batch)
+         -> processCutlistRecords()
+            -> for each SalesLine in query:
+               -> McaBOMSearchCutlist.run()
+               -> iterate McaBOMExplodeTmp
+               -> doCutlistItems()
+                  -> createCutlistRecord() for each matched BOM raw-material line</pre>
+
+      <h3>3.2 BOM selection strategy in <code>doCutlistItems()</code></h3>
+      <p>Creation attempts progressively broader BOM lookup paths until rows are found:</p>
+      <ol>
+        <li>Primary: Item coverage + transfer-warehouse site path.</li>
+        <li>Fallback 1: parent BOM site transfer-warehouse path.</li>
+        <li>Fallback 2: parent BOM site direct path.</li>
+        <li>Fallback 3: any BOM version path.</li>
+      </ol>
+
+      <p>All paths apply BOM effective-date filtering against off-line/required date:</p>
+      <pre>(BOM.fromDate <= offLineDate OR !BOM.fromDate)
 AND
-(BOM.toDate   &gt;= DateOffLine  OR  !BOM.toDate)</pre>
+(BOM.toDate   >= offLineDate OR !BOM.toDate)</pre>
 
-    <p><strong>Fallback strategy:</strong> if the primary item-coverage join returns no rows, two
-    fallback queries run in sequence (parent BOM site, then direct component site lookup).</p>
-
-    <h3>4.3 Module Path &mdash; McaCutlistCreate_Module</h3>
-    <p>A simplified variant that reads from <code class="inline">McaCutlistModuleTmp</code> (a UI datasource)
-    rather than building a BOM query from scratch. Key differences from the base class:</p>
-
-    <div class="table-wrap">
+      <h3>3.3 Field mapping highlights in <code>createCutlistRecord()</code></h3>
       <table>
-        <thead><tr><th>Behaviour</th><th>Base Class</th><th>Module Subclass</th></tr></thead>
+        <thead>
+          <tr><th>McaCutlist field</th><th>Source</th><th>Purpose</th></tr>
+        </thead>
         <tbody>
-          <tr><td>Identifier written</td><td><code>SalesLineRefRecId</code></td><td><code>CutModuleId</code></td></tr>
-          <tr><td>Source data</td><td>BOM join query</td><td><code>McaCutlistModuleTmp</code> datasource</td></tr>
-          <tr><td>Pieces written</td><td>Yes</td><td>Yes (SR423365)</td></tr>
-          <tr><td>Per_Series written</td><td>Yes</td><td><strong style="color:var(--red)">No &mdash; see &sect;8</strong></td></tr>
-          <tr><td>Counter increment</td><td>N/A</td><td>Skips FT unit items</td></tr>
-          <tr><td>Transaction</td><td>Caller-managed</td><td><code>processCutlistRecords()</code> wraps in TTS</td></tr>
+          <tr><td><code>SalesLineRefRecId</code></td><td><code>SalesLine.RecId</code></td><td>Link back to sales line context.</td></tr>
+          <tr><td><code>ItemId</code></td><td><code>activeRawMaterial(...)</code></td><td>Selects active raw material variant by date/site.</td></tr>
+          <tr><td><code>Qty</code></td><td><code>BOM.BOMQty</code></td><td>Base BOM quantity.</td></tr>
+          <tr><td><code>Pieces</code> <span class="badge">ACTIVE</span></td><td><code>BOM.McaPieces</code></td><td>Used by reports and machine-file quantities.</td></tr>
+          <tr><td><code>KitQty</code></td><td><code>McaBOMExplodeTmp.BOMQty</code></td><td>Model-level multiplier context.</td></tr>
+          <tr><td><code>MoveToAreaId</code></td><td><code>findMoveToArea(...)</code></td><td>Routing destination used in grouping/output.</td></tr>
+          <tr><td><code>CutGroupId</code></td><td><code>McaCutlist::getCutGroupId(...)</code></td><td>Classification used for grouping and output files.</td></tr>
+          <tr><td><code>BluePrint</code></td><td><code>McaEcoResProductPrints</code> lookup</td><td>Print number when BOM line requests cutlist print.</td></tr>
         </tbody>
       </table>
-    </div>
 
-    <h3>4.4 Report Path &mdash; McaCutlistReportDP &rarr; McaCutlistBaseReport</h3>
-    <p><code class="inline">McaCutlistReportDP.processReport()</code> queries McaCutlist, populates
-    McaCutlistTmp, then SSRS renders the report using two new SR423365 expressions:</p>
+      <h3>3.4 Module-based creation variant</h3>
+      <p>
+        <code>McaCutlistCreate_Module</code> extends the base create class, but sources rows from
+        <code>McaCutlistModuleTmp</code> and assigns module-centric identifiers (for example using
+        <code>CutModuleId</code> / converted <code>SalesLineRefRecId</code> behavior).
+      </p>
+    </section>
 
-    <div class="table-wrap">
+    <section id="outputs" class="card">
+      <h2>4) Output Generation: Machine Files + SSRS</h2>
+
+      <h3>4.1 High-level orchestrator</h3>
+      <p>
+        <code>McaCutlistFilesReports.run()</code> validates query safety, preserves the original query,
+        then executes in sequence:
+      </p>
+      <pre>runFiles()  -> McaCutlistFile.run()
+runReports() -> McaCutlistReports.run()
+runLabels()  -> McaCutlistLabels.run() [optional]
+runMarkProcessed() -> McaCutlistReports::markProcessed(query)</pre>
+
+      <h3>4.2 Machine file behavior</h3>
+      <p>
+        <code>McaCutlistFile</code> uses cutlist parameters for output folders:
+        <code>MachineFilePath</code> (sheet) and <code>MachineFilePathLinear</code> (linear).
+        It updates generated filename metadata back to <code>McaCutlist.MachineFileName</code>.
+      </p>
+
+      <h3>4.3 Report behavior</h3>
+      <p>
+        <code>McaCutlistReports</code> can print Summary, Cover Sheet, and Detail versions of
+        <code>McaCutlistBaseReport</code>. It prepares destination folder when printing to file and
+        executes report controllers by report design.
+      </p>
+
+      <h3>4.4 Data provider transformation</h3>
+      <p>
+        <code>McaCutlistReportDP.processReport()</code> routes to Cover/Detail/Summary processors,
+        each reading <code>McaCutlist</code> and writing display-ready rows into TempDB table
+        <code>McaCutlistTmp</code> (names, formatted dimensions, grouping keys, etc.).
+      </p>
+      <p>
+        In detail path, <code>Pieces</code> is transformed to an expanded quantity:
+        <code>real2int(cutlist.Pieces * cutlist.KitQty)</code>.
+      </p>
+    </section>
+
+    <section id="data" class="card">
+      <h2>5) Core Data Objects</h2>
+
       <table>
-        <thead><tr><th>Expression</th><th>Purpose</th><th>Formula</th></tr></thead>
+        <thead>
+          <tr><th>Object</th><th>Role in system</th><th>Examples</th></tr>
+        </thead>
         <tbody>
           <tr>
-            <td>Qty per series</td>
-            <td>Calculate how many series worth of cuts are needed</td>
-            <td><code>=Ceiling( Sum(Pieces * KitQty) / IIf(Per_Series &lt;= 0, 1, Per_Series) )</code></td>
+            <td><code>McaCutlist</code></td>
+            <td>Main persistent record table for cutlist processing.</td>
+            <td>Machine/path metadata, dimensions, quantities, processed flag.</td>
           </tr>
           <tr>
-            <td>Per_Series display</td>
-            <td>Show value or friendly fallback</td>
-            <td><code>=IIf(Per_Series &lt;= 0, "Not Set", Per_Series)</code></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <p>Report grouping: <strong>Model &rarr; Prefix &rarr; CutGroup</strong>, with page breaks on group
-    changes. Detail rows show one line per McaCutlistTmp record.</p>
-  </section>
-
-  <hr>
-
-  <!-- ══════════════════════════════════════════════════════ -->
-  <section id="ui">
-    <h2>5. UI Changes &mdash; Form_McaCutlistRecords</h2>
-
-    <h3>New Grid Columns (SR423365)</h3>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Control</th><th>Type</th><th>Bound Field</th><th>Behaviour</th></tr></thead>
-        <tbody>
-          <tr>
-            <td><code>McaCutlist_Pieces</code> <span class="badge-new">NEW</span></td>
-            <td>IntEdit</td>
-            <td><code>McaCutlist.Pieces</code></td>
-            <td>Editable</td>
+            <td><code>McaCutlistTmp</code></td>
+            <td>TempDB report staging dataset used by SSRS data provider.</td>
+            <td>Display names, grouped keys, formatted dimensions, <code>Pieces</code>.</td>
           </tr>
           <tr>
-            <td><code>McaCutlist_PerSeries</code> <span class="badge-new">NEW</span></td>
-            <td>RealEdit</td>
-            <td><code>McaCutlist.Per_Series</code></td>
-            <td><strong>Read-only</strong></td>
+            <td><code>McaCutlistParameters</code></td>
+            <td>Runtime configuration.</td>
+            <td>Machine paths, report path, docu type, unit, day window.</td>
+          </tr>
+          <tr>
+            <td><code>McaCutlistMoveToAreas</code> / <code>McaCutlistCutGroup</code></td>
+            <td>Reference data used for move-to and cut-group resolution.</td>
+            <td>Grouping + logistics labels used in files/reports.</td>
           </tr>
         </tbody>
       </table>
-    </div>
+    </section>
 
-    <p>Default filter: <code class="inline">IsCutlistProcessed = No</code>
-    (toggled by ProcessedCheckBox).</p>
+    <section id="logic" class="card">
+      <h2>6) Important Logic Notes</h2>
+      <ul>
+        <li><strong>Batch scalability:</strong> create service can split work into runtime tasks (one per sales line) when executed in batch.</li>
+        <li><strong>Validation guardrails:</strong> file/report orchestrator validates user query inputs before proceeding.</li>
+        <li><strong>Processed state:</strong> records are marked processed after output actions via <code>McaCutlistReports::markProcessed(query)</code>.</li>
+        <li><strong>Usage calculation:</strong> table methods such as <code>usageCalcRounding()</code> influence report values.</li>
+        <li><strong>Delete path:</strong> dedicated delete service iterates selected rows and deletes in a transaction with deadlock retry.</li>
+      </ul>
+    </section>
 
-    <h3>Existing Action Buttons (Unchanged)</h3>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Button</th><th>Action</th></tr></thead>
-        <tbody>
-          <tr><td>LoadRecords</td><td>Launches <code>McaCutlistCreateQuery</code> to create cutlist records from BOM</td></tr>
-          <tr><td>CreateFile</td><td>Invokes <code>McaCutlistFileAction</code> for machine file generation</td></tr>
-          <tr><td>FilesReports</td><td>Opens <code>McaCutlistReportsFilesForm</code></td></tr>
-          <tr><td>DeleteRecords</td><td>Custom delete dialog with parameter extraction</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
+    <section id="trace" class="card">
+      <h2>7) Troubleshooting Trace (Practical)</h2>
+      <p>If a cutlist row is missing or output is wrong, follow this order:</p>
+      <ol>
+        <li>Verify create query selection (build schedule/sales lines) reaching <code>McaCutlistCreateService</code>.</li>
+        <li>Confirm <code>McaBOMSearchCutlist</code> returns expected rows in <code>McaBOMExplodeTmp</code>.</li>
+        <li>Check which <code>doCutlistItems()</code> fallback branch was used.</li>
+        <li>Inspect raw inserted <code>McaCutlist</code> row: quantities, machine, move-to, cut group, prefix.</li>
+        <li>Validate report or machine-file query filters (especially usage type and cut group).</li>
+        <li>Confirm <code>McaCutlistParameters</code> file paths and output permissions.</li>
+        <li>If rows disappear from active worklist, check <code>IsCutlistProcessed</code> updates after output run.</li>
+      </ol>
 
-  <hr>
+      <div class="callout">
+        For SR423365-specific analysis: focus first on where <code>Pieces</code> is set in creation and expanded in detail/report/file paths.
+      </div>
+    </section>
 
-  <!-- ══════════════════════════════════════════════════════ -->
-  <section id="debug">
-    <h2>6. Debug Instrumentation</h2>
-
-    <p><code class="inline">McaCutlistCreate.createCutlistRecord()</code> contains a UAT validation
-    popup added for SR423365 testing:</p>
-
-    <pre>"UAT PerSeries Validation [Create]
- BomRecId=%1  BOMQty=%2  BOMQtySerie=%3
- CutlistQty=%4  CutlistKitQty=%5  Per_Series=%6"</pre>
-
-    <div class="callout danger">
-      <strong>Action required before production (Step 10):</strong> Remove or disable this popup.
-      It fires on every record insert and will disrupt production cutlist generation.
-    </div>
-  </section>
-
-  <hr>
-
-  <!-- ══════════════════════════════════════════════════════ -->
-  <section id="deps">
-    <h2>7. External Table Dependencies</h2>
-
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Table</th><th>Used For</th></tr></thead>
-        <tbody>
-          <tr><td><code>SalesLine</code></td><td>Sales order line &mdash; top-level driver for sales-order path</td></tr>
-          <tr><td><code>BOMVersion</code></td><td>BOM header (model)</td></tr>
-          <tr><td><code>BOM</code></td><td>Raw material BOM lines &mdash; primary source of Per_Series and Pieces</td></tr>
-          <tr><td><code>InventDim</code></td><td>Site / location / WMS dimensions (joined 3&times;)</td></tr>
-          <tr><td><code>InventTable</code></td><td>Item master &mdash; usage type, unit ID</td></tr>
-          <tr><td><code>InventLocation</code></td><td>Warehouse master</td></tr>
-          <tr><td><code>ReqItemTable</code></td><td>Item coverage &mdash; derives BOM site/location</td></tr>
-          <tr><td><code>DocuRef</code></td><td>Attached notes / documents per BOM line</td></tr>
-          <tr><td><code>PWSBuildSchedule</code></td><td>Production schedule header</td></tr>
-          <tr><td><code>PWSBuildSequenceOrder</code></td><td>Sequence / order data</td></tr>
-          <tr><td><code>McaBOMExplodeTmp</code></td><td>Exploded BOM structure (temp)</td></tr>
-          <tr><td><code>McaCutlistParameters</code></td><td>System configuration</td></tr>
-          <tr><td><code>McaEcoResProductPrints</code></td><td>Print number references for BluePrint field</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <hr>
-
-  <!-- ══════════════════════════════════════════════════════ -->
-  <section id="gap">
-    <h2>8. Potential Gap &mdash; Module Path Per_Series</h2>
-
-    <div class="callout warn">
-      <strong>Verify during Step 6 DEV testing:</strong>
-      <code>McaCutlistCreate_Module.createCutlistRecord()</code> sets <code>Pieces</code>
-      but does <strong>not</strong> set <code>Per_Series</code>. The base class sets both.
-    </div>
-
-    <p>Two possible explanations &mdash; confirm with Kelly Gordon / Rhonda Rowe:</p>
-    <ol style="margin:10px 0 0 20px; line-height:2">
-      <li><strong>Intentional:</strong> all module items are one-per-series, so Per_Series defaults to 0 / "Not Set" is acceptable on the report.</li>
-      <li><strong>Omission:</strong> the assignment <code>cutlist.Per_Series = bomRawMaterial.BOMQtySerie;</code> was missed in the module subclass override and should be added.</li>
-    </ol>
-  </section>
-
-  <hr>
-
-  <!-- ══════════════════════════════════════════════════════ -->
-  <section id="tfs">
-    <h2>9. TFS Changeset Summary</h2>
-
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>CS</th><th>Date</th><th>Notes</th></tr></thead>
-        <tbody>
-          <tr><td>7673</td><td>2026-01-20</td><td>Initial resolve &mdash; J_SR423365_1560_Enhance_Cutsheets</td></tr>
-          <tr><td>7675</td><td>2026-01-21</td><td>DEV-AX-12 &rarr; DEV deploy</td></tr>
-          <tr><td>7678</td><td>2026-01-26</td><td>Associated</td></tr>
-          <tr><td>7679</td><td>2026-01-26</td><td>Changed Coversheet header to span full top (consistent with other reports)</td></tr>
-          <tr><td>7706</td><td>2026-02-24</td><td>Associated</td></tr>
-          <tr><td>7707</td><td>2026-02-24</td><td>DEV-AX-JDEV12 &rarr; DEV redeploy</td></tr>
-          <tr><td>7710&ndash;7713</td><td>2026-02-25</td><td>Associated + forced redeploy</td></tr>
-          <tr><td><strong>7723</strong></td><td>2026-03-10</td><td><strong>Piece Fields added to Selection</strong> (redeploy)</td></tr>
-          <tr><td>7726&ndash;7731</td><td>2026-03-18&ndash;20</td><td>Associated + redeploy (ref CS 7725 from 03/18)</td></tr>
-          <tr><td>7735</td><td>2026-03-23</td><td>DEV-AX-JDEV12 redeploy</td></tr>
-          <tr><td>7736</td><td>2026-03-24</td><td>Associated</td></tr>
-          <tr><td><strong>7737</strong></td><td>2026-03-24</td><td><strong>DEV-AX-JDEV12 &rarr; DEV (current in DEV)</strong></td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="callout info">
-      <strong>Current state:</strong> CS 7737 deployed to DEV on 2026-03-24. Awaiting Kelly Gordon
-      confirmation that changes meet requirements before advancing to Step 7 (Hold for UAT).
-    </div>
-  </section>
-
-  <footer>
-    SR423365 &mdash; Software &amp; Data Flow &nbsp;&bull;&nbsp; Documented 2026-04-14 &nbsp;&bull;&nbsp; Ward, Jonathon
-  </footer>
-
-</main>
+    <footer>
+      Document generated from SR423365 Production Code analysis for functional understanding and onboarding.
+    </footer>
+  </main>
 </body>
 </html>
