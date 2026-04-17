@@ -1,0 +1,78 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: McaCutlistDeleteContract unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #McaCutlistDeleteContract
+    PROPERTIES
+      Name                #McaCutlistDeleteContract
+      Extends             #SysOperationDataContractBase
+      Origin              #{F965022F-5EF4-4BE4-8D98-4E3684A3CFDE}
+    ENDPROPERTIES
+    
+    METHODS
+      SOURCE #classDeclaration
+        #/// <summary>
+        #/// Contract class for the cutlist delete recurring batch job
+        #/// </summary>
+        #/// <remarks>
+        #/// MCA Robert O'Berry 7/31/2024 Case mca202404317 Create job to create and delete cutlist records
+        #/// </remarks>
+        #[
+        #    DataContractAttribute
+        #]
+        #class McaCutlistDeleteContract extends SysOperationDataContractBase
+        #{
+        #    str packedQuery;
+        #}
+      ENDSOURCE
+      SOURCE #getQuery
+        #/// <summary>
+        #/// Returns an initialized query object based on the query that is returned from
+        #/// the <c>packedQuery</c> method.
+        #/// </summary>
+        #/// <returns>
+        #/// <c>Query</c> object
+        #/// </returns>
+        #public Query getQuery()
+        #{
+        #    return new Query(SysOperationHelper::base64Decode(packedQuery));
+        #}
+      ENDSOURCE
+      SOURCE #parmQuery
+        #/// <summary>
+        #/// Sets the packedQuery variable
+        #/// </summary>
+        #/// <param name="_packedQuery">
+        #/// Packed query
+        #/// </param>
+        #/// <returns>
+        #/// Packed query
+        #/// </returns>
+        #[DataMemberAttribute, AifQueryTypeAttribute('_packedQuery', querystr(McaCutlistDeleteQuery))]
+        #public str parmQuery(str _packedQuery = packedQuery)
+        #{
+        #    packedQuery = _packedQuery;
+        #    return packedQuery;
+        #}
+      ENDSOURCE
+      SOURCE #setQuery
+        #/// <summary>
+        #/// Sets the packedQuery <c>Query</c> object variable after packing
+        #/// </summary>
+        #/// <param name="_query">
+        #/// <c>Query</c> object
+        #/// </param>
+        #public void setQuery(Query _query)
+        #{
+        #     packedQuery = SysOperationHelper::base64Encode(_query.pack());
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: END

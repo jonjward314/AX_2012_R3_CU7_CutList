@@ -1,0 +1,91 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: McaCutlistDeleteRecordsContract unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #McaCutlistDeleteRecordsContract
+    PROPERTIES
+      Name                #McaCutlistDeleteRecordsContract
+      Origin              #{4A2E4E59-CC3D-42BC-8895-B4E95F25799A}
+    ENDPROPERTIES
+    
+    METHODS
+      SOURCE #classDeclaration
+        #/// <summary>
+        #///     Contract class for the cutlist record deletes
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/21/2018 - Mca_CR009_PWSCutlistCRP2
+        #/// </remarks>
+        #class McaCutlistDeleteRecordsContract
+        #{
+        #    McaPrefix           prefix;
+        #    PWSBuildScheduleId  buildScheduleId;
+        #    ItemId              moduleItemId;
+        #}
+      ENDSOURCE
+      SOURCE #parmModuleItemId
+        #/// <summary>
+        #///     Sets the moduleItemId
+        #/// </summary>
+        #/// <param name="_moduleItemId">
+        #///     a ItemId value
+        #/// </param>
+        #/// <returns>
+        #///     moduleItemId variable
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/21/2018 - Mca_CR009_PWSCutlistCRP2
+        #/// </remarks>
+        #public ItemId parmModuleItemId(ItemId _moduleItemId = moduleItemId)
+        #{
+        #    moduleItemId = _moduleItemId;
+        #    return moduleItemId;
+        #}
+      ENDSOURCE
+      SOURCE #parmPrefix
+        #/// <summary>
+        #///     Sets the prefix
+        #/// </summary>
+        #/// <param name="_prefix">
+        #///     a McaPrefix value
+        #/// </param>
+        #/// <returns>
+        #///     prefix variable
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/21/2018 - Mca_CR009_PWSCutlistCRP2
+        #/// </remarks>
+        #public McaPrefix parmPrefix(McaPrefix _prefix = prefix)
+        #{
+        #    prefix = _prefix;
+        #    return prefix;
+        #}
+      ENDSOURCE
+      SOURCE #parmPWSBuildScheduleId
+        #/// <summary>
+        #///     Sets the PWSBuildScheduleId
+        #/// </summary>
+        #/// <param name="_buildScheduleId">
+        #///     a PWSBuildScheduleId value
+        #/// </param>
+        #/// <returns>
+        #///     buildScheduleId variable
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/21/2018 - Mca_CR009_PWSCutlistCRP2
+        #/// </remarks>
+        #public PWSBuildScheduleId parmPWSBuildScheduleId(PWSBuildScheduleId _buildScheduleId = buildScheduleId)
+        #{
+        #    buildScheduleId = _buildScheduleId;
+        #    return buildScheduleId;
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: END

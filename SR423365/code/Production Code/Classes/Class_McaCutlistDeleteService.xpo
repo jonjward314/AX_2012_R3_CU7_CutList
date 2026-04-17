@@ -1,0 +1,66 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: McaCutlistDeleteService unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #McaCutlistDeleteService
+    PROPERTIES
+      Name                #McaCutlistDeleteService
+      Extends             #SysOperationServiceBase
+      Origin              #{2FB24436-B0DE-499A-8104-62A6E0FFA7D2}
+    ENDPROPERTIES
+    
+    METHODS
+      SOURCE #classDeclaration
+        #/// <summary>
+        #/// The service class for the Cutlist creation reoccuring batch job
+        #/// </summary>
+        #/// <remarks>
+        #/// MCA Robert O'Berry 7/31/2024 Case mca202404317 Create job to create and delete cutlist records
+        #/// </remarks>
+        #class McaCutlistDeleteService extends SysOperationServiceBase
+        #{
+        #}
+      ENDSOURCE
+      SOURCE #process
+        #/// <summary>
+        #/// Service operation to process cutlist records
+        #/// </summary>
+        #/// <param name="_contract">
+        #/// <c>McaCutlistDeleteContract</c> object
+        #/// </param>
+        #[SysEntryPointAttribute(false)]
+        #public void process(McaCutlistDeleteContract _contract)
+        #{
+        #    QueryRun qr = new QueryRun(_contract.getQuery());
+        #    McaCutlist cutlist;
+        #
+        #    setPrefix("@MCA1918");
+        #
+        #    try
+        #    {
+        #        ttsBegin;
+        #
+        #        while (qr.next())
+        #        {
+        #            cutlist = qr.get(tableNum(McaCutlist));
+        #            cutlist.delete();
+        #        }
+        #
+        #        ttsCommit;
+        #    }
+        #    catch (Exception::Deadlock)
+        #    {
+        #        qr.reset();
+        #        retry;
+        #    }
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: END

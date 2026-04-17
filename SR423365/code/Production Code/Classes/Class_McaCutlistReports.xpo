@@ -1,0 +1,498 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: McaCutlistReports unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #McaCutlistReports
+    PROPERTIES
+      Name                #McaCutlistReports
+      Origin              #{B7028150-237A-4A75-AB09-1CA5C4788A74}
+    ENDPROPERTIES
+    
+    METHODS
+      SOURCE #classDeclaration
+        #/// <summary>
+        #///     This class generates the cutlist reports
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #class McaCutlistReports
+        #{
+        #    McaCutlistFileContract  contract;
+        #    str                     folder;
+        #    McaUsageType            usageType;
+        #    ProdUnitId              prodUnitId;
+        #    McaPrintDestinations    mcaPrintDestinations;
+        #
+        #    #define.FileExtensionPDF(".pdf")
+        #}
+      ENDSOURCE
+      SOURCE #createReportDirectory
+        #/// <summary>
+        #///     Create the directory to hold the reports
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #private void createReportDirectory()
+        #{
+        #    folder = strFmt('%1_%2%3%4_%5', this.parmContract().parmBuildScheduleId()
+        #                                  , strRFix(strFmt('%1', DateTimeUtil::month(DateTimeUtil::utcNow())), 2, '0')
+        #                                  , strRFix(strFmt('%1', DateTimeUtil::day(DateTimeUtil::utcNow())), 2, '0')
+        #                                  , DateTimeUtil::year(DateTimeUtil::utcNow())
+        #                                  , timeNow());
+        #
+        #    folder = System.IO.Path::Combine(McaCutlistParameters::find().ReportFilePath, folder);
+        #
+        #    if (!System.IO.Directory::Exists(folder))
+        #    {
+        #        System.IO.Directory::CreateDirectory(folder);    
+        #    }           
+        #}
+      ENDSOURCE
+      SOURCE #createReports
+        #/// <summary>
+        #///     Create the cutlist reports
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #private void createReports()
+        #{
+        #    setPrefix("@MCA636");
+        #
+        #    if (   this.parmContract().parmPrintMediumType() == McaPrintMedium::File
+        #        || this.parmContract().parmPrintMediumType() == McaPrintMedium::FilePrinter)
+        #    {
+        #        this.createReportDirectory();
+        #    }
+        #
+        #    if (this.parmContract().parmPrintSummary())
+        #    {
+        #        this.runReport(menuitemOutputStr(McaCutlistSummaryReport),
+        #                       ssrsReportStr(McaCutlistBaseReport, WorkOrderSummary),
+        #                       new McaCutlistSumReportController());
+        #    }
+        #
+        #    if (this.parmContract().parmCoverSheet())
+        #    {
+        #        this.runReport(menuitemOutputStr(McaCutlistCoverReport),
+        #                       ssrsReportStr(McaCutlistBaseReport, WorkOrderCoverSheet),
+        #                       new McaCutlistCoverReportController());
+        #    }
+        #
+        #    if (this.parmContract().parmPrintDetail())
+        #    {
+        #        this.parmMcaUsageType(McaUsageType::Linear);
+        #        this.runReport(menuitemOutputStr(McaCutlistDetailReport),
+        #                       ssrsReportStr(McaCutlistBaseReport, WorkOrderDetail),
+        #                       new McaCutlistDetailReportController());
+        #
+        #        this.parmMcaUsageType(McaUsageType::Sheet);
+        #        this.runReport(menuitemOutputStr(McaCutlistDetailReport),
+        #                       ssrsReportStr(McaCutlistBaseReport, WorkOrderDetail),
+        #                       new McaCutlistDetailReportController());
+        #
+        #    }
+        #}
+        #
+      ENDSOURCE
+      SOURCE #existsFile
+        #/// <summary>
+        #///     Checks to see if the file exists
+        #/// </summary>
+        #/// <param name="_fileName">
+        #///     The name and path of the file.
+        #/// </param>
+        #/// <returns>
+        #///     true if file exists or false if file does not exist
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #private boolean existsFile(Filename _fileName)
+        #{
+        #    _fileName = System.IO.Path::Combine(McaCutlistParameters::find().ReportFilePath, _fileName);
+        #
+        #    if (System.IO.File::Exists(_fileName))
+        #    {
+        #        return true;    
+        #    }   
+        #    return false;
+        #}
+      ENDSOURCE
+      SOURCE #parmContract
+        #/// <summary>
+        #///     Get/Set the <c>McaCutlistFileContract</c>
+        #/// </summary>
+        #/// <param name="_contract">
+        #///     a <c>McaCutlistFileContract</c> object
+        #/// </param>
+        #/// <returns>
+        #///     a <c>McaCutlistFileContract</c> object
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #McaCutlistFileContract parmContract(McaCutlistFileContract _contract = contract)
+        #{
+        #    if (!prmisDefault(_contract))
+        #    {
+        #        contract = _contract;
+        #    }
+        #
+        #    return contract;
+        #}
+      ENDSOURCE
+      SOURCE #parmMcaUsageType
+        #/// <summary>
+        #///     Get/Set the <c>McaUsageType</c>
+        #/// </summary>
+        #/// <param name="_usageType">
+        #///     a <c>McaUsageType</c> object
+        #/// </param>
+        #/// <returns>
+        #///     a <c>McaUsageType</c> object
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 05/23/2018 - Mca_CR009_CutlistEnhancements
+        #/// </remarks>
+        #McaUsageType parmMcaUsageType(McaUsageType _usageType = usageType)
+        #{
+        #    if (!prmisDefault(_usageType))
+        #    {
+        #        usageType = _usageType;
+        #    }
+        #
+        #    return usageType;
+        #}
+      ENDSOURCE
+      SOURCE #run
+        #/// <summary>
+        #///     Runs the class logic
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #public void run()
+        #{
+        #    #OCCRetryCount
+        #
+        #    startLengthyOperation();
+        #
+        #    try
+        #    {
+        #        if (this.validate())
+        #        {
+        #            this.createReports();
+        #        }
+        #    }
+        #    catch (Exception::Error)
+        #    {
+        #        throw error("@SYS21628"); //Update has been canceled because of an error.
+        #    }
+        #    catch (Exception::Deadlock)
+        #    {
+        #        retry;
+        #    }
+        #    catch (Exception::UpdateConflict)
+        #    {
+        #        if (appl.ttsLevel() == 0)
+        #        {
+        #            if (xSession::currentRetryCount() >= #RetryNum)
+        #            {
+        #                throw Exception::UpdateConflictNotRecovered;
+        #            }
+        #            else
+        #            {
+        #                retry;
+        #            }
+        #        }
+        #        else
+        #        {
+        #            throw Exception::UpdateConflict;
+        #        }
+        #    }
+        #    endLengthyOperation();
+        #}
+      ENDSOURCE
+      SOURCE #runReport
+        #/// <summary>
+        #///     Runs the reports
+        #/// </summary>
+        #/// <param name="_menuItemOutputStr">
+        #///     a <c>MenuItemNameOutput</c> object with the report menu item
+        #/// </param>
+        #/// <param name="_ssrsReportStr">
+        #///     the report string of the report and design to run.
+        #/// </param>
+        #/// <param name="_controller">
+        #///     the <c>SRSReportController</c> for the specific report
+        #/// </param>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #private void runReport(MenuItemNameOutput _menuItemOutputStr, str _ssrsReportStr, SRSReportRunController _controller)
+        #{
+        #    Args                            args = new Args();
+        #    Query                           query;
+        #    QueryBuildRange                 qbr, qbr2;
+        #    QueryBuildDataSource            qbds;
+        #    ReportName                      reportName;
+        #
+        #    // the detail report will need to print 1 report for sheet and 1 for linear
+        #    if (ssrsReportStr(McaCutlistBaseReport, WorkOrderDetail) == _ssrsReportStr)
+        #    {
+        #        query = contract.getQuery();
+        #
+        #        // add the usageType as a range
+        #        qbds = query.dataSourceTable(tablenum(McaCutlist));
+        #        qbr  = SysQuery::findOrCreateRange(qbds, fieldnum(McaCutlist, UsageType));
+        #        qbr.value(SysQuery::value(this.parmMcaUsageType()));
+        #
+        #        qbr2  = SysQuery::findOrCreateRange(qbds, fieldnum(McaCutlist, IsCutlistProcessed));
+        #        qbr2.dataSource().clearRange(fieldnum(McaCutlist, IsCutlistProcessed));
+        #
+        #        // Don't print if it is empty
+        #        if (QueryRun::getQueryRowCount(query, 6) == 0)
+        #        {
+        #            return;
+        #        }
+        #
+        #        contract.setQuery(query);
+        #
+        #        reportName = strFmt('%1 - %2', _ssrsReportStr, enum2str(this.parmMcaUsageType()));
+        #    }
+        #    else
+        #    {
+        #        reportName = _ssrsReportStr;
+        #    }
+        #
+        #    args.parmObject(contract.getQuery());
+        #
+        #    // If we are printing to the screen, use the menu item because that will call the dialogShow() dialogClose() so we can detach from the formRun
+        #    // This will enable us to send all 3 reports to the screen at once, instead of needing to close a report in order for the next one to display.
+        #    if (contract.parmPrintMediumType() == McaPrintMedium::Screen)
+        #    { 
+        #        new MenuFunction(_menuItemOutputStr, MenuItemType::Output).run(args);
+        #        return;
+        #    }
+        #
+        #    _controller.parmArgs(args);
+        #    _controller.parmReportName(_ssrsReportStr);
+        #
+        #    // Get the prodUnitId so we can get the printer
+        #    prodUnitId = McaCutlistReports::getProdUnitId(new QueryRun(contract.getQuery()));
+        #
+        #    if (contract.parmPrintMediumType() == McaPrintMedium::File)
+        #    { 
+        #        this.runReport2File(reportName, _controller);
+        #    }
+        #
+        #    if (contract.parmPrintMediumType() == McaPrintMedium::FilePrinter)
+        #    { 
+        #        this.runReport2File(reportName, _controller);
+        #        this.runReport2Printer(_controller);
+        #    }
+        #
+        #    if (contract.parmPrintMediumType() == McaPrintMedium::Printer)
+        #    { 
+        #        this.runReport2Printer(_controller);
+        #    }
+        #}
+        #
+      ENDSOURCE
+      SOURCE #runReport2File
+        #/// <summary>
+        #///     Runs the reports
+        #/// </summary>
+        #/// <param name="_reportName">
+        #///     a <c>ReportName</c> object with the report menu item
+        #/// </param>
+        #/// <param name="_controller">
+        #///     the <c>SRSReportController</c> for the specific report
+        #/// </param>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #private void runReport2File(ReportName _reportName, SRSReportRunController _controller)
+        #{
+        #    str                             reportFilePath;
+        #    McaCutlistReportContract        reportContract;
+        #
+        #    // choose to save the executed report as a pdf file
+        #    // You can change path to save the report in below line of code. It goes as 1st parameter in bellow line
+        #    reportFilePath = System.IO.Path::Combine(folder, _reportName + #FileExtensionPDF);
+        #
+        #    _controller.parmReportContract().parmPrintSettings().printMediumType(SRSPrintMediumType::File);
+        #    _controller.parmReportContract().parmPrintSettings().fileFormat(SRSReportFileFormat::PDF);
+        #    _controller.parmReportContract().parmPrintSettings().fileName(reportFilePath);
+        #    _controller.parmReportContract().parmPrintSettings().overwriteFile(true);
+        #
+        #    reportContract = _controller.parmReportContract().parmRdpContract() as McaCutlistReportContract;
+        #
+        #    // Set the contract for the specific report so the DP know what to aggregate
+        #    if (_controller is McaCutlistSumReportController)
+        #    {
+        #        reportContract.parmPrintSummary(true);
+        #    }
+        #    else if (_controller is McaCutlistDetailReportController)
+        #    {
+        #        reportContract.parmPrintDetail(true);
+        #    }
+        #    else if (_controller is McaCutlistCoverReportController)
+        #    {
+        #        reportContract.parmCoverSheet(true);
+        #    }
+        #
+        #    // run the report
+        #    _controller.runReport();
+        #}
+        #
+      ENDSOURCE
+      SOURCE #runReport2Printer
+        #/// <summary>
+        #///     Runs the reports
+        #/// </summary>
+        #/// <param name="_controller">
+        #///     the <c>SRSReportController</c> for the specific report
+        #/// </param>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #private void runReport2Printer(SRSReportRunController _controller)
+        #{
+        #    McaCutlistReportContract    reportContract;
+        #    SRSPrintDestinationSettings SRSPrintDestinationSettings = new SRSPrintDestinationSettings(McaPrintDestinations.CutlistReportDestination);
+        #
+        #    _controller.parmReportContract().parmPrintSettings(SRSPrintDestinationSettings);
+        #    _controller.parmReportContract().parmPrintSettings().printMediumType(SRSPrintMediumType::Printer);
+        #
+        #    reportContract = _controller.parmReportContract().parmRdpContract() as McaCutlistReportContract;
+        #
+        #    // Set the contract for the specific report so the DP know what to aggregate
+        #    if (_controller is McaCutlistSumReportController)
+        #    {
+        #        reportContract.parmPrintSummary(true);
+        #    }
+        #    else if (_controller is McaCutlistDetailReportController)
+        #    {
+        #        reportContract.parmPrintDetail(true);
+        #    }
+        #    else if (_controller is McaCutlistCoverReportController)
+        #    {
+        #        reportContract.parmCoverSheet(true);
+        #    }
+        #
+        #    // run the report
+        #    _controller.runReport();
+        #}
+        #
+      ENDSOURCE
+      SOURCE #validate
+        #private boolean validate()
+        #{
+        #    if (contract.parmPrintMediumType() == McaPrintMedium::FilePrinter ||
+        #        contract.parmPrintMediumType() == McaPrintMedium::Printer)
+        #    { 
+        #        // Get the prodUnitId so we can get the printer
+        #        prodUnitId = McaCutlistReports::getProdUnitId(new QueryRun(contract.getQuery()));
+        #
+        #        mcaPrintDestinations = McaPrintDestinations::find(prodUnitId);
+        #        if(!McaPrintDestinations.CutlistReportDestination)
+        #        {
+        #            error(strFmt("@MCA958", prodUnitId));
+        #            return false;
+        #        }
+        #    }
+        #
+        #    return true;
+        #}
+      ENDSOURCE
+      SOURCE #getProdUnitId
+        #public static ProdUnitId getProdUnitId(QueryRun _qr)
+        #{
+        #    Query                       query;
+        #    QueryBuildDataSource        qbds;
+        #    McaCutlist                  cutlist;
+        #    ProdUnitId                  prodUnitId;
+        #
+        #    query = _qr.query();
+        #    qbds  = query.dataSourceTable(tableNum(McaCutlist));
+        #
+        #    // add the grouping
+        #    SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, InventSiteId));
+        #
+        #    while (_qr.next())
+        #    {
+        #        cutlist = _qr.get(tablenum(McaCutlist));
+        #
+        #        prodUnitId = cutlist.InventSiteId;
+        #
+        #        if (prodUnitId)
+        #            break;
+        #    }
+        #
+        #    return prodUnitId;
+        #}
+      ENDSOURCE
+      SOURCE #markProcessed
+        #public static void markProcessed(Query _query)
+        #{
+        #    Query                   query = _query;
+        #    query                   querySaved = query;
+        #    QueryRun                queryRun;
+        #    QueryBuildDataSource    qbds;
+        #    McaCutlist              cutList;
+        #
+        #    ttsBegin;
+        #    qbds = query.dataSourceTable(tablenum(McaCutlist));
+        #    qbds.update(true);
+        #
+        #    queryRun = new QueryRun(query);
+        #
+        #    while (queryrun.next())
+        #    {
+        #        cutList = queryRun.get(tablenum(McaCutlist));
+        #
+        #        cutList.IsCutlistProcessed = true;
+        #
+        #        if (cutList.validateWrite())
+        #        {
+        #            cutList.doUpdate();
+        #        }
+        #    }
+        #    ttsCommit;
+        #}
+      ENDSOURCE
+      SOURCE #newStandard
+        #/// <summary>
+        #///     Creates a new <c>McaCutlistReports</c> object.
+        #/// </summary>
+        #/// <param name="_contract">
+        #///     a <c>McaCutlistContract</c> object
+        #/// </param>
+        #/// <returns>
+        #///     a newly created <c>McaCutlistReports</c> object.
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #static McaCutlistReports newStandard(McaCutlistFileContract _contract)
+        #{
+        #    McaCutlistReports cutlistReports = new McaCutlistReports();
+        #
+        #    cutlistReports.parmContract(_contract);
+        #
+        #    return cutlistReports;
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: END

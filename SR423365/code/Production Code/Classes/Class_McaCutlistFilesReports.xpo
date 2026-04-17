@@ -1,0 +1,426 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: McaCutlistFilesReports unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #McaCutlistFilesReports
+    PROPERTIES
+      Name                #McaCutlistFilesReports
+      Origin              #{B454CFB5-A24F-4CFD-8B03-818C649B04B6}
+    ENDPROPERTIES
+    
+    METHODS
+      SOURCE #classDeclaration
+        #/// <summary>
+        #///     This class generates the cutting machine files and reports
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #class McaCutlistFilesReports
+        #{
+        #    McaCutlistFileContract  contract;
+        #    Query                   query;
+        #}
+      ENDSOURCE
+      SOURCE #getBuildScheduleIdFromQueryRun
+        #private PWSBuildScheduleId getBuildScheduleIdFromQueryRun(QueryRun _qr)
+        #{
+        #
+        #    McaCutlist                  cutlist;
+        #    PWSBuildScheduleId          buildScheduleId;
+        #
+        #
+        #    while (_qr.next())
+        #    {
+        #        cutlist = _qr.get(tablenum(McaCutlist));
+        #
+        #        buildScheduleId = cutlist.PWSBuildScheduleId;
+        #
+        #        if (buildScheduleId)
+        #            break;
+        #    }
+        #
+        #    return buildScheduleId;
+        #}
+      ENDSOURCE
+      SOURCE #getMcaCutGroupIdFromQueryRun
+        #private McaCutGroupId getMcaCutGroupIdFromQueryRun(QueryRun _qr)
+        #{
+        #
+        #    McaCutlist                  cutlist;
+        #    McaCutGroupId          McaCutGroupId;
+        #
+        #
+        #    while (_qr.next())
+        #    {
+        #        cutlist = _qr.get(tablenum(McaCutlist));
+        #
+        #        McaCutGroupId = cutlist.CutGroupId;
+        #
+        #        if (McaCutGroupId)
+        #            break;
+        #    }
+        #
+        #    return McaCutGroupId;
+        #}
+      ENDSOURCE
+      SOURCE #getMcaPrefixFromQueryRun
+        #private McaPrefix getMcaPrefixFromQueryRun(QueryRun _qr)
+        #{
+        #
+        #    McaCutlist                  cutlist;
+        #    McaPrefix          McaPrefix;
+        #
+        #
+        #    while (_qr.next())
+        #    {
+        #        cutlist = _qr.get(tablenum(McaCutlist));
+        #
+        #        McaPrefix = cutlist.Prefix;
+        #
+        #        if (McaPrefix)
+        #            break;
+        #    }
+        #
+        #    return McaPrefix;
+        #}
+      ENDSOURCE
+      SOURCE #parmContract
+        #/// <summary>
+        #///     Get/Set the <c>McaCutlistFileContract</c>
+        #/// </summary>
+        #/// <param name="_contract">
+        #///     a <c>McaCutlistFileContract</c> object
+        #/// </param>
+        #/// <returns>
+        #///     a <c>McaCutlistFileContract</c> object
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #McaCutlistFileContract parmContract(McaCutlistFileContract _contract = contract)
+        #{
+        #    if (!prmisDefault(_contract))
+        #    {
+        #        contract = _contract;
+        #    }
+        #
+        #    return contract;
+        #}
+      ENDSOURCE
+      SOURCE #run
+        #/// <summary>
+        #///     Runs the class logic
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #public void run()
+        #{
+        #    Query queryValidate; // J_SR107265_CutListCreation Myrl Stadnick
+        #    #OCCRetryCount
+        #
+        #    startLengthyOperation();
+        #
+        #    setprefix("@MCA635");
+        #
+        #    try
+        #    {
+        #        // J_SR107265_CutListCreation Myrl Stadnick begin -->
+        #        //this.saveOriginalQuery();   // mca - Ray Michalski - 09/18/2018 - Mca_CR011_11_CounterTopLabels
+        #        //this.runFiles();
+        #        //this.runReports();
+        #       // this.runLabels();           // mca - Ray Michalski - 09/18/2018 - Mca_CR011_11_CounterTopLabels
+        #        //this.runMarkProcessed();    // mca - Ray Michalski - 09/18/2018 - Mca_CR011_11_CounterTopLabels
+        #
+        #        queryValidate = this.parmContract().getQuery();
+        #
+        #        if(!this.validateQuery(queryValidate))
+        #        {
+        #            this.saveOriginalQuery();   // mca - Ray Michalski - 09/18/2018 - Mca_CR011_11_CounterTopLabels
+        #            this.runFiles();
+        #            this.runReports();
+        #            this.runLabels();           // mca - Ray Michalski - 09/18/2018 - Mca_CR011_11_CounterTopLabels
+        #            this.runMarkProcessed();    // mca - Ray Michalski - 09/18/2018 - Mca_CR011_11_CounterTopLabels
+        #        }
+        #        else
+        #        {
+        #            throw error("Update has been cancelled");
+        #        }
+        #        // J_SR107265_CutListCreation Myrl Stadnick End -->
+        #    }
+        #    catch (Exception::Deadlock)
+        #    {
+        #        retry;
+        #    }
+        #    catch (Exception::UpdateConflict)
+        #    {
+        #        if (appl.ttsLevel() == 0)
+        #        {
+        #            if (xSession::currentRetryCount() >= #RetryNum)
+        #            {
+        #                throw Exception::UpdateConflictNotRecovered;
+        #            }
+        #            else
+        #            {
+        #                retry;
+        #            }
+        #        }
+        #        else
+        #        {
+        #            throw Exception::UpdateConflict;
+        #        }
+        #    }
+        #    endLengthyOperation();
+        #}
+      ENDSOURCE
+      SOURCE #runAssignPrefix
+        #/// <summary>
+        #///     Executes the Cutlist prefix assignment
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #private void runAssignPrefix()
+        #{
+        #    McaCutlistAssignPrefix cutlistAssignPrefix;
+        #
+        #    cutlistAssignPrefix = McaCutlistAssignPrefix::newStandard(this.parmContract());
+        #    cutlistAssignPrefix.run();
+        #}
+      ENDSOURCE
+      SOURCE #runFiles
+        #/// <summary>
+        #///     Executes the Cutlist machine files
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #private void runFiles()
+        #{
+        #    McaCutlistFile cutlistFile;
+        #
+        #    if (   this.parmContract().parmCreateCutlistFiles()
+        #        || this.parmContract().parmRegenCutlistFile())
+        #    {
+        #        cutlistFile = McaCutlistFile::newStandard(this.parmContract());
+        #        cutlistFile.run();
+        #    }
+        #}
+      ENDSOURCE
+      SOURCE #runLabels
+        #/// <summary>
+        #///     Executes the Cutlist labels
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 09/18/2018 - Mca_CR011_11_CounterTopLabels
+        #/// </remarks>
+        #private void runLabels()
+        #{
+        #    McaCutlistLabels labels;
+        #
+        #    if (this.parmContract().parmPrintLabels())
+        #    {
+        #        labels = McaCutlistLabels::newStandard(this.parmContract());
+        #        labels.run();
+        #    }
+        #}
+      ENDSOURCE
+      SOURCE #runMarkProcessed
+        #/// <summary>
+        #///     Marks the cutlist records as processed
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 09/18/2018 - Mca_CR011_11_CounterTopLabels
+        #/// </remarks>
+        #private void runMarkProcessed()
+        #{
+        #    if (this.parmContract().parmPrintDetail() ||
+        #        this.parmContract().parmCreateCutlistFiles() ||
+        #        this.parmContract().parmPrintSummary() ||
+        #        this.parmContract().parmCoverSheet())
+        #    {
+        #        McaCutlistReports::markProcessed(query);
+        #    }
+        #}
+      ENDSOURCE
+      SOURCE #runReports
+        #/// <summary>
+        #///     Executes the Cutlist reports
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #private void runReports()
+        #{
+        #    McaCutlistReports cutlistReports;
+        #
+        #    cutlistReports = McaCutlistReports::newStandard(this.parmContract());
+        #    cutlistReports.run();
+        #}
+      ENDSOURCE
+      SOURCE #saveOriginalQuery
+        #/// <summary>
+        #///     Saves the original query so we can mark the records as processed
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 09/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #private void saveOriginalQuery()
+        #{
+        #    QueryRun queryRun = new QueryRun(this.parmContract().getQuery());
+        #
+        #    query = queryRun.query();
+        #}
+      ENDSOURCE
+      SOURCE #validateQuery
+        #// J_SR107265_CutListCreation Myrl Stadnick
+        #public boolean validateQuery(Query _queryRun)
+        #{
+        #
+        #    int             i,j,k,Fieldid,tableId;
+        #    boolean         empty = true;
+        #    boolean         prefixemptyRange     = true;
+        #    boolean         cutGroupidEmptyRange = true;
+        #    boolean         prefixemptyValue     = true;
+        #    boolean         cutGroupidEmptyValue = true;
+        #    boolean         EmptyBuildScheduleValue = true;
+        #    QueryBuildRange range;
+        #    str             Fieldname = "";
+        #    DictTable       DictTable;
+        #    DictField       dictField;
+        #    boolean         Haserror;
+        #    QueryFilter     qf;
+        #    str             Fieldvalue;
+        #
+        #    if(!this.parmContract().parmSkipValidation())
+        #    {
+        #        for (k=1;k<=_queryRun.dataSourceCount();k++)
+        #        {
+        #            for (j=1;j<=_queryRun.dataSourceNo(k).rangeCount();j++)
+        #            {
+        #                Fieldid = fieldname2id(_queryRun.dataSourceno(k).table(),_queryRun.dataSourceNo(k).range(j).name());
+        #                TableId = _queryRun.dataSourceno(k).table();
+        #
+        #                DictTable = new SysDictTable(TableId);
+        #
+        #                dictField  = DictTable.fieldObject(Fieldid);
+        #
+        #                Fieldname = dictField.name();
+        #
+        #                if(Fieldname == "PWSBuildScheduleId")
+        #                {
+        #                    range = _queryRun.dataSourceNo(K).range(j);
+        #                    if(range.value())
+        #                    {
+        #                        prefixemptyRange = false;
+        #                        EmptyBuildScheduleValue = false;
+        #                    }
+        #                }
+        #
+        #                if(Fieldname == "Prefix")
+        #                {
+        #                    range = _queryRun.dataSourceNo(K).range(j);
+        #                    if(range.value())
+        #                    {
+        #                        prefixemptyRange = false;
+        #                        prefixemptyValue = false;
+        #                    }
+        #                }
+        #
+        #                if(Fieldname == "CutgroupId")
+        #                {
+        #                    range = _queryRun.dataSourceNo(K).range(j);
+        #                    if(range.value())
+        #                    {
+        #                        cutGroupidEmptyRange = false;
+        #                        cutGroupidEmptyValue = false;
+        #                    }
+        #                }
+        #
+        #                if(Fieldname != "Prefix" || Fieldname != "CutgroupId" && _queryRun.dataSourceNo(k).range(j).value())
+        #                {
+        #                    empty = false;
+        #                }
+        #            }
+        #        }
+        #        if(empty || cutGroupidEmptyValue && prefixemptyValue )
+        #        {
+        #            Haserror = true;
+        #        }
+        #
+        #        if(hasError)
+        #        {
+        #            for (i = 1; i <= _queryRun.queryFilterCount(); i++)
+        #            {
+        #                qf = _queryRun.queryFilter(i);
+        #
+        #                FieldName = qf.field();
+        #                Fieldvalue = qf.value();
+        #
+        #                if(Fieldname == "Prefix" && Fieldvalue)
+        #                {
+        #                    hasError = false;
+        #                    prefixemptyValue = false;
+        #                }
+        #
+        #                if(Fieldname == "CutgroupId"  && Fieldvalue)
+        #                {
+        #                    hasError = false;
+        #                    cutGroupidEmptyValue = false;
+        #                }
+        #                if(Fieldname == "PWSBuildScheduleId"  && Fieldvalue)
+        #                {
+        #                    hasError = false;
+        #                    EmptyBuildScheduleValue = false;
+        #                }
+        #            }
+        #        }
+        #
+        #        if(Haserror)
+        #        {
+        #
+        #            if(EmptyBuildScheduleValue)
+        #            {
+        #                error("Missing parameter Build schedule");
+        #            }
+        #            if(cutGroupidEmptyValue && prefixemptyValue)
+        #            {
+        #                error("Cut groupId or Prefix must be filled in.");
+        #            }
+        #        }
+        #    }
+        #    return hasError;
+        #}
+      ENDSOURCE
+      SOURCE #newStandard
+        #/// <summary>
+        #///     Creates a new <c>McaCutlistFile</c> object.
+        #/// </summary>
+        #/// <param name="_contract">
+        #///     a <c>McaCutlistContract</c> object
+        #/// </param>
+        #/// <returns>
+        #///     a newly created <c>McaCutlistCreate</c> object.
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #static McaCutlistFilesReports newStandard(McaCutlistFileContract _contract)
+        #{
+        #    mcaCutlistFilesReports cutlistFilesReports = new mcaCutlistFilesReports();
+        #
+        #    cutlistFilesReports.parmContract(_contract);
+        #
+        #    return cutlistFilesReports;
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: END

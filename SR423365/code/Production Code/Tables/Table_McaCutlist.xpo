@@ -1,0 +1,1518 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: DBT
+
+; Microsoft Dynamics AX Table : McaCutlist unloaded
+; --------------------------------------------------------------------------------
+  TABLEVERSION 1
+  
+  TABLE #McaCutlist
+    EnforceFKRelation 1
+    PROPERTIES
+      Name                #McaCutlist
+      Label               #@MCA601
+      TitleField1         #ItemId
+      TitleField2         #WrkCtrId
+      CreateRecIdIndex    #Yes
+      PrimaryIndex        #SurrogateKey
+      ClusterIndex        #SurrogateKey
+      CreatedDateTime     #Yes
+      CreatedBy           #Yes
+      DeveloperDocumentation  #@MCA612
+      Origin              #{35DC3317-31CE-4C53-A111-37C61923A81D}
+    ENDPROPERTIES
+    
+    FIELDS
+      FIELD #BluePrint
+        STRING
+        PROPERTIES
+          Name                #BluePrint
+          Table               #McaCutlist
+          Origin              #{3C2C9FCF-7012-4371-B227-D29B13693604}
+          ExtendedDataType    #McaBluePrint
+          StringSize          #30
+        ENDPROPERTIES
+        
+      FIELD #ComponentBOMId
+        STRING
+        PROPERTIES
+          Name                #ComponentBOMId
+          Label               #@MCA1886
+          Table               #McaCutlist
+          IgnoreEDTRelation   #Yes
+          Origin              #{726C45FB-ABB2-49BF-9680-AD4BC17CEFB8}
+          ExtendedDataType    #BOMId
+          StringSize          #20
+        ENDPROPERTIES
+        
+      FIELD #ComponentItemId
+        STRING
+        PROPERTIES
+          Name                #ComponentItemId
+          Label               #@SYS4004856
+          Table               #McaCutlist
+          IgnoreEDTRelation   #Yes
+          Origin              #{8BFFBFC9-1453-4FF9-91F3-84E6A9844CBD}
+          ExtendedDataType    #McaComponentItemId
+          StringSize          #40
+        ENDPROPERTIES
+        
+      FIELD #CutGroupId
+        STRING
+        PROPERTIES
+          Name                #CutGroupId
+          Table               #McaCutlist
+          Origin              #{3206800A-B735-4447-AD43-EC47420A928C}
+          ExtendedDataType    #McaCutGroupId
+        ENDPROPERTIES
+        
+      FIELD #CutModuleId
+        STRING
+        PROPERTIES
+          Name                #CutModuleId
+          Table               #McaCutlist
+          Origin              #{EA07E4B0-405D-454B-940F-847A13EA7A7C}
+          ExtendedDataType    #McaCutModuleId
+        ENDPROPERTIES
+        
+      FIELD #DateOffLine
+        DATE
+        PROPERTIES
+          Name                #DateOffLine
+          Label               #@PWS176
+          HelpText            #@PWS177
+          Table               #McaCutlist
+          Origin              #{2B350E96-23D1-46B7-B5D4-056B19A0E1E4}
+          ExtendedDataType    #TransDate
+        ENDPROPERTIES
+        
+      FIELD #DateOnLine
+        DATE
+        PROPERTIES
+          Name                #DateOnLine
+          Label               #@PWS178
+          HelpText            #@PWS179
+          Table               #McaCutlist
+          Origin              #{8567E553-F8D3-4920-A271-3941A1BC200C}
+          ExtendedDataType    #TransDate
+        ENDPROPERTIES
+        
+      FIELD #Depth
+        REAL
+        PROPERTIES
+          Name                #Depth
+          Label               #@SYS190754
+          Table               #McaCutlist
+          Origin              #{1C19352F-A282-4F65-9B2C-9248C862D1CF}
+          ExtendedDataType    #BOMMeasureDepth
+        ENDPROPERTIES
+        
+      FIELD #DueDateTime
+        DATETIME
+        PROPERTIES
+          Name                #DueDateTime
+          Table               #McaCutlist
+          Origin              #{328CD0A3-00FD-4EA8-8301-F567F52491D1}
+          ExtendedDataType    #KanbanDueDateTime
+        ENDPROPERTIES
+        
+      FIELD #Height
+        REAL
+        PROPERTIES
+          Name                #Height
+          Table               #McaCutlist
+          Origin              #{34C8024B-A3F7-4236-963E-B9C041AE2A88}
+          ExtendedDataType    #BOMMeasureHeight
+        ENDPROPERTIES
+        
+      FIELD #InventLocationId
+        STRING
+        PROPERTIES
+          Name                #InventLocationId
+          Table               #McaCutlist
+          IgnoreEDTRelation   #Yes
+          Origin              #{E6A175C4-0353-49AF-8C07-BF9155AAFAF0}
+          ExtendedDataType    #InventLocationId
+        ENDPROPERTIES
+        
+      FIELD #InventSiteId
+        STRING
+        PROPERTIES
+          Name                #InventSiteId
+          Table               #McaCutlist
+          IgnoreEDTRelation   #Yes
+          Origin              #{43DC5111-3B93-4B36-A44B-2BD5ED583E4C}
+          ExtendedDataType    #InventSiteId
+        ENDPROPERTIES
+        
+      FIELD #IsCutlistProcessed
+        ENUM
+        PROPERTIES
+          Name                #IsCutlistProcessed
+          Table               #McaCutlist
+          Origin              #{9A88270C-0868-4878-9968-3BF8FDFDA312}
+          ExtendedDataType    #McaIsCutlistProcessed
+          EnumType            #NoYes
+        ENDPROPERTIES
+        
+      FIELD #ItemId
+        STRING
+        PROPERTIES
+          Name                #ItemId
+          Table               #McaCutlist
+          IgnoreEDTRelation   #Yes
+          Origin              #{F31CB2E7-21BD-437C-AA3B-CE5F9CF9EC28}
+          ExtendedDataType    #McaRawMaterialItemId
+          StringSize          #40
+        ENDPROPERTIES
+        
+      FIELD #KanbanId
+        STRING
+        PROPERTIES
+          Name                #KanbanId
+          Table               #McaCutlist
+          Origin              #{F8C05E3F-1E08-46E0-9B06-9C37FD45A153}
+          ExtendedDataType    #KanbanId
+          StringSize          #20
+        ENDPROPERTIES
+        
+      FIELD #KitQty
+        REAL
+        PROPERTIES
+          Name                #KitQty
+          Table               #McaCutlist
+          Origin              #{E78A9EDA-0C39-4746-9269-9B61462B1FCE}
+          ExtendedDataType    #BOMQty
+        ENDPROPERTIES
+        
+      FIELD #LabelIdNum
+        INT
+        PROPERTIES
+          Name                #LabelIdNum
+          Table               #McaCutlist
+          Origin              #{1A875B2D-E3BB-43D0-8422-D137F6F7B535}
+          ExtendedDataType    #LabelIdNum
+        ENDPROPERTIES
+        
+      FIELD #MachineFilename
+        STRING
+        PROPERTIES
+          Name                #MachineFilename
+          Table               #McaCutlist
+          Origin              #{CF03F81C-5624-41FB-9B12-971E97B105AD}
+          ExtendedDataType    #Filename
+          StringSize          #259
+        ENDPROPERTIES
+        
+      FIELD #ModelBOMId
+        STRING
+        PROPERTIES
+          Name                #ModelBOMId
+          Table               #McaCutlist
+          IgnoreEDTRelation   #Yes
+          Origin              #{D4993DE8-0E9F-4D8A-AC4F-33A8E4B31CAA}
+          ExtendedDataType    #BOMId
+          StringSize          #20
+        ENDPROPERTIES
+        
+      FIELD #ModelItemId
+        STRING
+        PROPERTIES
+          Name                #ModelItemId
+          Table               #McaCutlist
+          IgnoreEDTRelation   #Yes
+          Origin              #{B8B86B9C-FC5C-4D18-BF9C-4612689C6618}
+          ExtendedDataType    #McaModelItemId
+          StringSize          #40
+        ENDPROPERTIES
+        
+      FIELD #ModuleBOMId
+        STRING
+        PROPERTIES
+          Name                #ModuleBOMId
+          Label               #@MCA1887
+          Table               #McaCutlist
+          IgnoreEDTRelation   #Yes
+          Origin              #{813834C1-6D75-49E5-96DA-28359931081D}
+          ExtendedDataType    #BOMId
+          StringSize          #20
+        ENDPROPERTIES
+        
+      FIELD #ModuleItemId
+        STRING
+        PROPERTIES
+          Name                #ModuleItemId
+          Label               #@SYS9941
+          Table               #McaCutlist
+          IgnoreEDTRelation   #Yes
+          Origin              #{E642D1B4-89B8-42B8-AEBC-808D612FD3C2}
+          ExtendedDataType    #ItemId
+          StringSize          #40
+        ENDPROPERTIES
+        
+      FIELD #MoveToAreaId
+        STRING
+        PROPERTIES
+          Name                #MoveToAreaId
+          Table               #McaCutlist
+          Origin              #{74DF001F-9802-4B55-BD30-7DB5B999AF03}
+          ExtendedDataType    #McaMoveToAreaId
+        ENDPROPERTIES
+        
+      FIELD #MoveToLocation
+        STRING
+        PROPERTIES
+          Name                #MoveToLocation
+          Table               #McaCutlist
+          IgnoreEDTRelation   #Yes
+          Origin              #{2A1F0CB0-F748-4D7D-9084-F67D46232D36}
+          ExtendedDataType    #McaMoveToLocation
+        ENDPROPERTIES
+        
+      FIELD #Notes
+        STRING
+        PROPERTIES
+          Name                #Notes
+          HelpText            #@SYS22561
+          Table               #McaCutlist
+          Origin              #{C21C4B1A-753C-44DA-82BD-C332DB2F4748}
+          ExtendedDataType    #NotesLine
+          StringSize          #254
+        ENDPROPERTIES
+        
+      FIELD #Pattern
+        STRING
+        PROPERTIES
+          Name                #Pattern
+          Table               #McaCutlist
+          Origin              #{889470A0-8821-4CCF-96FF-9C8298C92A2F}
+          ExtendedDataType    #McaPattern
+          StringSize          #8
+        ENDPROPERTIES
+        
+      FIELD #Pieces
+        INT
+        PROPERTIES
+          Name                #Pieces
+          Table               #McaCutlist
+          Origin              #{1EA6A0AE-8180-4E7A-9982-CA1D30185B61}
+          ExtendedDataType    #McaPieces
+        ENDPROPERTIES
+        
+      FIELD #Prefix
+        STRING
+        PROPERTIES
+          Name                #Prefix
+          Table               #McaCutlist
+          Origin              #{9356D854-531E-42E7-85D1-545BE8051A68}
+          ExtendedDataType    #McaPrefix
+        ENDPROPERTIES
+        
+      FIELD #PWSBuildScheduleId
+        STRING
+        PROPERTIES
+          Name                #PWSBuildScheduleId
+          Table               #McaCutlist
+          Origin              #{E54DC077-51A5-422A-BB51-C5405AB786E2}
+          ExtendedDataType    #PWSBuildScheduleId
+          StringSize          #20
+        ENDPROPERTIES
+        
+      FIELD #Qty
+        REAL
+        PROPERTIES
+          Name                #Qty
+          Table               #McaCutlist
+          Origin              #{36A8302A-26BE-43AF-9F33-D76665E5B59A}
+          ExtendedDataType    #BOMQty
+        ENDPROPERTIES
+        
+      FIELD #SalesLineRefRecId
+        INT64
+        PROPERTIES
+          Name                #SalesLineRefRecId
+          Table               #McaCutlist
+          IgnoreEDTRelation   #Yes
+          Origin              #{7E21A054-31E6-4A31-A7B0-48090C849D1B}
+          ExtendedDataType    #SalesLineRefRecId
+        ENDPROPERTIES
+        
+      FIELD #ShipToWarehouse
+        STRING
+        PROPERTIES
+          Name                #ShipToWarehouse
+          Table               #McaCutlist
+          IgnoreEDTRelation   #Yes
+          Origin              #{6F93A2E2-39D9-40F5-B5B6-902679532D90}
+          ExtendedDataType    #McaShipToWarehouse
+        ENDPROPERTIES
+        
+      FIELD #UnitId
+        STRING
+        PROPERTIES
+          Name                #UnitId
+          Table               #McaCutlist
+          Origin              #{5DF03456-B2E3-45BA-8148-BA4A2CFC20B9}
+          ExtendedDataType    #UnitOfMeasureSymbol
+        ENDPROPERTIES
+        
+      FIELD #Usage
+        REAL
+        PROPERTIES
+          Name                #Usage
+          Table               #McaCutlist
+          Origin              #{D12917E4-BDE4-4AB2-9894-07293C990270}
+          ExtendedDataType    #McaUsage
+        ENDPROPERTIES
+        
+      FIELD #UsageType
+        ENUM
+        PROPERTIES
+          Name                #UsageType
+          Table               #McaCutlist
+          Origin              #{EEF7EB40-A544-48CC-BF04-294B5F7277B0}
+          EnumType            #McaUsageType
+        ENDPROPERTIES
+        
+      FIELD #Width
+        REAL
+        PROPERTIES
+          Name                #Width
+          Table               #McaCutlist
+          Origin              #{20B32838-6093-47A2-A87D-73762A6306E1}
+          ExtendedDataType    #BOMMeasureWidth
+        ENDPROPERTIES
+        
+      FIELD #WMSLocationId
+        STRING
+        PROPERTIES
+          Name                #WMSLocationId
+          Table               #McaCutlist
+          Origin              #{855356D3-A82E-45D8-B0F8-F2E876A1F16A}
+          ExtendedDataType    #WMSLocationId
+        ENDPROPERTIES
+        
+      FIELD #WrkCtrId
+        STRING
+        PROPERTIES
+          Name                #WrkCtrId
+          Table               #McaCutlist
+          Origin              #{9BDA3B47-D094-4D46-9D6D-D15BDEDFDF53}
+          ExtendedDataType    #WrkCtrId
+        ENDPROPERTIES
+        
+    ENDFIELDS
+    GROUPS
+      GROUP #AutoReport
+        PROPERTIES
+          Name                #AutoReport
+        ENDPROPERTIES
+        
+        GROUPFIELDS
+          #KanbanId
+          #DueDateTime
+          #ItemId
+          #Qty
+          #InventSiteId
+          #InventLocationId
+          #WMSLocationId
+          #WrkCtrId
+          #Height
+          #Width
+          #Depth
+        ENDGROUPFIELDS
+      ENDGROUP
+      GROUP #Component
+        PROPERTIES
+          Name                #Component
+          Label               #@SYS129746
+        ENDPROPERTIES
+        
+        GROUPFIELDS
+          #ComponentItemId
+        ENDGROUPFIELDS
+      ENDGROUP
+      GROUP #Grid
+        PROPERTIES
+          Name                #Grid
+          Label               #@SYS26263
+        ENDPROPERTIES
+        
+        GROUPFIELDS
+          #BluePrint
+          #ComponentBOMId
+          #ComponentItemId
+          #CutGroupId
+          #Depth
+          #DueDateTime
+          #Height
+          #InventLocationId
+          #InventSiteId
+          #IsCutlistProcessed
+          #ItemId
+          #KanbanId
+          #KitQty
+          #ModelBOMId
+          #ModelItemId
+          #MoveToLocation
+          #Notes
+          #Pattern
+          #Pieces
+          #Prefix
+          #PWSBuildScheduleId
+          #Qty
+          #SalesLineRefRecId
+          #ShipToWarehouse
+          #UnitId
+          #Usage
+          #Width
+          #WMSLocationId
+          #WrkCtrId
+          #MoveToAreaId
+        ENDGROUPFIELDS
+      ENDGROUP
+      GROUP #InventoryDimensions
+        PROPERTIES
+          Name                #InventoryDimensions
+          Label               #@SYS53627
+        ENDPROPERTIES
+        
+        GROUPFIELDS
+          #InventSiteId
+          #InventLocationId
+          #WMSLocationId
+        ENDGROUPFIELDS
+      ENDGROUP
+      GROUP #Item
+        PROPERTIES
+          Name                #Item
+          Label               #@SYS332340
+        ENDPROPERTIES
+        
+        GROUPFIELDS
+          #ItemId
+          #Qty
+          #UnitId
+          #InventSiteId
+          #Depth
+          #Width
+          #Pieces
+          #Usage
+          #WrkCtrId
+          #Notes
+          #Pattern
+          #MoveToAreaId
+        ENDGROUPFIELDS
+      ENDGROUP
+      GROUP #Kanban
+        PROPERTIES
+          Name                #Kanban
+          Label               #@SYS131576
+        ENDPROPERTIES
+        
+        GROUPFIELDS
+          #KanbanId
+          #ModelItemId
+          #DueDateTime
+          #Prefix
+          #ModelBOMId
+        ENDGROUPFIELDS
+      ENDGROUP
+      GROUP #Machine
+        PROPERTIES
+          Name                #Machine
+          Label               #@SYS16276
+        ENDPROPERTIES
+        
+        GROUPFIELDS
+          #WrkCtrId
+        ENDGROUPFIELDS
+      ENDGROUP
+      GROUP #Measurements
+        PROPERTIES
+          Name                #Measurements
+          Label               #@SYS65050
+        ENDPROPERTIES
+        
+        GROUPFIELDS
+          #Height
+          #Width
+          #Depth
+          #Pieces
+        ENDGROUPFIELDS
+      ENDGROUP
+      GROUP #Misc
+        PROPERTIES
+          Name                #Misc
+          Label               #@SYS80069
+        ENDPROPERTIES
+        
+        GROUPFIELDS
+          #Height
+          #InventLocationId
+          #MachineFilename
+          #CutModuleId
+          #UsageType
+        ENDGROUPFIELDS
+      ENDGROUP
+      GROUP #Module
+        PROPERTIES
+          Name                #Module
+          Label               #@SYS9941
+        ENDPROPERTIES
+        
+        GROUPFIELDS
+          #ComponentBOMId
+          #ModuleItemId
+          #ModuleBOMId
+          #KitQty
+          #BluePrint
+          #ShipToWarehouse
+          #CutGroupId
+        ENDGROUPFIELDS
+      ENDGROUP
+      GROUP #Processed
+        PROPERTIES
+          Name                #Processed
+          Label               #@SYS4081649
+        ENDPROPERTIES
+        
+        GROUPFIELDS
+          #IsCutlistProcessed
+        ENDGROUPFIELDS
+      ENDGROUP
+      GROUP #PWS
+        PROPERTIES
+          Name                #PWS
+          Label               #@MCA1892
+        ENDPROPERTIES
+        
+        GROUPFIELDS
+          #PWSBuildScheduleId
+          #DateOnLine
+          #DateOffLine
+          #createdDateTime
+          #createdBy
+        ENDGROUPFIELDS
+      ENDGROUP
+      GROUP #ShipTo
+        PROPERTIES
+          Name                #ShipTo
+          Label               #@SYS50712
+        ENDPROPERTIES
+        
+        GROUPFIELDS
+          #ShipToWarehouse
+          #MoveToLocation
+          #MoveToAreaId
+        ENDGROUPFIELDS
+      ENDGROUP
+      GROUP #WMSLocation
+        PROPERTIES
+          Name                #WMSLocation
+          Label               #@SYS152623
+        ENDPROPERTIES
+        
+        GROUPFIELDS
+          #WMSLocationId
+        ENDGROUPFIELDS
+      ENDGROUP
+    ENDGROUPS
+    
+    INDICES
+      #Prefix
+      PROPERTIES
+        Name                #Prefix
+        Origin              #{9ACC5436-15A7-4E5B-BB9C-901BFC6D0485}
+      ENDPROPERTIES
+      
+      INDEXFIELDS
+        #Prefix
+      ENDINDEXFIELDS
+      
+      #Model
+      PROPERTIES
+        Name                #Model
+        Origin              #{580ED49F-B6BA-489A-8FE7-8C611CEB9006}
+      ENDPROPERTIES
+      
+      INDEXFIELDS
+        #ModelItemId
+      ENDINDEXFIELDS
+      
+      #BuildScheduleIdx
+      PROPERTIES
+        Name                #BuildScheduleIdx
+        Origin              #{EEE71142-73C8-46AB-8A3D-83B71583B08B}
+      ENDPROPERTIES
+      
+      INDEXFIELDS
+        #PWSBuildScheduleId
+      ENDINDEXFIELDS
+      
+      #CutModuleIdx
+      PROPERTIES
+        Name                #CutModuleIdx
+        Origin              #{FCBEA9ED-5BEF-48B3-A62D-77F4C15E162A}
+      ENDPROPERTIES
+      
+      INDEXFIELDS
+        #CutModuleId
+      ENDINDEXFIELDS
+      
+    ENDINDICES
+    FULLTEXTINDICES
+    ENDFULLTEXTINDICES
+    REFERENCES
+      REFERENCE #ComponentBOMTable
+        PROPERTIES
+          Name                #ComponentBOMTable
+          Table               #BOMTable
+          RelatedTableCardinality   #ZeroOne
+          Cardinality         #ZeroMore
+          RelationshipType    #Association
+          UseDefaultRoleNames #Yes
+          RelatedTableRole    #ComponentBOMTable
+        ENDPROPERTIES
+        
+        FIELDREFERENCES
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #ComponentBOMId
+            RelatedField        #BOMId
+          ENDPROPERTIES
+          
+        ENDFIELDREFERENCES
+      ENDREFERENCE
+      REFERENCE #ComponentItem
+        PROPERTIES
+          Name                #ComponentItem
+          Table               #InventTable
+          RelatedTableCardinality   #ZeroOne
+          Cardinality         #ZeroMore
+          RelationshipType    #Association
+          UseDefaultRoleNames #Yes
+          RelatedTableRole    #ComponentItem
+        ENDPROPERTIES
+        
+        FIELDREFERENCES
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #ComponentItemId
+            RelatedField        #ItemId
+          ENDPROPERTIES
+          
+        ENDFIELDREFERENCES
+      ENDREFERENCE
+      REFERENCE #InventLocation
+        PROPERTIES
+          Name                #InventLocation
+          Table               #InventLocation
+          RelatedTableCardinality   #ZeroOne
+          Cardinality         #ZeroMore
+          RelationshipType    #Association
+          UseDefaultRoleNames #Yes
+        ENDPROPERTIES
+        
+        FIELDREFERENCES
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #InventLocationId
+            RelatedField        #InventLocationId
+          ENDPROPERTIES
+          
+        ENDFIELDREFERENCES
+      ENDREFERENCE
+      REFERENCE #InventSite
+        PROPERTIES
+          Name                #InventSite
+          Table               #InventSite
+          RelatedTableCardinality   #ZeroOne
+          Cardinality         #ZeroMore
+          RelationshipType    #Association
+          UseDefaultRoleNames #Yes
+        ENDPROPERTIES
+        
+        FIELDREFERENCES
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #InventSiteId
+            RelatedField        #SiteId
+          ENDPROPERTIES
+          
+        ENDFIELDREFERENCES
+      ENDREFERENCE
+      REFERENCE #InventTable
+        PROPERTIES
+          Name                #InventTable
+          Table               #InventTable
+          RelatedTableCardinality   #ZeroOne
+          Cardinality         #ZeroMore
+          RelationshipType    #Association
+          UseDefaultRoleNames #Yes
+        ENDPROPERTIES
+        
+        FIELDREFERENCES
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #ItemId
+            RelatedField        #ItemId
+          ENDPROPERTIES
+          
+        ENDFIELDREFERENCES
+      ENDREFERENCE
+      REFERENCE #Kanban
+        PROPERTIES
+          Name                #Kanban
+          Table               #Kanban
+          RelatedTableCardinality   #ZeroOne
+          Cardinality         #ZeroMore
+          RelationshipType    #Association
+          UseDefaultRoleNames #Yes
+        ENDPROPERTIES
+        
+        FIELDREFERENCES
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #KanbanId
+            RelatedField        #KanbanId
+          ENDPROPERTIES
+          
+        ENDFIELDREFERENCES
+      ENDREFERENCE
+      REFERENCE #McaCutlistCutGroup
+        PROPERTIES
+          Name                #McaCutlistCutGroup
+          Table               #McaCutlistCutGroup
+          RelatedTableCardinality   #ZeroOne
+          Cardinality         #ZeroMore
+          RelationshipType    #Association
+          UseDefaultRoleNames #Yes
+        ENDPROPERTIES
+        
+        FIELDREFERENCES
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #CutGroupId
+            RelatedField        #CutGroupId
+          ENDPROPERTIES
+          
+        ENDFIELDREFERENCES
+      ENDREFERENCE
+      REFERENCE #McaCutlistMoveToAreas
+        PROPERTIES
+          Name                #McaCutlistMoveToAreas
+          Table               #McaCutlistMoveToAreas
+          RelatedTableCardinality   #ZeroOne
+          Cardinality         #ZeroMore
+          RelationshipType    #Association
+          UseDefaultRoleNames #Yes
+        ENDPROPERTIES
+        
+        FIELDREFERENCES
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #MoveToAreaId
+            RelatedField        #MoveToAreaId
+          ENDPROPERTIES
+          
+        ENDFIELDREFERENCES
+      ENDREFERENCE
+      REFERENCE #ModelBOMTable
+        PROPERTIES
+          Name                #ModelBOMTable
+          Table               #BOMTable
+          RelatedTableCardinality   #ZeroOne
+          Cardinality         #ZeroMore
+          RelationshipType    #Association
+          UseDefaultRoleNames #Yes
+          RelatedTableRole    #ModelBOMTable
+        ENDPROPERTIES
+        
+        FIELDREFERENCES
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #ModelBOMId
+            RelatedField        #BOMId
+          ENDPROPERTIES
+          
+        ENDFIELDREFERENCES
+      ENDREFERENCE
+      REFERENCE #ModelItem
+        PROPERTIES
+          Name                #ModelItem
+          Table               #InventTable
+          RelatedTableCardinality   #ZeroOne
+          Cardinality         #ZeroMore
+          RelationshipType    #Association
+          UseDefaultRoleNames #Yes
+          RelatedTableRole    #ModelItem
+        ENDPROPERTIES
+        
+        FIELDREFERENCES
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #ModelItemId
+            RelatedField        #ItemId
+          ENDPROPERTIES
+          
+        ENDFIELDREFERENCES
+      ENDREFERENCE
+      REFERENCE #ModuleBOMTable
+        PROPERTIES
+          Name                #ModuleBOMTable
+          Table               #BOMTable
+          RelatedTableCardinality   #ZeroOne
+          Cardinality         #ZeroMore
+          RelationshipType    #Association
+          UseDefaultRoleNames #Yes
+          RelatedTableRole    #ModuleBOMTable
+        ENDPROPERTIES
+        
+        FIELDREFERENCES
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #ModuleBOMId
+            RelatedField        #BOMId
+          ENDPROPERTIES
+          
+        ENDFIELDREFERENCES
+      ENDREFERENCE
+      REFERENCE #ModuleInventTable
+        PROPERTIES
+          Name                #ModuleInventTable
+          Table               #InventTable
+          RelatedTableCardinality   #ZeroOne
+          Cardinality         #ZeroMore
+          RelationshipType    #Association
+          UseDefaultRoleNames #Yes
+          RelatedTableRole    #ModuleInventTable
+        ENDPROPERTIES
+        
+        FIELDREFERENCES
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #ModuleItemId
+            RelatedField        #ItemId
+          ENDPROPERTIES
+          
+        ENDFIELDREFERENCES
+      ENDREFERENCE
+      REFERENCE #MoveToLocation
+        PROPERTIES
+          Name                #MoveToLocation
+          Table               #WMSLocation
+          RelatedTableCardinality   #ZeroOne
+          Cardinality         #ZeroMore
+          RelationshipType    #Association
+          UseDefaultRoleNames #Yes
+          RelatedTableRole    #MoveToLocation
+        ENDPROPERTIES
+        
+        FIELDREFERENCES
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #MoveToLocation
+            RelatedField        #wMSLocationId
+          ENDPROPERTIES
+          
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #ShipToWarehouse
+            RelatedField        #inventLocationId
+          ENDPROPERTIES
+          
+        ENDFIELDREFERENCES
+      ENDREFERENCE
+      REFERENCE #PWSBuildSchedule
+        PROPERTIES
+          Name                #PWSBuildSchedule
+          Table               #PWSBuildSchedule
+          RelatedTableCardinality   #ZeroOne
+          Cardinality         #ZeroMore
+          RelationshipType    #Association
+          UseDefaultRoleNames #Yes
+        ENDPROPERTIES
+        
+        FIELDREFERENCES
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #PWSBuildScheduleId
+            RelatedField        #BuildSchedule
+          ENDPROPERTIES
+          
+        ENDFIELDREFERENCES
+      ENDREFERENCE
+      REFERENCE #SalesLine
+        PROPERTIES
+          Name                #SalesLine
+          Table               #SalesLine
+          RelatedTableCardinality   #ZeroOne
+          Cardinality         #ExactlyOne
+          RelationshipType    #Association
+          UseDefaultRoleNames #Yes
+        ENDPROPERTIES
+        
+        FIELDREFERENCES
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #SalesLineRefRecId
+            RelatedField        #RecId
+          ENDPROPERTIES
+          
+        ENDFIELDREFERENCES
+      ENDREFERENCE
+      REFERENCE #ShipToWarehouse
+        PROPERTIES
+          Name                #ShipToWarehouse
+          Table               #InventLocation
+          RelatedTableCardinality   #ZeroOne
+          Cardinality         #ZeroMore
+          RelationshipType    #Association
+          UseDefaultRoleNames #Yes
+          RelatedTableRole    #ShipToWarehouse
+        ENDPROPERTIES
+        
+        FIELDREFERENCES
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #ShipToWarehouse
+            RelatedField        #InventLocationId
+          ENDPROPERTIES
+          
+        ENDFIELDREFERENCES
+      ENDREFERENCE
+      REFERENCE #UnitOfMeasure
+        PROPERTIES
+          Name                #UnitOfMeasure
+          Table               #UnitOfMeasure
+          RelatedTableCardinality   #ExactlyOne
+          Cardinality         #ZeroMore
+          RelationshipType    #Association
+          UseDefaultRoleNames #Yes
+          RelatedTableRole    #Unit
+        ENDPROPERTIES
+        
+        FIELDREFERENCES
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #UnitId
+            RelatedField        #Symbol
+          ENDPROPERTIES
+          
+        ENDFIELDREFERENCES
+      ENDREFERENCE
+      REFERENCE #WMSLocation
+        PROPERTIES
+          Name                #WMSLocation
+          Table               #WMSLocation
+          EntityRelationshipRole  #@SYS14719
+          RelatedTableCardinality   #ZeroOne
+          Cardinality         #ZeroMore
+          RelationshipType    #Association
+          UseDefaultRoleNames #Yes
+        ENDPROPERTIES
+        
+        FIELDREFERENCES
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #WMSLocationId
+            RelatedField        #wMSLocationId
+          ENDPROPERTIES
+          
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #InventLocationId
+            RelatedField        #inventLocationId
+          ENDPROPERTIES
+          
+        ENDFIELDREFERENCES
+      ENDREFERENCE
+      REFERENCE #WrkCtrTable
+        PROPERTIES
+          Name                #WrkCtrTable
+          Table               #WrkCtrTable
+          RelatedTableCardinality   #ZeroOne
+          Cardinality         #ZeroMore
+          RelationshipType    #Association
+          UseDefaultRoleNames #Yes
+        ENDPROPERTIES
+        
+        FIELDREFERENCES
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #WrkCtrId
+            RelatedField        #WrkCtrId
+          ENDPROPERTIES
+          
+          REFERENCETYPE EXTERNFIXED
+          PROPERTIES
+            Value               #1
+            Table               #WrkCtrTable
+            RelatedField        #IsIndividualResource
+          ENDPROPERTIES
+          
+        ENDFIELDREFERENCES
+      ENDREFERENCE
+    ENDREFERENCES
+    
+    DELETEACTIONS
+    ENDDELETEACTIONS
+    
+    METHODS
+      SOURCE #buildPrefix
+        #/// <summary>
+        #///     Display method for BuildPrefix
+        #/// </summary>
+        #/// <returns>
+        #///     a <c>McaBuildPrefix</c>
+        #/// </returns>
+        #/// <remarks>
+        #///      Ray Michalski - 11/22/2017 - Mca_PWSIntegration
+        #/// </remarks>
+        #// BP deviation documented
+        #display public McaBuildPrefix buildPrefix()
+        #{
+        #    return int2str(str2int(strKeep(this.PWSBuildScheduleId, '0123456789'))) + '-' + this.Prefix;
+        #}
+      ENDSOURCE
+      SOURCE #usageCalc
+        #/// <summary>
+        #///     Calculate the usage of materials.
+        #/// </summary>
+        #/// <returns>
+        #///     a <c>McaUsage</c> type
+        #/// </returns>
+        #/// <remarks>
+        #///     Ray M. - 05/27/2018 - Mca_CR009_CutlistEnhancements
+        #/// </remarks>
+        #public display McaUsage usageCalc()
+        #{
+        #    McaUsage        usage = 0.0;
+        #    McaUsageType    usageType = this.UsageType;
+        #
+        #    switch (usageType)
+        #    {
+        #        case McaUsageType::Linear:
+        #            usage = this.Depth * this.Pieces;
+        #            break;
+        #        case McaUsageType::Sheet:
+        #            usage = this.Depth * this.Width * this.Pieces;
+        #            break;
+        #        default:
+        #            break;
+        #    }
+        #
+        #    if (usage)
+        #    {
+        #        usage = InventTableModule::unitConvert(this.ItemId, ModuleInventPurchSales::Invent, 'IN', usage);
+        #    }
+        #
+        #    return usage;
+        #}
+        #
+      ENDSOURCE
+      SOURCE #usageCalcRounding
+        #/// <summary>
+        #///     Calculate the usage of materials without rounding.
+        #/// </summary>
+        #/// <returns>
+        #///     a <c>McaUsage</c> type
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #// Ray M - 06/04/2019 - Mca_BUG86642_UsageQuantityCalc - start
+        #public display McaUsage usageCalcRounding()
+        #{
+        #    McaUsage                usage       = 0.0;
+        #    McaUsageType            usageType   = this.UsageType;
+        #    UnitOfMeasureSymbol     inventUnitId;
+        #    UnitOfMeasureSymbol     fromUnitId;     // Ray M - 01/30/2020 - Mca_BUG168587_CutlistConversions
+        #
+        #    if (usageType == McaUsageType::None)
+        #    {
+        #        usageType = InventTable::find(this.ItemId).McaUsageType;
+        #    }
+        #
+        #    switch (usageType)
+        #    {
+        #        case McaUsageType::Linear:
+        #            usage       = this.Depth * this.Pieces;
+        #            fromUnitId  = 'IN';     // Ray M - 01/30/2020 - Mca_BUG168587_CutlistConversions
+        #            break;
+        #        case McaUsageType::Sheet:
+        #            usage       = this.Depth * this.Width * this.Pieces;
+        #            fromUnitId  = 'SI';     // Ray M - 01/30/2020 - Mca_BUG168587_CutlistConversions
+        #            break;
+        #        default:
+        #            break;
+        #    }
+        #
+        #    if (usage)
+        #    {
+        #        inventUnitId    = InventTableModule::find(this.ItemId, ModuleInventPurchSales::Invent).UnitId;
+        #        // Ray M - 01/30/2020 - Mca_BUG168587_CutlistConversions - start
+        #        //usage           = BOM::unitConvert(this.ItemId, 'IN', inventUnitId, inventUnitId, usage, true);
+        #        usage           = BOM::unitConvert(this.ItemId, fromUnitId, inventUnitId, inventUnitId, usage, true);
+        #        // Ray M - 01/30/2020 - Mca_BUG168587_CutlistConversions - end
+        #    }
+        #
+        #    return usage;
+        #}
+        #
+      ENDSOURCE
+      SOURCE #activeRawMaterial
+        #/// <summary>
+        #///     Finds the active raw material from the bom if the item is a phantom
+        #/// </summary>
+        #/// <param name="_phantom">
+        #///     a <c>McaRawMaterialItemId</c> parameter
+        #/// </param>
+        #/// <param name="_siteId">
+        #///     a <c>InventSiteId</c> parameter
+        #/// </param>
+        #/// <param name="_onlineDate">
+        #///     a <c>TransDate</c> parameter
+        #/// </param>
+        #/// <returns>
+        #///     ItemId or Bom.ItemId if the item is a phantom
+        #/// </returns>
+        #/// <remarks>
+        #///     Ray M. - 1/24/2018 - Mca_CR009_BUG67640
+        #/// </remarks>
+        #public static ItemId activeRawMaterial(
+        #    McaRawMaterialItemId    _phantom,
+        #    InventSiteId            _siteId,
+        #    TransDate               _onlineDate)
+        #{
+        #    BOM         bom;
+        #    BOMVersion  bomVersion;
+        #    ItemId      itemId = _phantom;
+        #    InventDim   inventDim;
+        #    InventTable inventTable = InventTable::find(_phantom);
+        #
+        #    if (inventTable.Phantom)
+        #    {
+        #        inventDim.InventSiteId = _siteId;
+        #        bomVersion = BOMVersion::findActive(inventTable.ItemId, _onlineDate, 1, inventDim);
+        #
+        #        select firstOnly ItemId from bom
+        #            where bom.BOMId     == bomVersion.BOMId
+        #               && bom.FromDate  <= _onlineDate
+        #               && (bom.ToDate   >= _onlineDate || !bom.ToDate);
+        #
+        #        if (bom)
+        #        {
+        #            itemId = bom.ItemId;
+        #        }
+        #    }
+        #
+        #    return itemId;
+        #}
+      ENDSOURCE
+      SOURCE #findBomLineMoveToArea
+        #/// <summary>
+        #///     Finds the BOM line Move To Area
+        #/// </summary>
+        #/// <param name="_itemId">
+        #///     a <c>McaComponentItemId</c> parameter
+        #/// </param>
+        #/// <param name="_bomId">
+        #///     a <c>BOMId</c> parameter
+        #/// </param>
+        #/// <param name="_onlineDate">
+        #///     a <c>TransDate</c> parameter
+        #/// </param>
+        #/// <returns>
+        #///     bom.McaMoveToAreaId
+        #/// </returns>
+        #/// <remarks>
+        #///     Ray M. - 03/27/2018 - Mca_CR009_Enhancements
+        #/// </remarks>
+        #public static McaMoveToAreaId findBomLineMoveToArea(
+        #    McaComponentItemId      _itemId,
+        #    BOMId                   _bomId,
+        #    TransDate               _onlineDate)
+        #{
+        #    BOM bom;
+        #
+        #    select firstOnly McaMoveToAreaId from bom
+        #        where bom.BOMId     == _bomId
+        #           && bom.ItemId    == _itemId
+        #           && bom.FromDate  <= _onlineDate
+        #           && (bom.ToDate   >= _onlineDate || !bom.ToDate);
+        #
+        #    return bom.McaMoveToAreaId;
+        #}
+      ENDSOURCE
+      SOURCE #findMoveToArea
+        #/// <summary>
+        #///     Finds the BOM line Move To Area
+        #/// </summary>
+        #/// <param name="_primaryBomRefRecId">
+        #///     a <c>BOMRefRecId</c> parameter
+        #/// </param>
+        #/// <param name="_moduleItemId">
+        #///     a <c>ItemId</c> parameter
+        #/// </param>
+        #/// <param name="_parentBomId">
+        #///     a <c>BOMId</c> parameter
+        #/// </param>
+        #/// <param name="_onlineDate">
+        #///     a <c>TransDate</c> parameter
+        #/// </param>
+        #/// <returns>
+        #///     bom.McaMoveToAreaId
+        #/// </returns>
+        #/// <remarks>
+        #///     Ray M. - 05/27/2018 - Mca_CR009_CutlistEnhancements
+        #/// </remarks>
+        #public static McaMoveToAreaId findMoveToArea(
+        #    BOMRefRecId             _primaryBomRefRecId,
+        #    ItemId                  _moduleItemId,
+        #    BOMId                   _parentBomId,
+        #    TransDate               _onlineDate)
+        #{
+        #    BOM                         bom, parentBOM;
+        #    InventDim                   parentInventDim;
+        #    McaCutlistSecMoveToAreas    moveTo;
+        #
+        #    select firstonly BOMId, InventDimId from parentBOM
+        #        join InventSiteId from parentInventDim
+        #            where parentInventDim.inventDimId == parentBOM.InventDimId
+        #               && parentBOM.BOMId == _parentBomId;
+        #
+        #    moveTo = McaCutlistSecMoveToAreas::find(_primaryBomRefRecId, parentInventDim.InventSiteId);
+        #
+        #    if (!moveTo)
+        #    {
+        #        select firstOnly RecId, InventDimId from bom
+        #            where bom.BOMId     == _parentBomId
+        #               && bom.ItemId    == _moduleItemId
+        #               && bom.FromDate  <= _onlineDate
+        #               && (bom.ToDate   >= _onlineDate || !bom.ToDate);
+        #
+        #        moveTo = McaCutlistSecMoveToAreas::find(bom.RecId, bom.inventDim().InventSiteId);
+        #    }
+        #
+        #    return moveTo.MoveToAreaId;
+        #}
+      ENDSOURCE
+      SOURCE #findRecId
+        #/// <summary>
+        #///     Find method
+        #/// </summary>
+        #/// <param name="_recId">
+        #///     a <c>recId</c> parameter
+        #/// </param>
+        #/// <param name="_update">
+        #///     a <c>boolean</c> parameter
+        #/// </param>
+        #/// <returns>
+        #///     a <c>McaCutlist</c> record, if exists.
+        #/// </returns>
+        #/// <remarks>
+        #///      mca - Ray Michalski - 07/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #public static McaCutlist findRecId(
+        #    recId       _recId,
+        #    boolean     _update = false
+        #    )
+        #{
+        #    McaCutlist cutlist;
+        #
+        #    if (_recId)
+        #    {
+        #        cutlist.selectForUpdate(_update);
+        #
+        #        select cutlist
+        #            where cutlist.RecId == _recId;
+        #    }
+        #
+        #    return cutlist;
+        #}
+      ENDSOURCE
+      SOURCE #getCutGroupId
+        #public static McaCutGroupId getCutGroupId(ItemId _itemId, InventSiteId _inventSiteId)
+        #{
+        #    InventDim       inventDim;
+        #    McaCutGroupId   cutGroupId;
+        #
+        #    inventDim.InventSiteId = _inventSiteId;
+        #    inventDim = InventDim::findOrCreate(inventDim);
+        #
+        #    cutGroupId = InventItemPurchSetup::find(_itemId, inventDim.inventDimId).McaCutGroupId;
+        #    if (!cutGroupId)
+        #    {
+        #        cutGroupId = InventItemPurchSetup::findDefault(_itemId).McaCutGroupId;
+        #    }
+        #
+        #    return cutGroupId;
+        #}
+      ENDSOURCE
+      SOURCE #getCutGroups
+        #public static String30 getCutGroups(QueryRun _qr)
+        #{
+        #    Query                       query;
+        #    QueryBuildDataSource        qbds;
+        #    McaCutlist                  cutlist;
+        #    String30                    cutGroups;
+        #
+        #    query = _qr.query();
+        #    qbds  = query.dataSourceTable(tableNum(McaCutlist));
+        #
+        #    // add the grouping
+        #    SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, CutGroupId));
+        #    //SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, Prefix));
+        #
+        #    while (_qr.next())
+        #    {
+        #        cutlist = _qr.get(tablenum(McaCutlist));
+        #
+        #        cutGroups   += cutlist.CutGroupId;
+        #        cutGroups   += ' ';
+        #    }
+        #
+        #    return cutGroups;
+        #}
+      ENDSOURCE
+      SOURCE #getModelPrefixes
+        #public static container getModelPrefixes(QueryRun _qr)
+        #{
+        #    Query                       query;
+        #    QueryBuildDataSource        qbds;
+        #    McaCutlist                  cutlist;
+        #    str                         models, prefixes;
+        #
+        #    query = _qr.query();
+        #
+        #    qbds  = query.dataSourceTable(tableNum(McaCutlist));
+        #
+        #    // Mca Robert O'Berry 11 September 2020 Case 202006881 [SR89517] - Cut list/PNX - sorting and condensing of information begin
+        #    qbds.clearSortIndex();
+        #    qbds.sortClear();
+        #    // Mca Robert O'Berry 11 September 2020 Case 202006881 [SR89517] - Cut list/PNX - sorting and condensing of information end
+        #
+        #    // add the grouping
+        #    SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, ModelItemId));
+        #    SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, Prefix));
+        #
+        #    // Mca Robert O'Berry 11 September 2020 Case 202006881 [SR89517] - Cut list/PNX - sorting and condensing of information begin
+        #    qbds.addSortField(fieldNum(McaCutlist, Prefix));
+        #    qbds.addSortField(fieldNum(McaCutlist, ModelItemId));
+        #    // Mca Robert O'Berry 11 September 2020 Case 202006881 [SR89517] - Cut list/PNX - sorting and condensing of information end
+        #
+        #    while (_qr.next())
+        #    {
+        #        cutlist = _qr.get(tablenum(McaCutlist));
+        #
+        #        models   += cutlist.ModelItemId;
+        #        models   += ' ';
+        #        prefixes += cutlist.Prefix;
+        #        prefixes += '   ';
+        #    }
+        #
+        #    return [models, prefixes];
+        #}
+      ENDSOURCE
+      SOURCE #lookupMachineResource
+        #/// <summary>
+        #///     Lookup up the machine type resources.
+        #/// </summary>
+        #/// <param name="_ctrl">
+        #///     <c>FormStringControl</c> control
+        #/// </param>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #public client static void lookupMachineResource(
+        #    FormStringControl    _ctrl)
+        #{
+        #    SysTableLookup          sysTableLookup  = SysTableLookup::newParameters(tablenum(WrkCtrTable), _ctrl);
+        #    Query                   query           = new Query();
+        #    QueryBuildDataSource    qbds;
+        #
+        #    qbds = query.addDataSource(tablenum(WrkCtrTable));
+        #    qbds.addRange(fieldnum(WrkCtrTable, WrkCtrType)).value(strfmt('%1',enum2str(WrkCtrType::Machine)));
+        #
+        #    sysTableLookup.addLookupfield(fieldnum(WrkCtrTable, WrkCtrId));
+        #    sysTableLookup.addLookupfield(fieldnum(WrkCtrTable, Name));
+        #
+        #    sysTableLookup.parmQuery(query);
+        #    sysTableLookup.performFormLookup();
+        #}
+      ENDSOURCE
+      SOURCE #mcaLookupSecondaryLocation
+        #/// <summary>
+        #///     Lookup up a valid location.
+        #/// </summary>
+        #/// <param name="_ctrl">
+        #///     <c>FormStringControl</c> control
+        #/// </param>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #public client static void mcaLookupSecondaryLocation(
+        #    FormStringControl    _ctrl)
+        #{
+        #    SysTableLookup          sysTableLookup  = SysTableLookup::newParameters(tablenum(WMSLocation), _ctrl);
+        #    Query                   query           = new Query();
+        #    QueryBuildDataSource    qbds;
+        #
+        #    qbds = query.addDataSource(tablenum(WMSLocation));
+        #
+        #    sysTableLookup.addLookupfield(fieldnum(WMSLocation, wMSLocationId));
+        #    sysTableLookup.addLookupfield(fieldnum(WMSLocation, inventLocationId));
+        #
+        #    sysTableLookup.parmQuery(query);
+        #    sysTableLookup.performFormLookup();
+        #}
+      ENDSOURCE
+      SOURCE #real2FractionStr
+        #//BP Deviation Documented
+        #static str real2FractionStr(real _value)
+        #{
+        #    str  strValue;
+        #    int  denominator    = 64;
+        #    int  integer        = real2int(trunc(_value));
+        #    int  numerator      = real2int(((Abs(_value) - Abs(integer)) * denominator + 0.5));
+        #
+        #    while ((numerator mod 2 == 0) && (denominator mod 2 == 0))
+        #    {
+        #        numerator   = numerator / 2;
+        #        denominator = denominator /2;
+        #    }
+        #
+        #    if (denominator > 1)
+        #    {
+        #        if (integer != 0)
+        #        {
+        #            strValue = strfmt("%1 %2/%3", integer, numerator, denominator);
+        #        }
+        #        else if (_value < 0)
+        #        {
+        #            strValue = strFmt("-%1/%2", numerator, denominator);
+        #        }
+        #        else
+        #        {
+        #            strValue = strFmt("%1/%2", numerator, denominator);
+        #        }
+        #    }
+        #    else
+        #    {
+        #        if (integer > 0)
+        #        {
+        #            strValue = strFmt('%1', integer);
+        #        }
+        #    }
+        #
+        #    return strValue;
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDTABLE
+  
+
+***Element: END

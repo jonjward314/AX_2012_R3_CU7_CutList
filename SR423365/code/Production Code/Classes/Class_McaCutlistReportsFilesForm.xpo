@@ -1,0 +1,615 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: McaCutlistReportsFilesForm unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #McaCutlistReportsFilesForm
+    PROPERTIES
+      Name                #McaCutlistReportsFilesForm
+      Extends             #RunBaseBatch
+      Origin              #{DFFCD65C-3E3D-4D13-BB8C-03C9ECE2EE41}
+    ENDPROPERTIES
+    
+    METHODS
+      SOURCE #allowSaveLast
+        #public boolean allowSaveLast()
+        #{
+        #    boolean ret = false;
+        #
+        #    return ret;
+        #}
+      ENDSOURCE
+      SOURCE #canGoBatch
+        #/// <summary>
+        #///    Always returns true.
+        #/// </summary>
+        #/// <returns>
+        #///    true.
+        #/// </returns>
+        #/// <remarks>
+        #///    This method must be in this class because it is called from the <c>dialogRunbase</c> class.
+        #/// </remarks>
+        #public boolean canGoBatch()
+        #{
+        #    return false;
+        #}
+      ENDSOURCE
+      SOURCE #canGoBatchJournal
+        #protected boolean canGoBatchJournal()
+        #{
+        #    boolean ret = false;
+        #
+        #
+        #    return ret;
+        #}
+      ENDSOURCE
+      SOURCE #classDeclaration
+        #// This is a framework class. Customizing this class may cause problems with future upgrades to the software.
+        #class McaCutlistReportsFilesForm extends RunBaseBatch
+        #{
+        #    // Packed
+        #    TransDate       transDate;
+        #    CustAccount     custAccount;
+        #    McaPrintCoverSheetReport    printCoverSheet;
+        #    McaPrintSummaryReport       printSummary;
+        #    McaPrintDetailReport        printDetail;
+        #    McaCreateCutlistFiles       createCutlistFiles;
+        #    McaRegenCutlistFile         regenCutlistFile;
+        #    McaPrintMedium              printMediumType;
+        #    McaPackedQuery              packedQuery;
+        #    McaCutlistFileContract      contract;
+        #    Query                       cutListQuery;
+        #    boolean                     printLabels; // mca - Ray Michalski - 09/18/2018 - Mca_CR011_11_CounterTopLabels
+        #    boolean                     skipValidation; //Mca J_SR136452_UnscheduledCutList
+        #
+        #    SysQueryRun     queryrun;
+        #
+        #    DialogField     dlgtransDate;
+        #
+        #    #define.CurrentVersion(1)
+        #    #define.Version1(1)
+        #    #localmacro.CurrentList
+        #        transDate,
+        #        custAccount,
+        #        printCoverSheet,
+        #        printSummary,
+        #        printDetail,
+        #        createCutlistFiles,
+        #        regenCutlistFile,
+        #        printMediumType,
+        #        packedQuery,
+        #        printLabels // mca - Ray Michalski - 09/18/2018 - Mca_CR011_11_CounterTopLabels
+        #    #endmacro
+        #}
+      ENDSOURCE
+      SOURCE #dialog
+        #/// <summary>
+        #///    Returns a class that contains the methods that are described by the <c>RunBaseDialogable</c>
+        #///    interface.
+        #/// </summary>
+        #/// <returns>
+        #///    A class that contains the methods that are described by the <c>RunBaseDialogable</c> interface.
+        #/// </returns>
+        #/// <remarks>
+        #///    A dialog box can be either built by using the <c>Dialog</c> class or by using a class that is
+        #///    created in the Application Object Tree (AOT).
+        #/// </remarks>
+        #public Object dialog()
+        #{
+        #    DialogRunbase   dialog = Dialog::newFormnameRunbase(formstr(McaCutlistReportsFiles),this);
+        #;
+        #    dialog = this.dialogInternal(dialog);
+        #//
+        #    //dlgtransDate = dialog.addField(extendedTypeStr(TransDate));
+        #   // dlgtransDate.value(transDate);
+        #
+        #    return dialog;
+        #}
+      ENDSOURCE
+      SOURCE #dialogClear
+        #public void dialogClear()
+        #{
+        #    super();
+        #}
+      ENDSOURCE
+      SOURCE #getBuildScheduleIdFromQueryRun
+        #private PWSBuildScheduleId getBuildScheduleIdFromQueryRun(QueryRun _qr)
+        #{
+        #    Query                       query;
+        #    McaCutlist                  cutlist;
+        #    PWSBuildScheduleId          buildScheduleId;
+        #
+        #    query = _qr.query();
+        #
+        #    while (_qr.next())
+        #    {
+        #        cutlist = _qr.get(tablenum(McaCutlist));
+        #
+        #        buildScheduleId = cutlist.PWSBuildScheduleId;
+        #
+        #        if (buildScheduleId)
+        #            break;
+        #    }
+        #
+        #    return buildScheduleId;
+        #}
+      ENDSOURCE
+      SOURCE #getFromDialog
+        #public boolean getFromDialog()
+        #{
+        #    boolean ret;
+        #
+        #    ret = super();
+        #
+        #    //transDate = dlgtransDate.value();
+        #
+        #    // custAccount is handled via the edit method on the form
+        #
+        #    return ret;
+        #}
+      ENDSOURCE
+      SOURCE #getMcaCutGroupIdFromQueryRun
+        #private McaCutGroupId getMcaCutGroupIdFromQueryRun(QueryRun _qr)
+        #{
+        #    Query                       query;
+        #    McaCutlist                  cutlist;
+        #    McaCutGroupId          McaCutGroupId;
+        #
+        #    query = _qr.query();
+        #
+        #    while (_qr.next())
+        #    {
+        #        cutlist = _qr.get(tablenum(McaCutlist));
+        #
+        #        McaCutGroupId = cutlist.CutGroupId;
+        #
+        #        if (McaCutGroupId)
+        #            break;
+        #    }
+        #
+        #    return McaCutGroupId;
+        #}
+      ENDSOURCE
+      SOURCE #getMcaPrefixFromQueryRun
+        #private McaPrefix getMcaPrefixFromQueryRun(QueryRun _qr)
+        #{
+        #    Query                       query;
+        #    McaCutlist                  cutlist;
+        #    McaPrefix          McaPrefix;
+        #
+        #    query = _qr.query();
+        #
+        #    while (_qr.next())
+        #    {
+        #        cutlist = _qr.get(tablenum(McaCutlist));
+        #
+        #        McaPrefix = cutlist.Prefix;
+        #
+        #        if (McaPrefix)
+        #            break;
+        #    }
+        #
+        #    return McaPrefix;
+        #}
+      ENDSOURCE
+      SOURCE #initParmDefault
+        #/// <summary>
+        #///    Initializes the internal variables.
+        #/// </summary>
+        #/// <remarks>
+        #///    This method is called when a <c>SysLastValue</c> record cannot be found when the code calls the
+        #///    <c>SysLastValue.GetLast</c> method. Remember to call the <c>super</c> method.
+        #/// </remarks>
+        #public void initParmDefault()
+        #{
+        #    this.initQuery();
+        #
+        #    super();
+        #}
+      ENDSOURCE
+      SOURCE #initQuery
+        #void initQuery()
+        #{
+        #    Query   query;
+        #
+        #    if (this.parmQueryCutlist() != null)
+        #    {
+        #        query = new Query(this.parmQueryCutlist());
+        #    }
+        #    else
+        #    {
+        #        query = new Query(queryStr(McaCutlistQuery));
+        #    }
+        #
+        #    queryrun = new SysQueryRun(query);
+        #}
+      ENDSOURCE
+      SOURCE #new
+        #protected void new()
+        #{
+        #    super();
+        #}
+      ENDSOURCE
+      SOURCE #pack
+        #public container pack()
+        #{
+        #    return [#CurrentVersion,#CurrentList,queryrun.pack()];
+        #}
+      ENDSOURCE
+      SOURCE #parmCoverSheet
+        #/// <summary>
+        #///     Sets the printCoverSheet boolean variable
+        #/// </summary>
+        #/// <param name="_printCoverSheet">
+        #///     a boolean value
+        #/// </param>
+        #/// <returns>
+        #///     printCoverSheet variable
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #[
+        #    DataMemberAttribute,
+        #    SysOperationGroupMemberAttribute("@MCA638"),
+        #    SysOperationDisplayOrderAttribute("2")
+        #]
+        #public McaPrintCoverSheetReport parmCoverSheet(McaPrintCoverSheetReport _printCoverSheet = printCoverSheet)
+        #{
+        #    printCoverSheet = _printCoverSheet;
+        #    return printCoverSheet;
+        #}
+      ENDSOURCE
+      SOURCE #parmCreateCutlistFiles
+        #/// <summary>
+        #///     Sets the createCutlistFiles boolean variable
+        #/// </summary>
+        #/// <param name="_createCutlistFiles">
+        #///     a boolean value
+        #/// </param>
+        #/// <returns>
+        #///     createCutlistFiles variable
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #[
+        #    DataMemberAttribute,
+        #    SysOperationGroupMemberAttribute("@MCA637"),
+        #    SysOperationDisplayOrderAttribute("1")
+        #]
+        #public McaCreateCutlistFiles parmCreateCutlistFiles(McaCreateCutlistFiles _createCutlistFiles = createCutlistFiles)
+        #{
+        #    createCutlistFiles = _createCutlistFiles;
+        #    return createCutlistFiles;
+        #}
+      ENDSOURCE
+      SOURCE #parmCustAccount
+        #CustAccount parmCustAccount(CustAccount _custAccount  = custAccount)
+        #{
+        #;
+        #    custAccount = _custAccount;
+        #
+        #    return custAccount;
+        #}
+      ENDSOURCE
+      SOURCE #parmPrintDetail
+        #/// <summary>
+        #///     Sets the printDetail boolean variable
+        #/// </summary>
+        #/// <param name="_printDetail">
+        #///     a boolean value
+        #/// </param>
+        #/// <returns>
+        #///     printDetail variable
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #[
+        #    DataMemberAttribute,
+        #    SysOperationGroupMemberAttribute("@MCA638"),
+        #    SysOperationDisplayOrderAttribute("4")
+        #]
+        #public McaPrintDetailReport parmPrintDetail(McaPrintDetailReport _printDetail = printDetail)
+        #{
+        #    printDetail = _printDetail;
+        #    return printDetail;
+        #}
+      ENDSOURCE
+      SOURCE #parmPrintLabels
+        #/// <summary>
+        #///     Sets the printLabels boolean variable
+        #/// </summary>
+        #/// <param name="_printLabels">
+        #///     a boolean value
+        #/// </param>
+        #/// <returns>
+        #///     printLabels variable
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 09/18/2018 - Mca_CR011_11_CounterTopLabels
+        #/// </remarks>
+        #[
+        #    DataMemberAttribute,
+        #    SysOperationGroupMemberAttribute("@MCA638"),
+        #    SysOperationDisplayOrderAttribute("4")
+        #]
+        #public boolean parmPrintLabels(boolean _printLabels = printLabels)
+        #{
+        #    printLabels = _printLabels;
+        #    return printLabels;
+        #}
+      ENDSOURCE
+      SOURCE #parmPrintMediumType
+        #/// <summary>
+        #///     Sets the printMediumType boolean variable
+        #/// </summary>
+        #/// <param name="_printMediumType">
+        #///     a boolean value
+        #/// </param>
+        #/// <returns>
+        #///     printMediumType variable
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #[
+        #    DataMemberAttribute,
+        #    SysOperationGroupMemberAttribute("@MCA638"),
+        #    SysOperationDisplayOrderAttribute("1")
+        #]
+        #public McaPrintMedium parmPrintMediumType(McaPrintMedium _printMediumType = printMediumType)
+        #{
+        #    printMediumType = _printMediumType;
+        #    return printMediumType;
+        #}
+      ENDSOURCE
+      SOURCE #parmPrintSummary
+        #/// <summary>
+        #///     Sets the printSummary boolean variable
+        #/// </summary>
+        #/// <param name="_printSummary">
+        #///     a boolean value
+        #/// </param>
+        #/// <returns>
+        #///     printSummary variable
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #[
+        #    DataMemberAttribute,
+        #    SysOperationGroupMemberAttribute("@MCA638"),
+        #    SysOperationDisplayOrderAttribute("3")
+        #]
+        #public McaPrintSummaryReport parmPrintSummary(McaPrintSummaryReport _printSummary = printSummary)
+        #{
+        #    printSummary = _printSummary;
+        #    return printSummary;
+        #}
+      ENDSOURCE
+      SOURCE #parmQuery
+        #/// <summary>
+        #///     Sets the packedQuery variable
+        #/// </summary>
+        #/// <param name="_packedQuery">
+        #///     a packed query
+        #/// </param>
+        #/// <returns>
+        #///     packedQuery variable
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #[
+        #    DataMemberAttribute,
+        #    AifQueryTypeAttribute('_packedQuery', querystr(McaCutlistQuery))
+        #]
+        #public str parmQuery(McaPackedQuery _packedQuery = packedQuery)
+        #{
+        #    packedQuery = _packedQuery;
+        #    return packedQuery;
+        #}
+      ENDSOURCE
+      SOURCE #parmQueryCutlist
+        #/// <summary>
+        #///     Sets the cutListQuery variable
+        #/// </summary>
+        #/// <param name="_query">
+        #///     a packed query
+        #/// </param>
+        #/// <returns>
+        #///     cutListQuery variable
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #public Query parmQueryCutlist(Query _query = cutListQuery)
+        #{
+        #    cutListQuery = _query;
+        #    return cutListQuery;
+        #}
+      ENDSOURCE
+      SOURCE #parmRegenCutlistFile
+        #/// <summary>
+        #///     Sets the regenCutlistFile boolean variable
+        #/// </summary>
+        #/// <param name="_regenCutlistFile">
+        #///     a boolean value
+        #/// </param>
+        #/// <returns>
+        #///     regenCutlistFile variable
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #[
+        #    DataMemberAttribute,
+        #    SysOperationGroupMemberAttribute("@MCA637"),
+        #    SysOperationDisplayOrderAttribute("2")
+        #]
+        #public McaRegenCutlistFile parmRegenCutlistFile(McaRegenCutlistFile _regenCutlistFile = regenCutlistFile)
+        #{
+        #    regenCutlistFile = _regenCutlistFile;
+        #    return regenCutlistFile;
+        #}
+      ENDSOURCE
+      SOURCE #parmskipValidation
+        #//J_SR136452_UnscheduledCutList
+        #boolean parmskipValidation(boolean _skipValidation  = skipValidation)
+        #{
+        #;
+        #    skipValidation = _skipValidation;
+        #
+        #    return skipValidation;
+        #}
+      ENDSOURCE
+      SOURCE #queryRun
+        #QueryRun queryrun()
+        #{
+        #    return queryrun;
+        #}
+      ENDSOURCE
+      SOURCE #run
+        #void run()
+        #{
+        #    McaCutlistFilesReports mcaCutlistFilesReports;
+        #    QueryBuildRange        PrefixRange;
+        #    QueryBuildRange        CutGroupRange;
+        #    QueryBuildDataSource   qbds;
+        #    contract = new McaCutlistFileContract();
+        #
+        #    contract.parmCoverSheet(this.parmCoverSheet());
+        #    contract.parmCreateCutlistFiles(this.parmCreateCutlistFiles());
+        #    contract.parmPrintDetail(this.parmPrintDetail());
+        #    contract.parmPrintMediumType(this.parmPrintMediumType());
+        #    contract.parmPrintSummary(this.parmPrintSummary());
+        #    contract.parmRegenCutlistFile(this.parmRegenCutlistFile());
+        #    contract.parmBuildScheduleId(this.getBuildScheduleIdFromQueryRun(new QueryRun(this.queryRun().query())));
+        #    contract.parmMCAPrefix(this.getMcaPrefixFromQueryRun(new QueryRun(this.queryRun().query())));
+        #    contract.parmMcaCutGroupId(this.getMcaCutGroupIdFromQueryRun(new QueryRun(this.queryRun().query())));
+        #    contract.setQuery(queryrun.query());
+        #    contract.parmPrintLabels(this.parmPrintLabels()); // mca - Ray Michalski - 09/18/2018 - Mca_CR011_11_CounterTopLabels
+        #
+        #    contract.parmSkipValidation(skipValidation);
+        #
+        #
+        #    if(contract.parmMCAPrefix() || contract.parmMcaCutGroupId() || skipValidation)
+        #    {
+        #        mcaCutlistFilesReports = McaCutlistFilesReports::newStandard(contract);
+        #        mcaCutlistFilesReports.run();
+        #    }
+        #    else
+        #    {
+        #        throw error("Prefix or Cut group Id must be filled in.");
+        #    }
+        #}
+      ENDSOURCE
+      SOURCE #runsImpersonated
+        #public boolean runsImpersonated()
+        #{
+        #    return true;
+        #}
+      ENDSOURCE
+      SOURCE #saveLast
+        #public void saveLast()
+        #{
+        #    super();
+        #}
+      ENDSOURCE
+      SOURCE #setFromContract
+        #/// <summary>
+        #///     Set the class variables from a <c>McaCutlistCreateContract</c> contract
+        #/// </summary>
+        #/// <param name="_contract">
+        #///     a <c>McaCutlistCreateContract</c> contract
+        #/// </param>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #void setFromContract(McaCutlistCreateContract _contract)
+        #{
+        #    this.parmQuery(_contract.parmQuery());
+        #}
+      ENDSOURCE
+      SOURCE #showQueryValues
+        #/// <summary>
+        #///    Indicates whether to add a select button to the dialog box.
+        #/// </summary>
+        #/// <returns>
+        #///    Always returns true.
+        #/// </returns>
+        #/// <remarks>
+        #///    If you click this button, it will show the query form. Therefore, the <c>queryRun</c> method has to
+        #///    return a valid <c>queryRun</c> .If you change the return value to false the button will no longer
+        #///    be added.
+        #/// </remarks>
+        #public boolean showQueryValues()
+        #{
+        #    return true;
+        #}
+      ENDSOURCE
+      SOURCE #unpack
+        #public boolean unpack(container packedClass)
+        #{
+        #    Version     version = RunBase::getVersion(packedClass);
+        #    container   queryCon;
+        #
+        #    switch (version)
+        #    {
+        #        case #CurrentVersion:
+        #            [version,#CurrentList,queryCon] = packedClass;
+        #            if (SysQuery::isPackedOk(queryCon))
+        #                queryrun = new QueryRun(queryCon);
+        #            else
+        #                this.initQuery();
+        #            break;
+        #        default:
+        #            return false;
+        #    }
+        #
+        #    return true;
+        #}
+      ENDSOURCE
+      SOURCE #construct
+        #//server static McaCutlistReportsFilesForm construct()
+        #static McaCutlistReportsFilesForm construct()
+        #{
+        #    return new McaCutlistReportsFilesForm();
+        #}
+      ENDSOURCE
+      SOURCE #main
+        #//server static void main(Args args)
+        #static void main(Args args)
+        #{
+        #    McaCutlistReportsFilesForm   reportsFilesForm = McaCutlistReportsFilesForm::construct();
+        #
+        #    if (args && args.parmObject() is Query)
+        #    {
+        #        reportsFilesForm.parmQueryCutlist(args.parmObject());
+        #    }
+        #
+        #    if (args && args.parm())
+        #    {
+        #        reportsFilesForm.parmPrintLabels(true);
+        #    }
+        #
+        #    if(args && args.parmEnum())
+        #    {
+        #        reportsFilesForm.parmskipValidation(true);
+        #    }
+        #
+        #    if (reportsFilesForm.prompt())
+        #        reportsFilesForm.run();
+        #
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: END

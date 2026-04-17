@@ -1,0 +1,102 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: McaCutlistFileController unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #McaCutlistFileController
+    PROPERTIES
+      Name                #McaCutlistFileController
+      Extends             #SysOperationServiceController
+      Origin              #{2E372CE7-B006-4388-AA57-DE4835ACC5CB}
+    ENDPROPERTIES
+    
+    METHODS
+      SOURCE #canGoBatch
+        #/// <summary>
+        #///     Tell the framework to enable batch
+        #/// </summary>
+        #/// <returns>
+        #///     a <c>boolean</c> to tell the framework to enable batch
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #public boolean canGoBatch()
+        #{
+        #    return false;
+        #}
+      ENDSOURCE
+      SOURCE #caption
+        #/// <summary>
+        #///     The description for the class
+        #/// </summary>
+        #/// <returns>
+        #///     the <c>ClassDescription</c>
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #public ClassDescription caption()
+        #{
+        #    return "@MCA639";
+        #}
+      ENDSOURCE
+      SOURCE #classDeclaration
+        #/// <summary>
+        #///     Controller class for the cutlist file creation.
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #class McaCutlistFileController extends SysOperationServiceController
+        #{
+        #}
+      ENDSOURCE
+      SOURCE #main
+        #/// <summary>
+        #///     Main for the class
+        #/// </summary>
+        #/// <param name="args">
+        #///     a <c>Args</c> object
+        #/// </param>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #public static void main(Args args)
+        #{
+        #    identifierName                className;   
+        #    identifierName                methodName; 
+        #    SysOperationExecutionMode     executionMode;
+        #    McaCutlistFileController      controller;   
+        #    McaCutlistFileContract        contract;
+        #   
+        #    [className, methodName, executionMode] =
+        #        SysOperationServiceController::parseServiceInfo(args);
+        #
+        #    controller =
+        #        new McaCutlistFileController(className, methodName, executionMode);
+        #
+        #    controller.parmDialogCaption("@MCA639");
+        #
+        #    if (args.parmObject() is Query)
+        #    {
+        #        contract = controller.getDataContractObject('_contract');
+        #        contract.setQuery(args.parmObject());
+        #    }
+        #
+        #    controller.parmLoadFromSysLastValue(false);
+        #
+        #    if (controller.prompt())
+        #    {
+        #        controller.run();
+        #    }
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: END

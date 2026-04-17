@@ -1,0 +1,291 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: DBT
+
+; Microsoft Dynamics AX Table : McaCutlistParameters unloaded
+; --------------------------------------------------------------------------------
+  TABLEVERSION 1
+  
+  TABLE #McaCutlistParameters
+    EnforceFKRelation 1
+    PROPERTIES
+      Name                #McaCutlistParameters
+      Label               #@MCA622
+      ConfigurationKey    #Prod
+      CacheLookup         #Found
+      CreateRecIdIndex    #Yes
+      TableGroup          #Parameter
+      PrimaryIndex        #SurrogateKey
+      ClusterIndex        #Key
+      DeveloperDocumentation  #@MCA624
+      Origin              #{E2DEBA7B-4BCD-458B-8958-FD1EFB9B2A4C}
+    ENDPROPERTIES
+    
+    FIELDS
+      FIELD #CutKitUnitId
+        STRING
+        PROPERTIES
+          Name                #CutKitUnitId
+          Table               #McaCutlistParameters
+          Origin              #{68A58D5C-D215-4F88-90A6-773CE68829B4}
+          ExtendedDataType    #UnitOfMeasureSymbol
+        ENDPROPERTIES
+        
+      FIELD #DocuTypeId
+        STRING
+        PROPERTIES
+          Name                #DocuTypeId
+          Label               #@SYS316101
+          Table               #McaCutlistParameters
+          IgnoreEDTRelation   #Yes
+          Origin              #{335E5588-FBFE-4A27-AE99-D5A2593E8980}
+          ExtendedDataType    #DocuTypeId
+          StringSize          #20
+        ENDPROPERTIES
+        
+      FIELD #Key
+        INT
+        PROPERTIES
+          Name                #Key
+          AllowEditOnCreate   #No
+          AllowEdit           #No
+          Visible             #No
+          Table               #McaCutlistParameters
+          Origin              #{3DC3AAD7-734B-48C1-BEE1-AD687CD520AB}
+          ExtendedDataType    #ParametersKey
+        ENDPROPERTIES
+        
+      FIELD #MachineFilePath
+        STRING
+        PROPERTIES
+          Name                #MachineFilePath
+          Label               #@MCA1894
+          HelpText            #@SYS326110
+          Table               #McaCutlistParameters
+          Origin              #{7930B3AA-943B-4258-BAAA-0CAA6B9DDDEB}
+          ExtendedDataType    #FilePath
+          StringSize          #259
+        ENDPROPERTIES
+        
+      FIELD #MachineFilePathLinear
+        STRING
+        PROPERTIES
+          Name                #MachineFilePathLinear
+          Label               #@MCA1893
+          HelpText            #@SYS326110
+          Table               #McaCutlistParameters
+          Origin              #{402E3B84-62ED-490F-9B64-14CBBC60405E}
+          ExtendedDataType    #FilePath
+          StringSize          #259
+        ENDPROPERTIES
+        
+      FIELD #NumOfDays
+        INT
+        PROPERTIES
+          Name                #NumOfDays
+          Table               #McaCutlistParameters
+          Origin              #{C6302AE2-FD00-4B04-BD04-23EB2E4F393D}
+          ExtendedDataType    #NumberOfDays
+        ENDPROPERTIES
+        
+      FIELD #RegenMachineFilePath
+        STRING
+        PROPERTIES
+          Name                #RegenMachineFilePath
+          Label               #@MCA682
+          HelpText            #@SYS326110
+          Table               #McaCutlistParameters
+          Origin              #{DEC36FA2-ACA0-46C0-AA1C-E9727A7FE719}
+          ExtendedDataType    #FilePath
+          StringSize          #259
+        ENDPROPERTIES
+        
+      FIELD #ReportFilePath
+        STRING
+        PROPERTIES
+          Name                #ReportFilePath
+          Label               #@MCA625
+          HelpText            #@SYS326110
+          Table               #McaCutlistParameters
+          Origin              #{780ADE7E-AB60-4669-824B-7F470197E713}
+          ExtendedDataType    #FilePath
+          StringSize          #259
+        ENDPROPERTIES
+        
+    ENDFIELDS
+    GROUPS
+      GROUP #AutoReport
+        PROPERTIES
+          Name                #AutoReport
+        ENDPROPERTIES
+        
+        GROUPFIELDS
+          #CutKitUnitId
+          #MachineFilePath
+          #MachineFilePathLinear
+          #NumOfDays
+          #RegenMachineFilePath
+          #ReportFilePath
+        ENDGROUPFIELDS
+      ENDGROUP
+      GROUP #Cutlist
+        PROPERTIES
+          Name                #Cutlist
+          Label               #@MCA616
+        ENDPROPERTIES
+        
+        GROUPFIELDS
+          #MachineFilePath
+          #MachineFilePathLinear
+          #RegenMachineFilePath
+          #ReportFilePath
+          #CutKitUnitId
+          #DocuTypeId
+        ENDGROUPFIELDS
+      ENDGROUP
+      GROUP #Days
+        PROPERTIES
+          Name                #Days
+          Label               #@SYS7425
+        ENDPROPERTIES
+        
+        GROUPFIELDS
+          #NumOfDays
+        ENDGROUPFIELDS
+      ENDGROUP
+    ENDGROUPS
+    
+    INDICES
+      #Key
+      PROPERTIES
+        Name                #Key
+        AllowDuplicates     #No
+        Origin              #{CCD6B9FD-4AF9-4390-8BE1-32DEEE038C20}
+      ENDPROPERTIES
+      
+      INDEXFIELDS
+        #Key
+      ENDINDEXFIELDS
+      
+    ENDINDICES
+    FULLTEXTINDICES
+    ENDFULLTEXTINDICES
+    REFERENCES
+      REFERENCE #DocuType
+        PROPERTIES
+          Name                #DocuType
+          Table               #DocuType
+          RelatedTableCardinality   #ZeroOne
+          Cardinality         #ZeroMore
+          RelationshipType    #Association
+          UseDefaultRoleNames #Yes
+        ENDPROPERTIES
+        
+        FIELDREFERENCES
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #dataAreaId
+            RelatedField        #dataAreaId
+          ENDPROPERTIES
+          
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #DocuTypeId
+            RelatedField        #TypeId
+          ENDPROPERTIES
+          
+        ENDFIELDREFERENCES
+      ENDREFERENCE
+      REFERENCE #UnitOfMeasure
+        PROPERTIES
+          Name                #UnitOfMeasure
+          Table               #UnitOfMeasure
+          RelatedTableCardinality   #ZeroOne
+          Cardinality         #ZeroMore
+          RelationshipType    #Association
+          UseDefaultRoleNames #Yes
+        ENDPROPERTIES
+        
+        FIELDREFERENCES
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #CutKitUnitId
+            RelatedField        #Symbol
+          ENDPROPERTIES
+          
+        ENDFIELDREFERENCES
+      ENDREFERENCE
+    ENDREFERENCES
+    
+    DELETEACTIONS
+    ENDDELETEACTIONS
+    
+    METHODS
+      SOURCE #delete
+        #/// <summary>
+        #///     Disable the deletion of the parameter record
+        #/// </summary>
+        #/// <remarks>
+        #///     Disable the deletion of the parameter record
+        #///     mca - Ray Michalski - 07/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #/// <exception cref="Exception::Error">
+        #///     Throw error.
+        #/// </exception>
+        #void delete()
+        #{
+        #    throw error("@SYS23721");
+        #}
+      ENDSOURCE
+      SOURCE #find
+        #/// <summary>
+        #///     Finds the specified instance of the <c>McaCutlistParameters</c> record if it exists; otherwise,
+        #///     creates and returns a new record.
+        #/// </summary>
+        #/// <param name="_forupdate">
+        #///     A Boolean value that specifies whether to select the record for update; optional.
+        #/// </param>
+        #/// <returns>
+        #///     The single instance of the record.
+        #/// </returns>
+        #/// <remarks>
+        #///      mca - Ray Michalski - 07/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #static McaCutlistParameters find(boolean _forupdate = false)
+        #{
+        #    McaCutlistParameters parameter;
+        #
+        #    if (_forupdate)
+        #    {
+        #        parameter.selectForUpdate(_forupdate);
+        #    }
+        #
+        #    select firstonly parameter
+        #        where parameter.Key == 0;
+        #
+        #    if (!parameter && !parameter.isTmp())
+        #    {
+        #        Company::createParameter(parameter);
+        #    }
+        #
+        #    return parameter;
+        #}
+      ENDSOURCE
+      SOURCE #numRefMcaCutlistMachineFileId
+        #public server static NumberSequenceReference numRefMcaCutlistMachineFileId()
+        #{
+        #    return NumberSeqReference::findReference(extendedTypeNum(McaCutlistMachineFileId));
+        #}
+      ENDSOURCE
+      SOURCE #numRefMcaCutModuleId
+        #public server static NumberSequenceReference numRefMcaCutModuleId()
+        #{
+        #    return NumberSeqReference::findReference(extendedTypeNum(McaCutModuleId));
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDTABLE
+  
+
+***Element: END

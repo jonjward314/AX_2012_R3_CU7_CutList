@@ -1,0 +1,206 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: McaCutlistDeleteRecords unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #McaCutlistDeleteRecords
+    PROPERTIES
+      Name                #McaCutlistDeleteRecords
+      Origin              #{4773CB54-D4C6-4864-8357-7501CA297D33}
+    ENDPROPERTIES
+    
+    METHODS
+      SOURCE #classDeclaration
+        #/// <summary>
+        #///     This class cutlist records based on criteria(set-based)
+        #/// </summary>
+        #/// <remarks>
+        #///      mca - Ray Michalski - 06/21/2018 - Mca_CR009_PWSCutlistCRP2
+        #/// </remarks>
+        #class McaCutlistDeleteRecords
+        #{
+        #    McaCutlistDeleteRecordsContract  contract;
+        #}
+      ENDSOURCE
+      SOURCE #deleteCutlistRecords
+        #private void deleteCutlistRecords()
+        #{
+        #    McaCutlist  cutlist;
+        #
+        #    if (!this.parmContract().parmPWSBuildScheduleId())
+        #    {
+        #        throw error('Build schedule is required');
+        #    }
+        #
+        #    if (!this.verifyDeletes())
+        #        return;
+        #
+        #    if (this.parmContract().parmPrefix() &&
+        #        this.parmContract().parmModuleItemId())
+        #    {
+        #        delete_from cutlist
+        #            where cutlist.Prefix             == this.parmContract().parmPrefix()
+        #               && cutlist.ModuleItemId       == this.parmContract().parmModuleItemId()
+        #               && cutlist.PWSBuildScheduleId == this.parmContract().parmPWSBuildScheduleId();
+        #    }
+        #    else if (this.parmContract().parmPrefix() &&
+        #             !this.parmContract().parmModuleItemId())
+        #    {
+        #        delete_from cutlist
+        #            where cutlist.Prefix             == this.parmContract().parmPrefix()
+        #               && cutlist.PWSBuildScheduleId == this.parmContract().parmPWSBuildScheduleId();
+        #    }
+        #    else if (!this.parmContract().parmPrefix() &&
+        #             this.parmContract().parmModuleItemId())
+        #    {
+        #        delete_from cutlist
+        #            where cutlist.ModuleItemId       == this.parmContract().parmModuleItemId()
+        #               && cutlist.PWSBuildScheduleId == this.parmContract().parmPWSBuildScheduleId();
+        #    }
+        #    else
+        #    {
+        #        delete_from cutlist
+        #            where cutlist.PWSBuildScheduleId == this.parmContract().parmPWSBuildScheduleId();
+        #    }
+        #
+        #}
+      ENDSOURCE
+      SOURCE #parmContract
+        #/// <summary>
+        #///     Get/Set the <c>McaCutlistDeleteRecordsContract</c>
+        #/// </summary>
+        #/// <param name="_contract">
+        #///     a <c>McaCutlistDeleteRecordsContract</c> object
+        #/// </param>
+        #/// <returns>
+        #///     a <c>McaCutlistDeleteRecordsContract</c> object
+        #/// </returns>
+        #/// <remarks>
+        #///      mca - Ray Michalski - 06/21/2018 - Mca_CR009_PWSCutlistCRP2
+        #/// </remarks>
+        #McaCutlistDeleteRecordsContract parmContract(McaCutlistDeleteRecordsContract _contract = contract)
+        #{
+        #    if (!prmisDefault(_contract))
+        #    {
+        #        contract = _contract;
+        #    }
+        #
+        #    return contract;
+        #}
+      ENDSOURCE
+      SOURCE #run
+        #/// <summary>
+        #///     Runs the class logic
+        #/// </summary>
+        #/// <remarks>
+        #///      mca - Ray Michalski - 06/21/2018 - Mca_CR009_PWSCutlistCRP2
+        #/// </remarks>
+        #public void run()
+        #{
+        #    #OCCRetryCount
+        #
+        #    startLengthyOperation();
+        #
+        #    setprefix("@MCA1918");
+        #
+        #    try
+        #    {
+        #        this.deleteCutlistRecords();
+        #    }
+        #    catch (Exception::Deadlock)
+        #    {
+        #        retry;
+        #    }
+        #    catch (Exception::UpdateConflict)
+        #    {
+        #        if (appl.ttsLevel() == 0)
+        #        {
+        #            if (xSession::currentRetryCount() >= #RetryNum)
+        #            {
+        #                throw Exception::UpdateConflictNotRecovered;
+        #            }
+        #            else
+        #            {
+        #                retry;
+        #            }
+        #        }
+        #        else
+        #        {
+        #            throw Exception::UpdateConflict;
+        #        }
+        #    }
+        #    endLengthyOperation();
+        #}
+      ENDSOURCE
+      SOURCE #verifyDeletes
+        #private boolean verifyDeletes()
+        #{
+        #    boolean ret = true;
+        #    str     strMessage;
+        #    str     strMessage1 = 'You are about to delete all the record for schedule %1. Continue delete?';
+        #    str     strMessage2 = 'You are about to delete all the record for schedule %1, prefix %2. Continue delete?';
+        #    str     strMessage3 = 'You are about to delete all the record for schedule %1, prefix %2 and module %3. Continue delete?';
+        #    str     strMessage4 = 'You are about to delete all the record for schedule %1, module %2. Continue delete?';
+        #
+        #    if (this.parmContract().parmPrefix() &&
+        #        this.parmContract().parmModuleItemId())
+        #    {
+        #        strMessage = strFmt(strMessage3, this.parmContract().parmPWSBuildScheduleId()
+        #                                       , this.parmContract().parmPrefix()
+        #                                       , this.parmContract().parmModuleItemId());
+        #    }
+        #    else if (this.parmContract().parmPrefix() &&
+        #             !this.parmContract().parmModuleItemId())
+        #    {
+        #        strMessage = strFmt(strMessage2, this.parmContract().parmPWSBuildScheduleId()
+        #                                       , this.parmContract().parmPrefix());
+        #    }
+        #    else if (!this.parmContract().parmPrefix() &&
+        #             this.parmContract().parmModuleItemId())
+        #    {
+        #        strMessage = strFmt(strMessage4, this.parmContract().parmPWSBuildScheduleId()
+        #                                       , this.parmContract().parmModuleItemId());
+        #    }
+        #    else
+        #    {
+        #        strMessage = strFmt(strMessage1, this.parmContract().parmPWSBuildScheduleId());
+        #    }
+        #
+        #    if (Box::yesNo(strMessage, DialogButton::No, "@SYS114651") == DialogButton::No)
+        #    {
+        #        ret = false;
+        #    }
+        #
+        #    return ret;
+        #}
+      ENDSOURCE
+      SOURCE #newStandard
+        #/// <summary>
+        #///     Creates a new <c>McaCutlistDeleteRecordsContract</c> object.
+        #/// </summary>
+        #/// <param name="_contract">
+        #///     a <c>McaCutlistDeleteRecordsContract</c> object
+        #/// </param>
+        #/// <returns>
+        #///     a newly created <c>McaCutlistDeleteRecordsContract</c> object.
+        #/// </returns>
+        #/// <remarks>
+        #///      mca - Ray Michalski - 06/21/2018 - Mca_CR009_PWSCutlistCRP2
+        #/// </remarks>
+        #static McaCutlistDeleteRecords newStandard(McaCutlistDeleteRecordsContract _contract)
+        #{
+        #    McaCutlistDeleteRecords cutlistDeleteRecords = new McaCutlistDeleteRecords();
+        #
+        #    cutlistDeleteRecords.parmContract(_contract);
+        #
+        #    return cutlistDeleteRecords;
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: END

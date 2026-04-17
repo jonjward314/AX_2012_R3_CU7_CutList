@@ -1,0 +1,230 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: DBT
+
+; Microsoft Dynamics AX Table : McaCutlistCutGroup unloaded
+; --------------------------------------------------------------------------------
+  TABLEVERSION 1
+  
+  TABLE #McaCutlistCutGroup
+    EnforceFKRelation 1
+    PROPERTIES
+      Name                #McaCutlistCutGroup
+      Label               #@MCA661
+      FormRef             #McaCutlistCutgroup
+      TitleField1         #CutGroupId
+      TitleField2         #Name
+      TableContents       #Default data
+      CacheLookup         #EntireTable
+      CreateRecIdIndex    #Yes
+      TableGroup          #Group
+      PrimaryIndex        #SurrogateKey
+      DeveloperDocumentation  #@MCA662
+      Origin              #{FD4EE0A5-2AD0-4FE6-91B7-6E96BD9F4E0A}
+    ENDPROPERTIES
+    
+    FIELDS
+      FIELD #CutGroupId
+        STRING
+        PROPERTIES
+          Name                #CutGroupId
+          Mandatory           #Yes
+          AllowEdit           #No
+          Table               #McaCutlistCutGroup
+          Origin              #{C8ADE979-35B4-458D-9F5F-EF15E6DDFF81}
+          ExtendedDataType    #McaCutGroupId
+        ENDPROPERTIES
+        
+      FIELD #Name
+        STRING
+        PROPERTIES
+          Name                #Name
+          HelpText            #@MCA665
+          Table               #McaCutlistCutGroup
+          Origin              #{6F6572BE-BE34-4DD3-A4B0-7A6B49212387}
+          ExtendedDataType    #Description
+          StringSize          #60
+        ENDPROPERTIES
+        
+    ENDFIELDS
+    GROUPS
+      GROUP #AutoReport
+        PROPERTIES
+          Name                #AutoReport
+        ENDPROPERTIES
+        
+        GROUPFIELDS
+          #CutGroupId
+          #Name
+        ENDGROUPFIELDS
+      ENDGROUP
+      GROUP #All
+        PROPERTIES
+          Name                #All
+          Label               #@SYS80094
+        ENDPROPERTIES
+        
+        GROUPFIELDS
+          #CutGroupId
+          #Name
+        ENDGROUPFIELDS
+      ENDGROUP
+    ENDGROUPS
+    
+    INDICES
+      #CutGroupIdx
+      PROPERTIES
+        Name                #CutGroupIdx
+        AllowDuplicates     #No
+        AlternateKey        #Yes
+        Origin              #{BB60CFED-16FA-4A06-BA25-5DF9A8D608ED}
+      ENDPROPERTIES
+      
+      INDEXFIELDS
+        #CutGroupId
+      ENDINDEXFIELDS
+      
+    ENDINDICES
+    FULLTEXTINDICES
+    ENDFULLTEXTINDICES
+    REFERENCES
+    ENDREFERENCES
+    
+    DELETEACTIONS
+    ENDDELETEACTIONS
+    
+    METHODS
+      SOURCE #checkExist
+        #/// <summary>
+        #///     Checks for existence of a cut group
+        #/// </summary>
+        #/// <param name="_cutGroupId">
+        #///     a <c>McaCutGroupId</c> parameter
+        #/// </param>
+        #/// <returns>
+        #///     True if exists
+        #/// </returns>
+        #/// <remarks>
+        #///      mca - Ray Michalski - 07/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #public static boolean checkExist(McaCutGroupId _cutGroupId)
+        #{
+        #    boolean ret = true;
+        #    ;
+        #
+        #    if (!McaCutlistCutGroup::exist(_cutGroupId))
+        #    {
+        #        ret = checkFailed(strfmt(MCaCutlistCutGroup::txtNotExist(), _cutGroupId));
+        #    }
+        #
+        #    return ret;
+        #}
+      ENDSOURCE
+      SOURCE #exist
+        #/// <summary>
+        #///     Checks for existence of a cut group
+        #/// </summary>
+        #/// <param name="_cutGroupId">
+        #///     a <c>McaCutGroupId</c> parameter
+        #/// </param>
+        #/// <returns>
+        #///     True if exists
+        #/// </returns>
+        #/// <remarks>
+        #///      mca - Ray Michalski - 07/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #public static boolean exist(McaCutGroupId _cutGroupId)
+        #{
+        #    boolean found;
+        #
+        #    found = (select firstonly RecId from McaCutlistCutGroup where
+        #                 McaCutlistCutGroup.CutGroupId == _cutGroupId).RecId != 0;
+        #
+        #    return found;
+        #}
+      ENDSOURCE
+      SOURCE #find
+        #/// <summary>
+        #///     Finds a <c>McaCutlist</c> record
+        #/// </summary>
+        #/// <param name="_cutGroupId">
+        #///     a <c>McaCutGroupId</c> parameter
+        #/// </param>
+        #/// <param name="_forupdate">
+        #///     a <c>boolean</c> parameter
+        #/// </param>
+        #/// <param name="_concurrencyModel">
+        #///     a <c>ConcurrencyModel</c> parameter
+        #/// </param>
+        #/// <returns>
+        #///     a <c>McaCutlist</c> record, if exists
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 07/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #public static McaCutlistCutGroup find(
+        #    McaCutGroupId           _cutGroupId ,
+        #    boolean                 _forupdate = false,
+        #    ConcurrencyModel        _concurrencyModel = ConcurrencyModel::Auto)
+        #{
+        #    McaCutlistCutGroup cutGroup;
+        #
+        #    cutGroup.selectForUpdate(_forupdate);
+        #
+        #    if (_forupdate  && _concurrencyModel != ConcurrencyModel::Auto)
+        #    {
+        #        cutGroup.concurrencyModel(_concurrencyModel);
+        #    }
+        #
+        #    if (_cutGroupId)
+        #    {
+        #        select firstonly cutGroup
+        #            where cutGroup.CutGroupId == _cutGroupId;
+        #    }
+        #
+        #    return cutGroup;
+        #}
+      ENDSOURCE
+      SOURCE #lookupCutGroup
+        #/// <summary>
+        #///     a lookup method
+        #/// </summary>
+        #/// <param name="_formStringControl">
+        #///     a <c>FormStringControl</c> parameter
+        #/// </param>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 07/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #public client static void lookupCutGroup(FormStringControl _formStringControl)
+        #{
+        #    SysTableLookup  sysTableLookup = SysTableLookup::newParameters(tablenum(McaCutlistCutGroup), _formStringControl);
+        #    Query           query = new Query();
+        #
+        #    query.addDataSource(tablenum(McaCutlistCutGroup));
+        #    sysTableLookup.addLookupfield(fieldnum(McaCutlistCutGroup, CutGroupId));
+        #    sysTableLookup.addLookupfield(fieldnum(McaCutlistCutGroup, Name));
+        #    sysTableLookup.parmQuery(query);
+        #    sysTableLookup.performFormLookup();
+        #}
+      ENDSOURCE
+      SOURCE #txtNotExist
+        #/// <summary>
+        #///     a not exists string
+        #/// </summary>
+        #/// <returns>
+        #///     a not exists string
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 07/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #static TxtNotExist txtNotExist()
+        #{
+        #    return "@MCA670";
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDTABLE
+  
+
+***Element: END

@@ -1,0 +1,359 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: DBT
+
+; Microsoft Dynamics AX Table : McaCutlistSecMoveToAreas unloaded
+; --------------------------------------------------------------------------------
+  TABLEVERSION 1
+  
+  TABLE #McaCutlistSecMoveToAreas
+    EnforceFKRelation 1
+    PROPERTIES
+      Name                #McaCutlistSecMoveToAreas
+      Label               #@MCA1896
+      TitleField1         #InventSiteId
+      TitleField2         #MoveToAreaId
+      CreateRecIdIndex    #Yes
+      PrimaryIndex        #SurrogateKey
+      ClusterIndex        #SurrogateKey
+      DeveloperDocumentation  #@MCA1897
+      Origin              #{3355F10D-A604-45AD-8A5A-3CFA9ADA1FD4}
+    ENDPROPERTIES
+    
+    FIELDS
+      FIELD #BOMRefRecId
+        INT64
+        PROPERTIES
+          Name                #BOMRefRecId
+          Table               #McaCutlistSecMoveToAreas
+          IgnoreEDTRelation   #Yes
+          Origin              #{EB6EAB94-936C-4331-BD52-7DECD2AF0773}
+          ExtendedDataType    #BOMRefRecId
+        ENDPROPERTIES
+        
+      FIELD #InventSiteId
+        STRING
+        PROPERTIES
+          Name                #InventSiteId
+          Table               #McaCutlistSecMoveToAreas
+          IgnoreEDTRelation   #Yes
+          Origin              #{74FDAAEA-66A9-4D87-B367-EDD29A2492D1}
+          ExtendedDataType    #InventSiteId
+        ENDPROPERTIES
+        
+      FIELD #MoveToAreaId
+        STRING
+        PROPERTIES
+          Name                #MoveToAreaId
+          Table               #McaCutlistSecMoveToAreas
+          Origin              #{CA78078C-2482-41DF-93FB-7306358E04EE}
+          ExtendedDataType    #McaMoveToAreaId
+        ENDPROPERTIES
+        
+    ENDFIELDS
+    GROUPS
+      GROUP #AutoReport
+        PROPERTIES
+          Name                #AutoReport
+        ENDPROPERTIES
+        
+        GROUPFIELDS
+          #BOMRefRecId
+          #InventSiteId
+          #MoveToAreaId
+        ENDGROUPFIELDS
+      ENDGROUP
+      GROUP #All
+        PROPERTIES
+          Name                #All
+          Label               #@SYS80094
+        ENDPROPERTIES
+        
+        GROUPFIELDS
+          #BOMRefRecId
+          #InventSiteId
+          #MoveToAreaId
+        ENDGROUPFIELDS
+      ENDGROUP
+      GROUP #Grid
+        PROPERTIES
+          Name                #Grid
+          Label               #@SYS26263
+        ENDPROPERTIES
+        
+        GROUPFIELDS
+          #InventSiteId
+          #MoveToAreaId
+        ENDGROUPFIELDS
+      ENDGROUP
+    ENDGROUPS
+    
+    INDICES
+      #SiteBOMIdx
+      PROPERTIES
+        Name                #SiteBOMIdx
+        AllowDuplicates     #No
+        Origin              #{A660AD39-F1A9-4464-BDB5-4D19EABB4E39}
+      ENDPROPERTIES
+      
+      INDEXFIELDS
+        #InventSiteId
+        #BOMRefRecId
+      ENDINDEXFIELDS
+      
+      #BOMIdx
+      PROPERTIES
+        Name                #BOMIdx
+        Origin              #{64C43C65-022D-4F38-9592-DF56F03CC642}
+      ENDPROPERTIES
+      
+      INDEXFIELDS
+        #BOMRefRecId
+      ENDINDEXFIELDS
+      
+    ENDINDICES
+    FULLTEXTINDICES
+    ENDFULLTEXTINDICES
+    REFERENCES
+      REFERENCE #BOM
+        PROPERTIES
+          Name                #BOM
+          Table               #BOM
+          RelatedTableCardinality   #ZeroOne
+          Cardinality         #ZeroMore
+          RelationshipType    #Association
+          UseDefaultRoleNames #Yes
+        ENDPROPERTIES
+        
+        FIELDREFERENCES
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #BOMRefRecId
+            RelatedField        #RecId
+          ENDPROPERTIES
+          
+        ENDFIELDREFERENCES
+      ENDREFERENCE
+      REFERENCE #InventSite
+        PROPERTIES
+          Name                #InventSite
+          Table               #InventSite
+          RelatedTableCardinality   #ZeroOne
+          Cardinality         #ZeroMore
+          RelationshipType    #Association
+          UseDefaultRoleNames #Yes
+        ENDPROPERTIES
+        
+        FIELDREFERENCES
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #InventSiteId
+            RelatedField        #SiteId
+          ENDPROPERTIES
+          
+        ENDFIELDREFERENCES
+      ENDREFERENCE
+      REFERENCE #McaCutlistMoveToAreas
+        PROPERTIES
+          Name                #McaCutlistMoveToAreas
+          Table               #McaCutlistMoveToAreas
+          RelatedTableCardinality   #ZeroOne
+          Cardinality         #ZeroMore
+          RelationshipType    #Association
+          UseDefaultRoleNames #Yes
+        ENDPROPERTIES
+        
+        FIELDREFERENCES
+          REFERENCETYPE PKFK
+          PROPERTIES
+            Field               #MoveToAreaId
+            RelatedField        #MoveToAreaId
+          ENDPROPERTIES
+          
+        ENDFIELDREFERENCES
+      ENDREFERENCE
+    ENDREFERENCES
+    
+    DELETEACTIONS
+    ENDDELETEACTIONS
+    
+    METHODS
+      SOURCE #description
+        #/// <summary>
+        #///     Move to area description
+        #/// </summary>
+        #/// <returns>
+        #///     Move to area description
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 05/15/2018 - Mca_CR009_CutlistEnhancements
+        #/// </remarks>
+        #display Description description()
+        #{
+        #    return McaCutListMoveToAreas::find(this.MoveToAreaId).Description;
+        #}
+      ENDSOURCE
+      SOURCE #validateWrite
+        #public boolean validateWrite()
+        #{
+        #    boolean     ret;
+        #    UnitIDBase  unitId = McaCutlistParameters::find().CutKitUnitId;
+        #
+        #    ret = super();
+        #
+        #    if (ret)
+        #    {
+        #        if (BOM::findRecId(this.BOMRefRecId).UnitId == unitId)
+        #        {
+        #            if (McaCutlistSecMoveToAreas::existBOMMoveTo(this.BOMRefRecId))
+        #            {
+        #                ret = checkFailed(strFmt('Only 1 Move to allowed for items with a UOM = %1', unitId));
+        #            }
+        #        }
+        #    }
+        #
+        #    return ret;
+        #}
+      ENDSOURCE
+      SOURCE #deleteByBomRecId
+        #/// <summary>
+        #/// Deletes the records from the database with the specified referenced record ID.
+        #/// </summary>
+        #/// <param name="_bomRecId">
+        #/// The referenced record ID to delete.
+        #/// </param>
+        #public static void deleteByBomRecId(RefRecId _bomRecId)
+        #{
+        #    McaCutlistSecMoveToAreas cutlistSecMoveToAreas;
+        #
+        #    if (_bomRecId)
+        #    {
+        #        delete_from cutlistSecMoveToAreas
+        #            where cutlistSecMoveToAreas.BOMRefRecId == _bomRecId;
+        #    }
+        #}
+      ENDSOURCE
+      SOURCE #existBOMMoveTo
+        #/// <summary>
+        #///    Checks whether the BOM record exist in the <c>McaCutlistSecMoveToAreas</c> table.
+        #/// </summary>
+        #/// <param name="_bomRecId">
+        #///    The <c>recId</c> value that specifies the BOM in the <c>McaCutlistSecMoveToAreas</c> table.
+        #/// </param>
+        #/// <returns>
+        #///    true if the record exist
+        #/// </returns>
+        #static boolean existBOMMoveTo(recId _bomRecId)
+        #{
+        #    McaCutlistSecMoveToAreas area;
+        #
+        #    select firstonly RecId from area
+        #        where area.BOMRefRecId == _bomRecId;
+        #
+        #    return (area.RecId != 0);
+        #}
+      ENDSOURCE
+      SOURCE #find
+        #/// <summary>
+        #///     Retrieves the record from the database with the specified record ID and site.
+        #/// </summary>
+        #/// <param name="_bomRecId">
+        #///     The referenced record ID to search for.
+        #/// </param>
+        #/// /// <param name="_inventSiteId">
+        #///     The site to search for.
+        #/// </param>
+        #/// <param name="_forUpdate">
+        #///     If the record should be selected for update.
+        #/// </param>
+        #/// <returns>
+        #///     The retrieved record or an empty table buffer.
+        #/// </returns>
+        #public static McaCutlistSecMoveToAreas find(
+        #    RefRecId        _bomRecId,
+        #    InventSiteId    _inventSiteId,
+        #    boolean  _forUpdate = false)
+        #{
+        #    McaCutlistSecMoveToAreas cutlistSecMoveToAreas;
+        #
+        #    if (_bomRecId && _inventSiteId)
+        #    {
+        #        cutlistSecMoveToAreas.selectForUpdate(_forUpdate);
+        #
+        #        select firstonly cutlistSecMoveToAreas
+        #            where cutlistSecMoveToAreas.InventSiteId == _inventSiteId
+        #               && cutlistSecMoveToAreas.BOMRefRecId  == _bomRecId;
+        #    }
+        #
+        #    return cutlistSecMoveToAreas;
+        #}
+      ENDSOURCE
+      SOURCE #findBOM
+        #/// <summary>
+        #/// Retrieves the <c>BOM</c> record from the database with the specified record ID.
+        #/// </summary>
+        #/// <param name="_bomRecId">
+        #/// The referenced record ID to search for.
+        #/// </param>
+        #/// <param name="_forUpdate">
+        #/// If the record should be selected for update.
+        #/// </param>
+        #/// <returns>
+        #/// The retrieved record or an empty table buffer.
+        #/// </returns>
+        #public static BOM findBOM(
+        #    recId    _bomRecId,
+        #    boolean  _forUpdate = false)
+        #{
+        #    BOM bom;
+        #
+        #    if (_bomRecId)
+        #    {
+        #        bom.selectForUpdate(_forUpdate);
+        #
+        #        bom = BOM::findRecId(_bomRecId, _forUpdate);
+        #    }
+        #
+        #    return bom;
+        #}
+      ENDSOURCE
+      SOURCE #findRecId
+        #/// <summary>
+        #///     Find method
+        #/// </summary>
+        #/// <param name="_recId">
+        #///     a <c>recId</c> parameter
+        #/// </param>
+        #/// <param name="_update">
+        #///     a <c>boolean</c> parameter
+        #/// </param>
+        #/// <returns>
+        #///     a <c>McaCutlistSecMoveToAreas</c> record, if exists.
+        #/// </returns>
+        #/// <remarks>
+        #///      mca - Ray Michalski - 05/15/2018 - Mca_CR009_CutlistEnhancements
+        #/// </remarks>
+        #public static McaCutlistSecMoveToAreas findRecId(
+        #    recId       _recId,
+        #    boolean     _update = false
+        #    )
+        #{
+        #    McaCutlistSecMoveToAreas area;
+        #
+        #    if (_recId)
+        #    {
+        #        area.selectForUpdate(_update);
+        #
+        #        select area
+        #            where area.RecId == _recId;
+        #    }
+        #
+        #    return area;
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDTABLE
+  
+
+***Element: END

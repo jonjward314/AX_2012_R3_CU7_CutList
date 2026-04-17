@@ -1,0 +1,151 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: McaCutlistPrefixNumberSeq unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #McaCutlistPrefixNumberSeq
+    PROPERTIES
+      Name                #McaCutlistPrefixNumberSeq
+      Origin              #{900C1624-1126-4E47-8A46-6C5D413F3A95}
+    ENDPROPERTIES
+    
+    METHODS
+      SOURCE #abort
+        #public void abort()
+        #{
+        #    NumberSequenceTable numberSequenceTable = ProdParameters::numRefMcaPrefix().numberSequenceTable();
+        #
+        #    if (numberSequenceTable.Continuous)
+        #    {
+        #        NumberSeq::release(numberSequenceTable.NumberSequence, num);
+        #    }
+        #    else
+        #    {
+        #        ttsbegin;
+        #        numberSequenceTable = NumberSequenceTable::find(numberSequenceTable.RecId, true);
+        #        numberSequenceTable.NextRec--;
+        #        numberSequenceTable.doUpdate();
+        #        ttscommit;
+        #    }
+        #
+        #    numberSequenceTable = null;
+        #}
+      ENDSOURCE
+      SOURCE #classDeclaration
+        #/// <summary>
+        #///     Handles the number sequence for the Prefix assignment
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 07/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #class McaCutlistPrefixNumberSeq
+        #{
+        #    McaPrefix               num;
+        #    NumberSeq               numberSeq;
+        #}
+      ENDSOURCE
+      SOURCE #num
+        #/// <summary>
+        #///     Gets the next prefix number sequence
+        #/// </summary>
+        #/// <returns>
+        #///     the next prefix number sequence
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 07/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #public McaPrefix num()
+        #{
+        #    this.runNumber();
+        #
+        #    return num;
+        #}
+      ENDSOURCE
+      SOURCE #reset
+        #public void reset()
+        #{
+        #    this.runNumber();
+        #    this.resetPrefixNumSequence(numberSeq);
+        #}
+      ENDSOURCE
+      SOURCE #resetPrefixNumSequence
+        #/// <summary>
+        #///     Resets the number sequence back to A0 so we can reuse it
+        #/// </summary>
+        #/// <param name="_numberSeq">
+        #///     a <c>NumberSeq</c> object
+        #/// </param>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 07/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #private void resetPrefixNumSequence(NumberSeq _numberSeq)
+        #{
+        #    NumberSequenceTable numberSequenceTable;
+        #
+        #    numberSequenceTable = _numberSeq.parmNumTableNum(numberSequenceTable);
+        #
+        #    ttsBegin;
+        #    numberSequenceTable = NumberSequenceTable::find(numberSequenceTable.RecId, true);
+        #    numberSequenceTable.NextRec = 1;
+        #    numberSequenceTable.update();   
+        #    ttsCommit;
+        #}
+      ENDSOURCE
+      SOURCE #runNumber
+        #/// <summary>
+        #///     Handles the the execution of the prefix number sequence. Resets it necessary.
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 07/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #private void runNumber()
+        #{
+        #    //NumberSeq               numberSeq;
+        #    NumberSequenceTable     numberSequenceTable;
+        #   
+        #    numberSeq           = NumberSeq::newGetNum(ProdParameters::numRefMcaPrefix());   
+        #    numberSequenceTable = numberSeq.parmNumTableNum(numberSequenceTable);
+        #
+        #    if (numberSequenceTable.NextRec >= 260)
+        #    {
+        #        this.resetPrefixNumSequence(numberSeq);
+        #        numberSeq = NumberSeq::newGetNum(ProdParameters::numRefMcaPrefix());
+        #    }
+        #    numberSequenceTable = null;
+        #    num = numberSeq.num();
+        #}
+      ENDSOURCE
+      SOURCE #used
+        #public void used()
+        #{
+        #    NumberSequenceTable numberSequenceTable;
+        #
+        #    if (numberSeq.parmNumTableNum(numberSequenceTable).Continuous)
+        #    {
+        #        numberSeq.used();
+        #    }
+        #}
+      ENDSOURCE
+      SOURCE #construct
+        #/// <summary>
+        #///     Construction
+        #/// </summary>
+        #/// <returns>
+        #///     a <c>McaCutlistPrefixNumberSeq</c> objects
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 07/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #public static McaCutlistPrefixNumberSeq construct()
+        #{
+        #    return new McaCutlistPrefixNumberSeq();
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: END

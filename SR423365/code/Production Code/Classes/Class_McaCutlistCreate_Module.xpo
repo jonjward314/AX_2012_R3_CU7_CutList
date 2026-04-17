@@ -1,0 +1,246 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: McaCutlistCreate_Module unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #McaCutlistCreate_Module
+    PROPERTIES
+      Name                #McaCutlistCreate_Module
+      Extends             #McaCutlistCreate
+      Origin              #{9F3FF129-8EAE-4C9A-888B-248932F358F4}
+    ENDPROPERTIES
+    
+    METHODS
+      SOURCE #classDeclaration
+        #class McaCutlistCreate_Module extends McaCutlistCreate
+        #{
+        #    McaCutlistModuleTmp cutlistModuleTmp;
+        #    FormDataSource      mcaCutlistModuleTmp_ds;
+        #    int                 counter;
+        #}
+      ENDSOURCE
+      SOURCE #createCutlistRecord
+        #/// <summary>
+        #///     Creates or updates a <c>McaCutlist</c> record
+        #/// </summary>
+        #/// <exception cref="Exception::Error">
+        #///     cannot update cutlist record
+        #/// </exception>
+        #/// <exception cref="Exception::Error">
+        #///     cannot insert cutlist record
+        #/// </exception>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2018 - Mca_CR009_PWSCutlistCRP2
+        #/// </remarks>
+        #public void createCutlistRecord()
+        #{
+        #    InventDim           inventDim = bomRawMaterial.inventDim();
+        #    DocuRef             docuRef;
+        #    McaCutlist          cutlist;
+        #
+        #    // Get any attached notes to the raw material bom line
+        #    select firstOnly Notes from docuRef
+        #        where docuRef.RefTableId    == bomRawMaterial.TableId
+        #           && docuRef.RefRecId      == bomRawMaterial.RecId
+        #           && docuRef.RefCompanyId  == bomRawMaterial.dataAreaId
+        #           && docuRef.TypeId        == params.DocuTypeId;
+        #
+        #    cutlist.clear();
+        #    cutlist.initValue();
+        #
+        #    cutlist.CutModuleId         = cutModuleId;
+        #    cutlist.SalesLineRefRecId   = str2int64(cutModuleId);
+        #    cutlist.ModelItemId         = cutlistModuleTmp.ModelItemId;
+        #    cutlist.PWSBuildScheduleId  = cutlistModuleTmp.PWSBuildScheduleId;
+        #    cutlist.DueDateTime         = DateTimeUtil::newDateTime(today(), timeNow());
+        #    cutlist.InventSiteId        = inventDim.InventSiteId;
+        #    cutlist.InventLocationId    = inventDim.InventLocationId;
+        #    cutlist.WMSLocationId       = inventDim.wMSLocationId;
+        #    //cutlist.ItemId              = bomRawMaterial.ItemId;
+        #    cutlist.ItemId              = McaCutlist::activeRawMaterial(bomRawMaterial.ItemId, cutlist.InventSiteId, today());
+        #    cutlist.Height              = bomRawMaterial.Height;
+        #    cutlist.Width               = bomRawMaterial.Width;
+        #    cutlist.Depth               = bomRawMaterial.Depth;
+        #    cutlist.Qty                 = bomRawMaterial.BOMQty;
+        #    cutlist.Pieces              = bomRawMaterial.McaPieces;
+        #    cutlist.WrkCtrId            = bomRawMaterial.McaMachine;
+        #    cutlist.Usage               = bomRawMaterial.mcaUsage();
+        #    cutlist.UnitId              = inventTableRawMaterial.inventUnitId(); //bomRawMaterial.UnitId;
+        #    cutlist.Pattern             = bomRawMaterial.McaPattern;
+        #    cutlist.UsageType           = bomRawMaterial.inventTable().McaUsageType;
+        #    cutlist.CutGroupId          = McaCutlist::getCutGroupId(bomVersion.ItemId, bomVersion.inventSiteId());
+        #    //cutlist.MoveToAreaId        = McaCutlistSecMoveToAreas::find(bomRawMaterial.RecId, InventLocation::find(cutlistModuleTmp.ShipToWarehouse).InventSiteId).MoveToAreaId;
+        #    cutlist.MoveToAreaId        = cutlistModuleTmp.MoveToAreaId;
+        #    cutlist.ModuleItemId        = bomVersion.ItemId;
+        #    cutlist.ModuleBOMId         = bomVersion.BOMId;
+        #    cutlist.ShipToWarehouse     = cutlistModuleTmp.ShipToWarehouse;
+        #    cutlist.KitQty              = cutlistModuleTmp.Qty;
+        #    cutlist.Notes               = docuRef.Notes;
+        #    cutlist.Prefix              = cutlistModuleTmp.Prefix;
+        #    cutlist.LabelIdNum          = counter;
+        #
+        #    if (bomRawMaterial.McaCutlistPrintNumber)
+        #    {
+        #        cutlist.BluePrint = McaEcoResProductPrints::findEcoResProductRecId(bomVersion.inventTable().Product).PrintNumber;
+        #    }
+        #
+        #    if (cutlist.validateWrite())
+        #    {
+        #        cutlist.insert();
+        #        recCount++;
+        #    }
+        #    else
+        #    {
+        #        throw error(strFmt("@MCA642", cutlist.Prefix, cutlist.ModuleItemId, cutlist.ItemId, cutlist.KanbanId));
+        #    }
+        #}
+      ENDSOURCE
+      SOURCE #doCutlistItems
+        #protected boolean doCutlistItems()
+        #{
+        #    //InventTable             inventTableRawMaterial;
+        #    //InventDim               inventDimBomVersion;
+        #    boolean                 created = false;
+        #
+        #    counter = 1;
+        #
+        #    while select ItemId, BOMId, InventDimId from bomVersion
+        #        where bomVersion.ItemId  == cutlistModuleTmp.ItemId
+        #            join InventDimId, InventSiteId from inventDimBomVersion
+        #                where inventDimBomVersion.inventDimId   == bomVersion.InventDimId
+        #                   && inventDimBomVersion.InventSiteId  == cutlistModuleTmp.InventSiteId
+        #            join ItemId, UnitId, Height, Width, Depth, BOMQty,
+        #                 McaPieces, McaMachine, McaPattern, InventDimId,
+        #                 RecId, dataAreaId, TableId, McaCutlistPrintNumber, McaMoveToAreaId  from  bomRawMaterial
+        #                where bomRawMaterial.BOMId     == bomVersion.BOMId
+        #                   && (bomRawMaterial.fromDate <= systemdateget()  || ! bomRawMaterial.fromDate)  &&
+        #                      (bomRawMaterial.toDate   >= systemdateget()  || ! bomRawMaterial.toDate)
+        #            join ItemId from inventTableRawMaterial
+        #                where inventTableRawMaterial.ItemId == bomRawMaterial.ItemId
+        #    {
+        #        //if (bomRawMaterial.UnitId == 'FT')
+        #            //continue;
+        #
+        #        this.createCutlistRecord();
+        #        created = true;
+        #
+        #        if (bomRawMaterial.UnitId != 'FT')
+        #        {
+        #            counter++;
+        #        }
+        #    }
+        #
+        #    return created;
+        #}
+      ENDSOURCE
+      SOURCE #initCutModuleId
+        #private void initCutModuleId()
+        #{
+        #    if (!cutModuleId)
+        #    {
+        #        cutModuleId = NumberSeq::newGetNum(McaCutlistParameters::numRefMcaCutModuleId()).num();
+        #    }
+        #}
+      ENDSOURCE
+      SOURCE #parmFormDataSource
+        #/// <summary>
+        #///     Get/Set the <c>FormDataSource</c>
+        #/// </summary>
+        #/// <param name="_mcaCutlistModuleTmp_ds">
+        #///     a <c>FormDataSource</c> object
+        #/// </param>
+        #/// <returns>
+        #///     a <c>FormDataSource</c> object
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2018 - Mca_CR009_PWSCutlistCRP2
+        #/// </remarks>
+        #FormDataSource parmFormDataSource(FormDataSource _mcaCutlistModuleTmp_ds = mcaCutlistModuleTmp_ds)
+        #{
+        #    if (!prmisDefault(_mcaCutlistModuleTmp_ds))
+        #    {
+        #        mcaCutlistModuleTmp_ds = _mcaCutlistModuleTmp_ds;
+        #    }
+        #
+        #    return mcaCutlistModuleTmp_ds;
+        #}
+      ENDSOURCE
+      SOURCE #parmMcaCutModuleId
+        #/// <summary>
+        #///     Get/Set the <c>McaCutModuleId</c>
+        #/// </summary>
+        #/// <param name="_cutModuleId">
+        #///     a <c>McaCutModuleId</c> object
+        #/// </param>
+        #/// <returns>
+        #///     a <c>McaCutModuleId</c> object
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2018 - Mca_CR009_PWSCutlistCRP2
+        #/// </remarks>
+        #McaCutModuleId parmMcaCutModuleId(McaCutModuleId _cutModuleId = cutModuleId)
+        #{
+        #    if (!prmisDefault(_cutModuleId))
+        #    {
+        #        cutModuleId = _cutModuleId;
+        #    }
+        #
+        #    return cutModuleId;
+        #}
+      ENDSOURCE
+      SOURCE #processCutlistRecords
+        #/// <summary>
+        #///     Processes all the cutlists records
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2018 - Mca_CR009_PWSCutlistCRP2
+        #/// </remarks>
+        #void processCutlistRecords()
+        #{
+        #    params = McaCutlistParameters::find();
+        #
+        #    this.initCutModuleId();
+        #
+        #    if (cutModuleId)
+        #    {
+        #        ttsBegin;
+        #        for (cutlistModuleTmp = mcaCutlistModuleTmp_ds.getFirst() ? mcaCutlistModuleTmp_ds.getFirst() : mcaCutlistModuleTmp_ds.cursor();
+        #             cutlistModuleTmp;
+        #             cutlistModuleTmp = mcaCutlistModuleTmp_ds.getNext())
+        #        {
+        #            this.doCutlistItems();
+        #        }
+        #        ttsCommit;
+        #    }
+        #}
+      ENDSOURCE
+      SOURCE #newStandard
+        #/// <summary>
+        #///     Creates a new <c>McaCutlistCreate_Module</c> object.
+        #/// </summary>
+        #/// <param name="_mcaCutlistModuleTmp_ds">
+        #///     a <c>FormDataSource</c> object
+        #/// </param>
+        #/// <returns>
+        #///     a newly created <c>McaCutlistCreate_Module</c> object.
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2018 - Mca_CR009_PWSCutlistCRP2
+        #/// </remarks>
+        #server static McaCutlistCreate_Module newStandard(FormDataSource _mcaCutlistModuleTmp_ds)
+        #{
+        #    McaCutlistCreate_Module cutlistCreate = new McaCutlistCreate_Module();
+        #
+        #    cutlistCreate.parmFormDataSource(_mcaCutlistModuleTmp_ds);
+        #
+        #    return cutlistCreate;
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: END

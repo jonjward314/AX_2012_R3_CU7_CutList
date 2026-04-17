@@ -1,0 +1,150 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: McaCutlistCoverReportController unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #McaCutlistCoverReportController
+    PROPERTIES
+      Name                #McaCutlistCoverReportController
+      Extends             #SrsReportRunController
+      Origin              #{00FDD96F-B92F-4A45-A51B-57EC65DE2DB5}
+    ENDPROPERTIES
+    
+    METHODS
+      SOURCE #classDeclaration
+        #/// <summary>
+        #///     The controller class for the (McaCutlistBaseReport, WorkOrderCoverSheet) report
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #class McaCutlistCoverReportController extends SrsReportRunController
+        #{
+        #}
+      ENDSOURCE
+      SOURCE #dialogClose
+        #/// <summary>
+        #///     Closes the dialog when the report viewer form is not shown for print management.
+        #/// </summary>
+        #/// <remarks>
+        #///     This method is overridden to let the user view multiple copies of the same report under print
+        #///     management settings.
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #protected void dialogClose()
+        #{
+        #    if(!useReportViewerForm)
+        #    {
+        #        super();
+        #    }
+        #}
+      ENDSOURCE
+      SOURCE #dialogShow
+        #/// <summary>
+        #///     Detaches the form after the report viewer is shown.
+        #/// </summary>
+        #/// <remarks>
+        #///     This method lets the user show multiple report viewers.
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #protected void dialogShow()
+        #{
+        #    SysOperationDialog sysOperationDialog;
+        #    FormRun formRun;
+        #
+        #    if (useReportViewerForm)
+        #    {
+        #        dialog.run();
+        #        this.dialogPostRun();
+        #
+        #        sysOperationDialog = dialog as SysOperationDialog;
+        #        formRun = sysOperationDialog.formRun();
+        #        formRun.detach();
+        #    }
+        #    else
+        #    {
+        #        super();
+        #    }
+        #}
+      ENDSOURCE
+      SOURCE #prePromptModifyContract
+        #/// <summary>
+        #///     Set the query object in the contract
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #protected void prePromptModifyContract()
+        #{
+        #    McaCutlistReportContract                contract;
+        #
+        #    contract = this.parmReportContract().parmRdpContract() as McaCutlistReportContract;
+        #
+        #    if (!contract)
+        #    {
+        #        contract = new McaCutlistReportContract();
+        #    }
+        #
+        #    if (this.parmArgs().parmObject())
+        #    {
+        #        contract.setQuery(this.parmArgs().parmObject());
+        #        contract.parmCoverSheet(true);
+        #    }
+        #}
+        #
+      ENDSOURCE
+      SOURCE #preRunModifyContract
+        #/// <summary>
+        #///     Set the query object in the contract
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #protected void preRunModifyContract()
+        #{
+        #    McaCutlistReportContract                contract;
+        #
+        #    contract = this.parmReportContract().parmRdpContract() as McaCutlistReportContract;
+        #
+        #    if (!contract)
+        #    {
+        #        contract = new McaCutlistReportContract();
+        #    }
+        #
+        #    if (this.parmArgs().parmObject())
+        #    {
+        #        contract.setQuery(this.parmArgs().parmObject());
+        #        contract.parmCoverSheet(true);
+        #    }
+        #}
+      ENDSOURCE
+      SOURCE #main
+        #/// <summary>
+        #///     Main entry point
+        #/// </summary>
+        #/// <param name="args">
+        #///     a <c>Args</c> object
+        #/// </param>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #public static void main(Args args)
+        #{
+        #    McaCutlistCoverReportController controller = new McaCutlistCoverReportController();
+        #
+        #    controller.parmReportName(ssrsReportStr(McaCutlistBaseReport, WorkOrderCoverSheet));
+        #    controller.parmShowDialog(false);
+        #    controller.parmLoadFromSysLastValue(false);
+        #    controller.parmArgs(args);
+        #    controller.startOperation();
+        #}
+        #
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: END

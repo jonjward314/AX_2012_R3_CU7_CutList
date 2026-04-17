@@ -1,0 +1,536 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: McaCutlistLabels unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #McaCutlistLabels
+    PROPERTIES
+      Name                #McaCutlistLabels
+      Origin              #{32C90A8D-E0C9-4A1D-B926-EC2279DF6733}
+    ENDPROPERTIES
+    
+    METHODS
+      SOURCE #classDeclaration
+        #/// <summary>
+        #///     This class generates the cutlist lables
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 09/18/2018 - Mca_CR011_11_CounterTopLabels
+        #/// </remarks>
+        #class McaCutlistLabels
+        #{
+        #    McaCutlistLabelType     cutlistLabelType;
+        #    McaLabelFilePaths       labelFilePaths;
+        #    McaCutlistFileContract  contract;
+        #    int                     numFilesCreated, numTotalFilesCreated;
+        #
+        #    #define.FileExtensionCSV(".csv")
+        #}
+      ENDSOURCE
+      SOURCE #create
+        #/// <summary>
+        #///     Creates all the cutlist labels.
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 09/18/2018 - Mca_CR011_11_CounterTopLabels
+        #/// </remarks>
+        #private void create()
+        #{
+        #    setPrefix("@MCA1943");
+        #
+        #    this.createModuleLabelFiles();
+        #    this.createRawMaterialFiles();
+        #
+        #    info(strFmt("@RET764", numTotalFilesCreated));
+        #}
+        #
+      ENDSOURCE
+      SOURCE #createFile
+        #/// <summary>
+        #///     Creates a <c>CommaIo</c> object
+        #/// </summary>
+        #/// <param name="_fileName">
+        #///     Name of the file to create
+        #/// </param>
+        #/// <returns>
+        #///     the newly created <c>CommaIo</c> object
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 09/18/2018 - Mca_CR011_11_CounterTopLabels
+        #/// </remarks>
+        #/// <exception cref="Exception::Error">
+        #///     Error cannot create file
+        #/// </exception>
+        #private CommaIo createFile(Filename _fileName)
+        #{
+        #    #File
+        #    CommaIo             commaIo;
+        #    FileIOPermission    permission;
+        #
+        #    _fileName = System.IO.Path::Combine(this.filePath(), _fileName);
+        #
+        #    permission  = new FileIOPermission(_fileName, #io_write);
+        #    permission.assert();
+        #
+        #    commaIo = new CommaIo(_fileName, #io_write);
+        #    if (!commaIo || commaIo.status() != IO_Status::Ok)
+        #    {
+        #        throw error("@SYS19358");
+        #    }
+        #    commaIo.outFieldDelimiter(',');
+        #
+        #    return commaIo;
+        #}
+      ENDSOURCE
+      SOURCE #createLabel
+        #/// <summary>
+        #///     Creates all the cutlist labels.
+        #/// </summary>
+        #/// <param name="_cutlist">
+        #///     The McaCutlist table buffer
+        #/// </param>
+        #/// <param name="_labelData">
+        #///     The container with the data
+        #/// </param>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 09/18/2018 - Mca_CR011_11_CounterTopLabels
+        #/// </remarks>
+        #private void createLabel(McaCutlist _cutlist, container _labelData)
+        #{
+        #    CommaIo commaIo;
+        #    str     fileName;
+        #
+        #    // try to make the file name unique
+        #    fileName = "@SYS14234" + _cutList.ModuleItemId + '_' + guid2str(newGuid()) + #FileExtensionCSV;
+        #
+        #    while (this.existsFile(fileName))
+        #    {
+        #        fileName = "@SYS14234" + _cutList.ModuleItemId + '_' + guid2str(newGuid()) + #FileExtensionCSV;
+        #    }
+        #
+        #    commaIo = this.createFile(fileName);
+        #    commaIo.writeExp(_labelData);
+        #    commaIo.finalize();
+        #
+        #    CodeAccessPermission::revertAssert();
+        #}
+        #
+      ENDSOURCE
+      SOURCE #createModuleLabelFiles
+        #/// <summary>
+        #///     Creates all the cutlist lables for the cut modules.
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 09/18/2018 - Mca_CR011_11_CounterTopLabels
+        #/// </remarks>
+        #private void createModuleLabelFiles()
+        #{
+        #    #File
+        #    Query                   query = contract.getQuery();
+        #    QueryRun                queryRun;
+        #    QueryGroupByField       qgf;
+        #    QueryBuildDataSource    qbds;
+        #    container               line;
+        #    McaCutlist              cutList, cutlistPieceCnt;
+        #    InventTable             inventTable;
+        #    //str                     fileName;
+        #    McaPrintDestinations    printDestinations; // Ray M. - 10/12/2018 - Mca_CR011_3_BUG111971_LabelPrinter
+        #    McaLabelTemplateFilePath labelTemplate = McaLabelFilePaths::find().CutlistModuleTemplate;
+        #    int                     i;
+        #
+        #    setPrefix("@MCA1944");
+        #
+        #    numFilesCreated = 0;
+        #
+        #    this.parmMcaCutlistLabelType(McaCutlistLabelType::Module);
+        #
+        #    // add the resource as a range
+        #    qbds = query.dataSourceTable(tablenum(McaCutlist));
+        #
+        #    // add the grouping
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, ModuleItemId));
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, CutModuleId));
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, InventSiteId));
+        #    qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, KitQty));
+        #
+        #    // sort by Module
+        #    qbds.addSortField(fieldNum(McaCutlist, ModuleItemId));
+        #
+        #    queryRun = new QueryRun(query);
+        #
+        #    while (queryrun.next())
+        #    {
+        #        cutList     = queryRun.get(tablenum(McaCutlist));
+        #        inventTable = InventTable::find(cutList.ModuleItemId);
+        #
+        #        // Ray M. - 10/12/2018 - Mca_CR011_3_BUG111971_LabelPrinter - start
+        #        printDestinations = McaPrintDestinations::find(cutList.InventSiteId);
+        #
+        #        if (!printDestinations.CutlistLabelDestination)
+        #        {
+        #            throw error(strFmt('Label printer not setup for Prod unit %1', cutList.InventSiteId));
+        #        }
+        #        // Ray M. - 10/12/2018 - Mca_CR011_3_BUG111971_LabelPrinter - end
+        #
+        #        //// try to make the file name unique
+        #        //fileName = "@SYS14234" + cutList.ModuleItemId + '_' + guid2str(newGuid()) + #FileExtensionCSV;
+        #//
+        #        //while (this.existsFile(fileName))
+        #        //{
+        #            //fileName = "@SYS14234" + cutList.ModuleItemId + '_' + guid2str(newGuid()) + #FileExtensionCSV;
+        #        //}
+        #
+        #        select count(ItemId) from cutlistPieceCnt
+        #            where cutlistPieceCnt.CutModuleId == cutList.CutModuleId
+        #               && cutlistPieceCnt.ModuleItemId == cutList.ModuleItemId;
+        #
+        #        line += cutlist.ModuleItemId;
+        #        line += inventTable.itemName();
+        #        line += cutlistPieceCnt.ItemId;
+        #        line += '';
+        #        line += '';
+        #        line += '';
+        #        line += '';
+        #        line += '';
+        #        line += '';
+        #        line += printDestinations.displayCutlistLabelPrinterName();
+        #        line += labelTemplate;
+        #
+        #        for (i = 0; i < cutList.kitQty; i++)
+        #        {
+        #            this.createLabel(cutList, line);
+        #            numFilesCreated++;
+        #        }
+        #
+        #        //numFilesCreated++;
+        #
+        #        line = conNull();
+        #    }
+        #
+        #    numTotalFilesCreated += numFilesCreated;
+        #
+        #    info(strFmt("@RET764", numFilesCreated));
+        #}
+        #
+      ENDSOURCE
+      SOURCE #createRawMaterialFiles
+        #/// <summary>
+        #///     Creates all the cutlist labels for the raw materials.
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 09/18/2018 - Mca_CR011_11_CounterTopLabels
+        #/// </remarks>
+        #private void createRawMaterialFiles()
+        #{
+        #    #File
+        #    Query                   query = contract.getQuery();
+        #    QueryRun                queryRun;
+        #    //QueryGroupByField       qgf;
+        #    //QueryBuildRange         qbr;
+        #    QueryBuildDataSource    qbds;
+        #    container               line;
+        #    McaCutlist              cutList, cutlistPieceCnt;
+        #    ItemId                  lastModuleItemId;
+        #    InventTable             inventTableModule, inventTableRawMat;
+        #    //str                     fileName;
+        #    int                     cnt = 0;
+        #    McaPrintDestinations    printDestinations; // Ray M. - 10/12/2018 - Mca_CR011_3_BUG111971_LabelPrinter
+        #    McaLabelTemplateFilePath labelTemplate = McaLabelFilePaths::find().CutlistRawTemplate;   // Ray M - 07/17/19 - Mca_BUG136640_FedTagLabelOrder
+        #    int                     i;
+        #
+        #    setPrefix("@MCA1945");
+        #
+        #    numFilesCreated = 0;
+        #
+        #    this.parmMcaCutlistLabelType(McaCutlistLabelType::RawMaterial);
+        #
+        #    // add the resource as a range
+        #    qbds = query.dataSourceTable(tablenum(McaCutlist));
+        #
+        #    // add the grouping
+        #    //qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, ItemId));
+        #    //qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, ModuleItemId));
+        #    //qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, CutModuleId));
+        #    //qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, Depth));
+        #    //qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, Width));
+        #    //qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, BluePrint));
+        #    //qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, Notes));
+        #    //qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, Pattern));
+        #    //qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, InventSiteId));
+        #    //qgf = SysQuery::findOrCreateGroupByField(query, qbds, fieldnum(McaCutlist, LabelIdNum));
+        #
+        #    //qbr = SysQuery::findOrCreateRange(qbds, fieldNum(McaCutlist, UnitID));
+        #    //qbr.value(SysQuery::valueNot('FT'));
+        #
+        #    // sort by Module
+        #    //qbds.addSortField(fieldNum(McaCutlist, ModuleItemId));
+        #    qbds.addSortField(fieldNum(McaCutlist, ItemId));
+        #
+        #    queryRun = new QueryRun(query);
+        #
+        #    while (queryrun.next())
+        #    {
+        #        cutList           = queryRun.get(tablenum(McaCutlist));
+        #        inventTableModule = InventTable::find(cutList.ModuleItemId);
+        #        inventTableRawMat = InventTable::find(cutList.ItemId);
+        #
+        #        if (cutList.UnitId == 'FT')
+        #            continue;
+        #
+        #        // Ray M. - 10/12/2018 - Mca_CR011_3_BUG111971_LabelPrinter - start
+        #        printDestinations = McaPrintDestinations::find(cutList.InventSiteId);
+        #
+        #        if (!printDestinations.CutlistLabelDestination)
+        #        {
+        #            throw error(strFmt('Label printer not setup for Prod unit %1', cutList.InventSiteId));
+        #        }
+        #        // Ray M. - 10/12/2018 - Mca_CR011_3_BUG111971_LabelPrinter - end
+        #
+        #        //if (!cutList.Pattern)
+        #        //    continue;
+        #
+        #        // Bypass unit of measure of 'FT'
+        #        // Kit Qty repeat labels
+        #        if (lastModuleItemId != cutList.ModuleItemId)
+        #        {
+        #            cnt = 0;
+        #        }
+        #
+        #        cnt++;
+        #
+        #        //// try to make the file name unique
+        #        //fileName = "@SYS92992" + cutList.ModuleItemId + '_' + guid2str(newGuid()) + #FileExtensionCSV;
+        #//
+        #        //while (this.existsFile(fileName))
+        #        //{
+        #            //fileName = "@SYS92992" + cutList.ModuleItemId + '_' + guid2str(newGuid()) + #FileExtensionCSV;
+        #        //}
+        #
+        #        select count(ItemId) from cutlistPieceCnt
+        #            where cutlistPieceCnt.CutModuleId == cutList.CutModuleId
+        #               && cutlistPieceCnt.ModuleItemId == cutList.ModuleItemId;
+        #
+        #        line += cutlist.ModuleItemId;
+        #        line += inventTableModule.itemName();
+        #        line += cutlist.BluePrint;
+        #        line += strFmt('%1.%2', strRem(strRFix(strfmt('%1', num2str(cutlist.Width, -1, 3, DecimalSeparator::Dot, ThousandSeparator::None)), 7, '0'), '.')     // Width - 9 alpha
+        #                              , strRem(strRFix(strfmt('%1', num2str(cutlist.Depth, -1, 3, DecimalSeparator::Dot, ThousandSeparator::None)), 7, '0'), '.'));      // Length - 9 alph
+        #        line += cutlist.Notes;
+        #        line += cutlist.Pattern;
+        #        line += inventTableRawMat.ItemId;
+        #        line += inventTableRawMat.itemName();
+        #        line += strFmt('%1 of %2', cutList.LabelIdNum, cutlistPieceCnt.ItemId);
+        #        line += printDestinations.displayCutlistLabelPrinterName();
+        #        line += labelTemplate;
+        #
+        #        //this.createLabel(fileName, line);
+        #        for (i = 0; i < cutList.kitQty; i++)
+        #        {
+        #            this.createLabel(cutList, line);
+        #            numFilesCreated++;
+        #        }
+        #
+        #        lastModuleItemId = cutList.ModuleItemId;
+        #
+        #        //numFilesCreated++;
+        #        line = conNull();
+        #    }
+        #
+        #    numTotalFilesCreated += numFilesCreated;
+        #
+        #    info(strFmt("@RET764", numFilesCreated));
+        #}
+        #
+      ENDSOURCE
+      SOURCE #existsFile
+        #/// <summary>
+        #///     Checks to see if the file exists
+        #/// </summary>
+        #/// <param name="_fileName">
+        #///     The name and path of the file.
+        #/// </param>
+        #/// <returns>
+        #///     true if file exists or false if file does not exist
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 09/18/2018 - Mca_CR011_11_CounterTopLabels
+        #/// </remarks>
+        #private boolean existsFile(Filename _fileName)
+        #{
+        #    _fileName = System.IO.Path::Combine(this.filePath(), _fileName);
+        #
+        #    if (System.IO.File::Exists(_fileName))
+        #    {
+        #        return true;    
+        #    }   
+        #    return false;
+        #}
+      ENDSOURCE
+      SOURCE #filePath
+        #/// <summary>
+        #///     Sets the filePath
+        #/// </summary>
+        #/// <returns>
+        #///     a <c>FilePath</c> object
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 09/18/2018 - Mca_CR011_11_CounterTopLabels
+        #/// </remarks>
+        #private FilePath filePath()
+        #{
+        #    FilePath    filePath;
+        #
+        #    if (this.parmMcaCutlistLabelType() == McaCutlistLabelType::Module)
+        #    {
+        #        filePath = this.labelFilePaths().CutlistModuleDrop;
+        #    }
+        #    else if (this.parmMcaCutlistLabelType() == McaCutlistLabelType::RawMaterial)
+        #    {
+        #        filePath = this.labelFilePaths().CutlistRawDrop;
+        #    }
+        #
+        #    return filePath;
+        #}
+      ENDSOURCE
+      SOURCE #labelFilePaths
+        #/// <summary>
+        #///     Gets the <c>McaLabelFilePaths</c>
+        #/// </summary>
+        #/// <returns>
+        #///     a <c>McaLabelFilePaths</c> object
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 09/18/2018 - Mca_CR011_11_CounterTopLabels
+        #/// </remarks>
+        #McaLabelFilePaths labelFilePaths()
+        #{
+        #    if (!labelFilePaths)
+        #    {
+        #        labelFilePaths = McaLabelFilePaths::find();
+        #    }
+        #
+        #    return labelFilePaths;
+        #}
+      ENDSOURCE
+      SOURCE #parmContract
+        #/// <summary>
+        #///     Get/Set the <c>McaCutlistFileContract</c>
+        #/// </summary>
+        #/// <param name="_contract">
+        #///     a <c>McaCutlistFileContract</c> object
+        #/// </param>
+        #/// <returns>
+        #///     a <c>McaCutlistFileContract</c> object
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 09/18/2018 - Mca_CR011_11_CounterTopLabels
+        #/// </remarks>
+        #McaCutlistFileContract parmContract(McaCutlistFileContract _contract = contract)
+        #{
+        #    if (!prmisDefault(_contract))
+        #    {
+        #        contract = _contract;
+        #    }
+        #
+        #    return contract;
+        #}
+      ENDSOURCE
+      SOURCE #parmMcaCutlistLabelType
+        #/// <summary>
+        #///     Get/Set the <c>McaCutlistLabelType</c>
+        #/// </summary>
+        #/// <param name="_cutlistLabelType">
+        #///     a <c>McaCutlistLabelType</c> object
+        #/// </param>
+        #/// <returns>
+        #///     a <c>McaUsageType</c> object
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 09/18/2018 - Mca_CR011_11_CounterTopLabels
+        #/// </remarks>
+        #McaCutlistLabelType parmMcaCutlistLabelType(McaCutlistLabelType _cutlistLabelType = cutlistLabelType)
+        #{
+        #    if (!prmisDefault(_cutlistLabelType))
+        #    {
+        #        cutlistLabelType = _cutlistLabelType;
+        #    }
+        #
+        #    return cutlistLabelType;
+        #}
+      ENDSOURCE
+      SOURCE #run
+        #/// <summary>
+        #///     Runs the class logic
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 09/18/2018 - Mca_CR011_11_CounterTopLabels
+        #/// </remarks>
+        #public void run()
+        #{
+        #    #OCCRetryCount
+        #
+        #    startLengthyOperation();
+        #
+        #    try
+        #    {
+        #        this.create();
+        #    }
+        #    catch (Exception::Error)
+        #    {
+        #        throw error("@SYS21628"); //Update has been canceled because of an error.
+        #    }
+        #    catch (Exception::Deadlock)
+        #    {
+        #        retry;
+        #    }
+        #    catch (Exception::UpdateConflict)
+        #    {
+        #        if (appl.ttsLevel() == 0)
+        #        {
+        #            if (xSession::currentRetryCount() >= #RetryNum)
+        #            {
+        #                throw Exception::UpdateConflictNotRecovered;
+        #            }
+        #            else
+        #            {
+        #                retry;
+        #            }
+        #        }
+        #        else
+        #        {
+        #            throw Exception::UpdateConflict;
+        #        }
+        #    }
+        #    endLengthyOperation();
+        #}
+      ENDSOURCE
+      SOURCE #newStandard
+        #/// <summary>
+        #///     Creates a new <c>McaCutlistLabels</c> object.
+        #/// </summary>
+        #/// <param name="_contract">
+        #///     a <c>McaCutlistFileContract</c> object
+        #/// </param>
+        #/// <returns>
+        #///     a newly created <c>McaCutlistLabels</c> object.
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 09/18/2018 - Mca_CR011_11_CounterTopLabels
+        #/// </remarks>
+        #static McaCutlistLabels newStandard(McaCutlistFileContract _contract)
+        #{
+        #    McaCutlistLabels cutlistLabel = new McaCutlistLabels();
+        #
+        #    cutlistLabel.parmContract(_contract);
+        #
+        #    return cutlistLabel;
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: END

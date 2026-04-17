@@ -1,0 +1,92 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: VPA
+
+; Microsoft Dynamics AX VISUALSTUDIOPROJECT : McaCutlistReport unloaded
+; --------------------------------------------------------------------------------
+  VERSION 1
+  
+  VISUALSTUDIOPROJECT #McaCutlistReport
+    PROPERTIES
+      Name                #McaCutlistReport
+      ProjectGUID         #{0FFFE335-15BE-4AFF-8718-C062B4D7F728}
+      ProjectTypeGUID     #{AA631830-3AD7-4631-8CF6-443A09BF983B}
+      VisualStudioProjectFile   #McaCutlistReport.dynamicsproj
+      Origin              #{192EC357-EDF2-4AC4-B348-1A6876134102}
+    ENDPROPERTIES
+    
+    REFERENCEDPROJECTS
+      #
+    ENDREFERENCEDPROJECTS
+    
+    VISUALSTUDIOPROJECTFOLDER #Project Content
+      PROPERTIES
+        Name                #Project Content
+      ENDPROPERTIES
+      
+      VISUALSTUDIOPROJECTFILE #McaCutlistReport.dynamicsproj
+        PROPERTIES
+          Name                #McaCutlistReport.dynamicsproj
+        ENDPROPERTIES
+        
+        SOURCE 2171
+#﻿<?xml version="1.0" encoding="utf-8"?>
+#<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+#  <PropertyGroup>
+#    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+#    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+#    <ProductVersion>6.3.4000.127</ProductVersion>
+#    <SchemaVersion>2.0</SchemaVersion>
+#    <ProjectGuid>0fffe335-15be-4aff-8718-c062b4d7f728</ProjectGuid>
+#    <ProjectTypeGuids>{BF6F8E12-879D-49E7-ADF0-5503146B24B8};{aa631830-3ad7-4631-8cf6-443a09bf983b}</ProjectTypeGuids>
+#    <Name>McaCutlistReport</Name>
+#    <BaseAssemblyName>McaCutlistReport</BaseAssemblyName>
+#    <!-- Application property page properties -->
+#    <OutputType>Dynamics Reporting Library</OutputType>
+#    <!-- AssemblyInfo properties -->
+#    <AssemblyTitle>McaCutlistReport</AssemblyTitle>
+#    <AssemblyCompany>
+#    </AssemblyCompany>
+#    <AssemblyProduct>McaCutlistReport</AssemblyProduct>
+#    <AssemblyCopyright>Copyright ©  2017</AssemblyCopyright>
+#    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+#    <FileAlignment>512</FileAlignment>
+#    <OutputPath>bin\Debug\</OutputPath>
+#    <DeployToServer>No</DeployToServer>
+#    <DeployToClient>No</DeployToClient>
+#    <DeployToEP>No</DeployToEP>
+#    <RootNamespace>McaCutlistReport</RootNamespace>
+#    <StartupElement />
+#    <DebugTarget>None</DebugTarget>
+#  </PropertyGroup>
+#  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+#    <OutputPath>bin\Debug\</OutputPath>
+#  </PropertyGroup>
+#  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+#    <OutputPath>bin\Release\</OutputPath>
+#  </PropertyGroup>
+#  <ItemGroup>
+#    <Compile Include="\SSRS Reports\Reports\McaCutlistBaseReport">
+#      <Virtual>True</Virtual>
+#    </Compile>
+#  </ItemGroup>
+#  <Import Project="$(MSBuildExtensionsPath)\Microsoft\DynamicsTools\Microsoft.Dynamics.Framework.Design.Reporting.Modeling.targets" />
+#  <Import Project="$(MSBuildExtensionsPath)\Microsoft\DynamicsTools\Microsoft.Dynamics.Framework.Design.InteractionProject.targets" />
+#</Project>
+        ENDSOURCE
+      ENDVISUALSTUDIOPROJECTFILE
+      
+    ENDVISUALSTUDIOPROJECTFOLDER
+    
+    VISUALSTUDIOPROJECTFOLDER #Project Output
+      PROPERTIES
+        Name                #Project Output
+      ENDPROPERTIES
+      
+    ENDVISUALSTUDIOPROJECTFOLDER
+    
+  ENDVISUALSTUDIOPROJECT
+  
+
+***Element: END

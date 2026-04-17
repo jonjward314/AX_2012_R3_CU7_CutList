@@ -1,0 +1,909 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: CLS
+
+; Microsoft Dynamics AX Class: McaCutlistCreate unloaded
+; --------------------------------------------------------------------------------
+  CLSVERSION 1
+  
+  CLASS #McaCutlistCreate
+    PROPERTIES
+      Name                #McaCutlistCreate
+      Origin              #{DA72BFFE-29F6-42A2-A8CD-24EF41AAB880}
+    ENDPROPERTIES
+    
+    METHODS
+      SOURCE #classDeclaration
+        #/// <summary>
+        #///     Logic to create <c>McaCutlist</c> records
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #class McaCutlistCreate
+        #{
+        #    BOMVersion                      bomVersion;
+        #    BOM                             bomRawMaterial;
+        #    PWSBuildSequenceOrder           buildScheduleOrder;
+        #    PWSBuildScheduleId              buildScheduleId;
+        #    PWSBuildSchedule                buildSchedule;
+        #    SalesLine                       salesLine;
+        #    InventDim                       inventDimSalesLine;
+        #    InventDim                       inventDimBomVersion;
+        #    InventDim                       inventDimBomRawMaterial;
+        #    InventTable                     inventTableRawMaterial;
+        #    InventTable                     inventTable;
+        #    McaCutlistCreateContract        contract;
+        #    McaCutlistPrefixNumberSeq       cutlistPrefixNumberSeq;
+        #    McaCutlistParameters            params;
+        #    McaBOMExplodeTmp                mcaBOMExplodeTmp;
+        #    McaPrefix                       prefix;
+        #    str                             infoPrefix;
+        #    McaCutModuleId                  cutModuleId;
+        #    BOMId                           modelBomId;
+        #    int                             recCount;
+        #
+        #    Batch                           batch;
+        #    BatchHeader                     batchheader;
+        #    McaNumThreads                   numThreads;
+        #}
+      ENDSOURCE
+      SOURCE #createCutlistRecord
+        #/// <summary>
+        #///     Creates or updates a <c>McaCutlist</c> record
+        #/// </summary>
+        #/// <exception cref="Exception::Error">
+        #///     cannot update cutlist record
+        #/// </exception>
+        #/// <exception cref="Exception::Error">
+        #///     cannot insert cutlist record
+        #/// </exception>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #public void createCutlistRecord()
+        #{
+        #    DocuRef                 docuRef;
+        #    McaCutlist              cutlist;
+        #
+        #    // Get any attached notes to the raw material bom line
+        #    select firstOnly Notes from docuRef
+        #        where docuRef.RefTableId    == bomRawMaterial.TableId
+        #           && docuRef.RefRecId      == bomRawMaterial.RecId
+        #           && docuRef.RefCompanyId  == bomRawMaterial.dataAreaId
+        #           && docuRef.TypeId        == params.DocuTypeId;
+        #
+        #    cutlist.clear();
+        #    cutlist.initValue();
+        #
+        #    cutlist.SalesLineRefRecId   = salesLine.RecId;
+        #    cutlist.ComponentBOMId      = mcaBOMExplodeTmp.BOMId;
+        #    cutlist.ComponentItemId     = mcaBOMExplodeTmp.RefItemId;
+        #    cutlist.ModelBOMId          = modelBomId;
+        #    cutlist.ModelItemId         = salesLine.ItemId;
+        #    cutlist.DueDateTime         = DateTimeUtil::newDateTime(buildScheduleOrder.DateOffLine, timeMax());
+        #    cutlist.InventSiteId        = inventDimBomRawMaterial.InventSiteId;
+        #    cutlist.InventLocationId    = inventDimBomRawMaterial.InventLocationId;
+        #    cutlist.WMSLocationId       = inventDimBomRawMaterial.wMSLocationId;
+        #    //cutlist.ItemId              = bomRawMaterial.ItemId;
+        #    //cutlist.ItemId              = McaCutlist::activeRawMaterial(bomRawMaterial.ItemId, cutlist.InventSiteId, salesLine.deliveryDate());
+        #    // MCA Robert O'Berry 1/25/2024 Case mca202301217 [SR299695] - Cut list Program – Dates begin
+        #    //cutlist.ItemId              = McaCutlistCreate::activeRawMaterial(bomRawMaterial.ItemId, cutlist.InventSiteId, buildScheduleOrder.DateOffLine);
+        #    cutlist.ItemId              = McaCutlistCreate::activeRawMaterial(bomRawMaterial.ItemId, cutlist.InventSiteId, mcaBOMExplodeTmp.ReqDate);
+        #    // MCA Robert O'Berry 1/25/2024 Case mca202301217 [SR299695] - Cut list Program – Dates end
+        #    cutlist.Height              = bomRawMaterial.Height;
+        #    cutlist.Width               = bomRawMaterial.Width;
+        #    cutlist.Depth               = bomRawMaterial.Depth;
+        #    cutlist.Qty                 = bomRawMaterial.BOMQty;
+        #    cutlist.Pieces              = bomRawMaterial.McaPieces;
+        #    cutlist.WrkCtrId            = bomRawMaterial.McaMachine;
+        #    cutlist.Usage               = bomRawMaterial.mcaUsage();
+        #    cutlist.UnitId              = inventTableRawMaterial.inventUnitId(); // bomRawMaterial.UnitId;
+        #    cutlist.Pattern             = bomRawMaterial.McaPattern;
+        #    cutlist.UsageType           = inventTableRawMaterial.McaUsageType; //bomRawMaterial.inventTable().McaUsageType;
+        #    cutlist.CutGroupId          = McaCutlist::getCutGroupId(BOMVersion.ItemId, inventDimBomVersion.InventSiteId);
+        #    cutlist.ModuleItemId        = bomVersion.ItemId;
+        #    cutlist.ModuleBOMId         = bomVersion.BOMId;
+        #    cutlist.MoveToLocation      = inventDimSalesLine.WMSLocationId;
+        #    //cutlist.ShipToWarehouse     = inventDimSalesLine.InventLocationId;
+        #    cutlist.ShipToWarehouse     = this.shipToWarehouse();
+        #    cutlist.KitQty              = mcaBOMExplodeTmp.BOMQty;
+        #    cutlist.Notes               = docuRef.Notes;
+        #    cutlist.Prefix              = buildScheduleOrder.McaPrefix;
+        #    cutlist.PWSBuildScheduleId  = buildSchedule.BuildSchedule;
+        #    cutlist.CutModuleId         = cutModuleId;
+        #    cutlist.DateOffLine         = buildScheduleOrder.DateOffLine;
+        #    cutlist.DateOnLine          = buildScheduleOrder.DateOnLine;
+        #    //cutlist.MoveToAreaId        = McaCutlist::findMoveToArea(bomRawMaterial.RecId, cutlist.ModuleItemId, mcaBOMExplodeTmp.BOMId, buildScheduleOrder.DateOffLine);
+        #    cutlist.MoveToAreaId        = McaCutlistCreate::findMoveToArea(bomRawMaterial.RecId, cutlist.ModuleItemId, mcaBOMExplodeTmp.BOMId, buildScheduleOrder.DateOffLine);
+        #
+        #    if (bomRawMaterial.McaCutlistPrintNumber)
+        #    {
+        #        cutlist.BluePrint = McaEcoResProductPrints::findEcoResProductRecId(bomVersion.inventTable().Product).PrintNumber;
+        #    }
+        #
+        #    if (cutlist.validateWrite())
+        #    {
+        #        cutlist.insert();
+        #        recCount++;
+        #    }
+        #    else
+        #    {
+        #        throw error(strFmt("@MCA642", cutlist.Prefix, cutlist.ModuleItemId, cutlist.ItemId, cutlist.KanbanId));
+        #    }
+        #}
+      ENDSOURCE
+      SOURCE #createMultiTasks
+        #/// <summary>
+        #///     Create all the cutlists create tasks, 1 per salesline
+        #/// </summary>
+        #/// <remarks>
+        #///     Ray M - 2/14/2019 - Mca_TASK118324_CutlistMultiThread
+        #/// </remarks>
+        #void createMultiTasks()
+        #{
+        #    Query                   query = contract.getQuery();
+        #    QueryRun                queryRun;
+        #    QueryBuildRange         qbr;
+        #    QueryBuildDataSource    qbdsSchedule, qbdsSequence;
+        #    BatchHeader             header = this.parmBatchHeader();
+        #    McaCutlistCreateTask    cutlistCreateTask;
+        #
+        #    // Set the range for build schedule if it was passed into the class
+        #    if (this.parmBuildScheduleId())
+        #    {
+        #        qbr = SysQuery::findOrCreateRange(SysQuery::findOrCreateDataSource(query, tablenum(PWSBuildSchedule)), fieldnum(PWSBuildSchedule, BuildSchedule));
+        #        qbr.value(this.parmBuildScheduleId());
+        #    }
+        #
+        #    // add the sort for schedules
+        #    qbdsSchedule = query.dataSourceTable(tablenum(PWSBuildSchedule));
+        #    qbdsSchedule.addSortField(fieldNum(PWSBuildSchedule, BuildSchedule));
+        #
+        #    // add the order for sequence
+        #    qbdsSequence = query.dataSourceTable(tablenum(PWSBuildSequenceOrder));
+        #    qbdsSequence.addSortField(fieldNum(PWSBuildSequenceOrder, BuildSequenceId));
+        #
+        #    queryRun = new QueryRun(query);
+        #
+        #    while (queryrun.next())
+        #    {
+        #        salesLine         = queryRun.get(tablenum(SalesLine));
+        #        cutlistCreateTask = McaCutlistCreateTask::newStandard(salesLine.RecId);
+        #
+        #        header.addRuntimeTask(cutlistCreateTask, batchheader.parmBatchHeaderId(), BatchConstraintType::And);
+        #        header.save();
+        #    }
+        #}
+      ENDSOURCE
+      SOURCE #doCutlistItems
+        #protected boolean doCutlistItems()
+        #{
+        #    ReqItemTable            reqItemTable;
+        #    InventDim               inventDimReq;
+        #    InventLocation          inventLocation;
+        #    boolean                 created = false;
+        #    TransDate               offLineDate = (buildScheduleOrder.DateOffLine ? buildScheduleOrder.DateOffLine : today());
+        #
+        #    // MCA Robert O'Berry 1/25/2024 Case mca202301217 [SR299695] - Cut list Program – Dates begin
+        #    offLineDate = mcaBOMExplodeTmp.ReqDate ? mcaBOMExplodeTmp.ReqDate : offLineDate;
+        #    // MCA Robert O'Berry 1/25/2024 Case mca202301217 [SR299695] - Cut list Program – Dates end
+        #
+        #    //inventDimSalesLine = salesLine.inventDim();
+        #
+        #    // Get the BOM from the transfer warehouse from the SalesLine site setup in Item coverage
+        #    while select ItemId, CovInventDimId, InventLocationIdReqMain from reqItemTable      // get the main warehouse in the item coverage
+        #        where reqItemTable.ItemId               == mcaBOMExplodeTmp.ItemId
+        #           && reqItemTable.dataAreaId           == salesLine.dataAreaId
+        #         join InventSiteId from inventLocation                                          // get the warehouse record for the main warehouse
+        #        where inventLocation.InventLocationId   == reqItemTable.InventLocationIdReqMain
+        #         join InventDimId, InventSiteId from inventDimReq                               // get the inventory dimensions
+        #        where inventDimReq.inventDimId          == reqItemTable.CovInventDimId
+        #           && inventDimReq.InventSiteId         == inventDimSalesLine.InventSiteId
+        #         join ItemId, BOMId, InventDimId from bomVersion                                // get the BOMVersion of cut kit for the main warehouse
+        #        where bomVersion.ItemId                 == reqItemTable.ItemId
+        #         join InventDimId, InventSiteId, InventLocationId from inventDimBomVersion
+        #        where inventDimBomVersion.inventDimId   == bomVersion.InventDimId
+        #           && inventDimBomVersion.InventSiteId  == inventLocation.InventSiteId
+        #         join ItemId, UnitId, Height, Width, Depth, BOMQty,
+        #              McaPieces, McaMachine, McaPattern, InventDimId,
+        #              RecId, dataAreaId, TableId, McaCutlistPrintNumber, McaMoveToAreaId from bomRawMaterial   // get the raw materials bom lines for the cut kit
+        #        where bomRawMaterial.BOMId              == bomVersion.BOMId
+        #           //&& (bomRawMaterial.fromDate <= systemdateget()  || ! bomRawMaterial.fromDate)  &&
+        #              //(bomRawMaterial.toDate   >= systemdateget()  || ! bomRawMaterial.toDate)
+        #           && (bomRawMaterial.fromDate <= offLineDate  || ! bomRawMaterial.fromDate)  &&
+        #              (bomRawMaterial.toDate   >= offLineDate  || ! bomRawMaterial.toDate)
+        #         join InventDimId, InventSiteId, InventLocationId, wMSLocationId from inventDimBomRawMaterial
+        #        where inventDimBomRawMaterial.InventDimId == bomRawMaterial.InventDimId
+        #         join ItemId, McaUsageType from inventTableRawMaterial
+        #        where inventTableRawMaterial.ItemId     == bomRawMaterial.ItemId
+        #    {
+        #        this.createCutlistRecord();
+        #        created = true;
+        #    }
+        #
+        #    // or Get the BOM from the transfer warehouse from the transfer warehouse of the parent bom site setup in Item coverage
+        #    if (!created)
+        #    {
+        #        while select ItemId, CovInventDimId, InventLocationIdReqMain from reqItemTable      // get the main warehouse in the item coverage
+        #            where reqItemTable.ItemId               == mcaBOMExplodeTmp.ItemId
+        #               && reqItemTable.dataAreaId           == salesLine.dataAreaId
+        #                join InventSiteId from inventLocation                                       // get the warehouse record for the main warehouse
+        #                    where inventLocation.InventLocationId   == reqItemTable.InventLocationIdReqMain
+        #                join InventDimId, InventSiteId from inventDimReq                            // get the inventory dimensions
+        #                    where inventDimReq.inventDimId          == reqItemTable.CovInventDimId
+        #                       && inventDimReq.InventSiteId         == mcaBOMExplodeTmp.InventSiteId
+        #                join ItemId, BOMId, InventDimId from bomVersion                             // get the BOMVersion of cut kit for the main warehouse
+        #                    where bomVersion.ItemId                 == reqItemTable.ItemId
+        #                join InventDimId, InventSiteId, InventLocationId from inventDimBomVersion
+        #                    where inventDimBomVersion.inventDimId   == bomVersion.InventDimId
+        #                       && inventDimBomVersion.InventSiteId  == inventLocation.InventSiteId
+        #                join ItemId, UnitId, Height, Width, Depth, BOMQty,
+        #                     McaPieces, McaMachine, McaPattern, InventDimId,                        // get the raw materials bom lines for the cut kit
+        #                     RecId, dataAreaId, TableId, McaCutlistPrintNumber, McaMoveToAreaId from bomRawMaterial
+        #                    where bomRawMaterial.BOMId              == bomVersion.BOMId
+        #                       //&& (bomRawMaterial.fromDate <= systemdateget()  || ! bomRawMaterial.fromDate)  &&
+        #                          //(bomRawMaterial.toDate   >= systemdateget()  || ! bomRawMaterial.toDate)
+        #                       && (bomRawMaterial.fromDate <= offLineDate  || ! bomRawMaterial.fromDate)  &&
+        #                          (bomRawMaterial.toDate   >= offLineDate  || ! bomRawMaterial.toDate)
+        #                join InventDimId, InventSiteId, InventLocationId, wMSLocationId from inventDimBomRawMaterial
+        #                    where inventDimBomRawMaterial.InventDimId == bomRawMaterial.InventDimId
+        #                join ItemId, McaUsageType from inventTableRawMaterial
+        #                    where inventTableRawMaterial.ItemId     == bomRawMaterial.ItemId
+        #        {
+        #            this.createCutlistRecord();
+        #            created = true;
+        #        }
+        #    }
+        #
+        #    // or Get the BOM from the site of the parent boms transfer warehouse setup in item coverage
+        #    if (!created)
+        #    {
+        #        while select ItemId, BOMId, InventDimId from bomVersion
+        #            where bomVersion.ItemId  == mcaBOMExplodeTmp.ItemId
+        #                join InventDimId, InventSiteId, InventLocationId from inventDimBomVersion
+        #                    where inventDimBomVersion.inventDimId   == bomVersion.InventDimId
+        #                       && inventDimBomVersion.InventSiteId  == mcaBOMExplodeTmp.InventSiteId
+        #                join ItemId, UnitId, Height, Width, Depth, BOMQty,
+        #                     McaPieces, McaMachine, McaPattern, InventDimId,
+        #                     RecId, dataAreaId, TableId, McaCutlistPrintNumber, McaMoveToAreaId  from  bomRawMaterial
+        #                    where bomRawMaterial.BOMId     == bomVersion.BOMId
+        #                       //&& (bomRawMaterial.fromDate <= systemdateget()  || ! bomRawMaterial.fromDate)  &&
+        #                          //(bomRawMaterial.toDate   >= systemdateget()  || ! bomRawMaterial.toDate)
+        #                       && (bomRawMaterial.fromDate <= offLineDate  || ! bomRawMaterial.fromDate)  &&
+        #                          (bomRawMaterial.toDate   >= offLineDate  || ! bomRawMaterial.toDate)
+        #                join InventDimId, InventSiteId, InventLocationId, wMSLocationId from inventDimBomRawMaterial
+        #                    where inventDimBomRawMaterial.InventDimId == bomRawMaterial.InventDimId
+        #                join ItemId, McaUsageType from inventTableRawMaterial
+        #                    where inventTableRawMaterial.ItemId     == bomRawMaterial.ItemId
+        #        {
+        #           this.createCutlistRecord();
+        #           created = true;
+        #        }
+        #    }
+        #
+        #    // or Get any BOM
+        #    if (!created)
+        #    {
+        #        while select ItemId, BOMId, InventDimId from bomVersion
+        #            where bomVersion.ItemId  == mcaBOMExplodeTmp.ItemId
+        #                join InventDimId, InventSiteId, InventLocationId from inventDimBomVersion
+        #                    where inventDimBomVersion.inventDimId == bomVersion.InventDimId
+        #                join ItemId, UnitId, Height, Width, Depth, BOMQty,
+        #                     McaPieces, McaMachine, McaPattern, InventDimId,
+        #                     RecId, dataAreaId, TableId, McaCutlistPrintNumber, McaMoveToAreaId  from  bomRawMaterial
+        #                    where bomRawMaterial.BOMId     == bomVersion.BOMId
+        #                       //&& (bomRawMaterial.fromDate <= systemdateget()  || ! bomRawMaterial.fromDate)  &&
+        #                          //(bomRawMaterial.toDate   >= systemdateget()  || ! bomRawMaterial.toDate)
+        #                       && (bomRawMaterial.fromDate <= offLineDate  || ! bomRawMaterial.fromDate)  &&
+        #                          (bomRawMaterial.toDate   >= offLineDate  || ! bomRawMaterial.toDate)
+        #                join InventDimId, InventSiteId, InventLocationId, wMSLocationId from inventDimBomRawMaterial
+        #                    where inventDimBomRawMaterial.InventDimId == bomRawMaterial.InventDimId
+        #                join ItemId, McaUsageType from inventTableRawMaterial
+        #                    where inventTableRawMaterial.ItemId == bomRawMaterial.ItemId
+        #        {
+        #           this.createCutlistRecord();
+        #           created = true;
+        #        }
+        #    }
+        #
+        #    if ( created == false)
+        #    {
+        #        info(strFmt('No cutlist record created for %1 %2 %3 %4', mcaBOMExplodeTmp.ItemId, mcaBOMExplodeTmp.InventSiteId, mcaBOMExplodeTmp.RefItemId, mcaBOMExplodeTmp.BOMId));
+        #    }
+        #
+        #    return created;
+        #}
+      ENDSOURCE
+      SOURCE #parmBatch
+        #/// <summary>
+        #///     Get/Set the <c>Batch</c>
+        #/// </summary>
+        #/// <param name="_batch">
+        #///     a <c>Batch</c> object
+        #/// </param>
+        #/// <returns>
+        #///     a <c>Batch</c> object
+        #/// </returns>
+        #/// <remarks>
+        #///     Ray M - 2/14/2019 - Mca_TASK118324_CutlistMultiThread
+        #/// </remarks>
+        #public Batch parmBatch(Batch _batch = batch)
+        #{
+        #    batch = _batch;
+        #
+        #    return batch;
+        #}
+      ENDSOURCE
+      SOURCE #parmBatchHeader
+        #/// <summary>
+        #///     Get/Set the <c>BatchHeader</c>
+        #/// </summary>
+        #/// <param name="_batchHeader">
+        #///     a <c>BatchHeader</c> object
+        #/// </param>
+        #/// <returns>
+        #///     a <c>BatchHeader</c> object
+        #/// </returns>
+        #/// <remarks>
+        #///     Ray M - 2/14/2019 - Mca_TASK118324_CutlistMultiThread
+        #/// </remarks>
+        #public BatchHeader parmBatchHeader(BatchHeader _batchHeader = batchHeader)
+        #{
+        #    batchHeader = _batchHeader;
+        #
+        #    return batchHeader;
+        #}
+      ENDSOURCE
+      SOURCE #parmBuildScheduleId
+        #/// <summary>
+        #///     Get/Set the <c>PWSBuildScheduleId</c>
+        #/// </summary>
+        #/// <param name="_buildScheduleId">
+        #///     a <c>PWSBuildScheduleId</c> object
+        #/// </param>
+        #/// <returns>
+        #///     a <c>PWSBuildScheduleId</c> object
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #PWSBuildScheduleId parmBuildScheduleId(PWSBuildScheduleId _buildScheduleId = buildScheduleId)
+        #{
+        #    if (!prmisDefault(_buildScheduleId))
+        #    {
+        #        buildScheduleId = _buildScheduleId;
+        #    }
+        #
+        #    return buildScheduleId;
+        #}
+      ENDSOURCE
+      SOURCE #parmContract
+        #/// <summary>
+        #///     Get/Set the <c>McaCutlistContract</c>
+        #/// </summary>
+        #/// <param name="_contract">
+        #///     a <c>McaCutlistContract</c> object
+        #/// </param>
+        #/// <returns>
+        #///     a <c>McaCutlistContract</c> object
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #McaCutlistCreateContract parmContract(McaCutlistCreateContract _contract = contract)
+        #{
+        #    if (!prmisDefault(_contract))
+        #    {
+        #        contract = _contract;
+        #    }
+        #
+        #    return contract;
+        #}
+      ENDSOURCE
+      SOURCE #parmNumThreads
+        #public McaNumThreads parmNumThreads(McaNumThreads _numThreads = numThreads)
+        #{
+        #    numThreads = _numThreads;
+        #
+        #    return numThreads;
+        #}
+      ENDSOURCE
+      SOURCE #processCutlistMultiTask
+        #/// <summary>
+        #///     Processes all the cutlists records using a seperate batch task per salesline
+        #/// </summary>
+        #/// <remarks>
+        #///     Ray M - 2/14/2019 - Mca_TASK118324_CutlistMultiThread
+        #/// </remarks>
+        #void processCutlistMultiTask()
+        #{
+        #    Query                   query = new Query(queryStr(McaCutlistCreateQuery));
+        #    QueryRun                queryRun;
+        #    QueryBuildRange         qbr;
+        #    McaBOMSearchCutlist     bomSearch;
+        #    QueryBuildDataSource    qbdsSchedule, qbdsSequence;
+        #
+        #    params = McaCutlistParameters::find();
+        #
+        #    // Set the range for salesLine recId if it was passed into the class
+        #    if (this.parmContract().parmSalesLineRecId())
+        #    {
+        #        qbr = SysQuery::findOrCreateRange(SysQuery::findOrCreateDataSource(query, tablenum(SalesLine)), fieldnum(SalesLine, RecId));
+        #        qbr.value(SysQuery::value(this.parmContract().parmSalesLineRecId()));
+        #    }
+        #
+        #    // add the sort for schedules
+        #    qbdsSchedule = query.dataSourceTable(tablenum(PWSBuildSchedule));
+        #    qbdsSchedule.addSortField(fieldNum(PWSBuildSchedule, BuildSchedule));
+        #
+        #    // add the order for sequence
+        #    qbdsSequence = query.dataSourceTable(tablenum(PWSBuildSequenceOrder));
+        #    qbdsSequence.addSortField(fieldNum(PWSBuildSequenceOrder, BuildSequenceId));
+        #
+        #    queryRun = new QueryRun(query);
+        #
+        #    ttsBegin;
+        #    while (queryrun.next())
+        #    {
+        #        buildSchedule           = queryRun.get(tablenum(PWSBuildSchedule));
+        #        buildScheduleOrder      = queryRun.get(tablenum(PWSBuildSequenceOrder));
+        #        salesLine               = queryRun.get(tablenum(SalesLine));
+        #        inventTable             = queryRun.get(tablenum(InventTable));
+        #        inventDimSalesLine      = queryRun.get(tablenum(InventDim));
+        #
+        #        bomSearch = McaBOMSearchCutlist::newSalesLine(salesLine);
+        #        bomSearch.run();
+        #
+        #        mcaBOMExplodeTmp = bomSearch.parmMcaBOMExplodeTmp();
+        #        modelBomId       = salesLine.ItemBOMId ? salesLine.ItemBOMId : salesLine.inventTable().bomId(salesLine.deliveryDate(), salesLine.QtyOrdered, salesLine.InventDim());
+        #
+        #        while select mcaBOMExplodeTmp
+        #        {
+        #            this.doCutlistItems();
+        #        }
+        #    }
+        #
+        #    ttsCommit;
+        #}
+      ENDSOURCE
+      SOURCE #processCutlistRecords
+        #/// <summary>
+        #///     Processes all the cutlists records
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #void processCutlistRecords()
+        #{
+        #    Query                   query = contract.getQuery();
+        #    QueryRun                queryRun;
+        #    QueryBuildRange         qbr;
+        #    McaBOMSearchCutlist     bomSearch;
+        #    QueryBuildDataSource    qbdsSchedule, qbdsSequence;
+        #
+        #    params = McaCutlistParameters::find();
+        #
+        #    // Set the range for build schedule if it was passed into the class
+        #    if (this.parmBuildScheduleId())
+        #    {
+        #        qbr = SysQuery::findOrCreateRange(SysQuery::findOrCreateDataSource(query, tablenum(PWSBuildSchedule)), fieldnum(PWSBuildSchedule, BuildSchedule));
+        #        qbr.value(this.parmBuildScheduleId());
+        #    }
+        #
+        #    // add the sort for schedules
+        #    qbdsSchedule = query.dataSourceTable(tablenum(PWSBuildSchedule));
+        #    qbdsSchedule.addSortField(fieldNum(PWSBuildSchedule, BuildSchedule));
+        #
+        #    // add the order for sequence
+        #    qbdsSequence = query.dataSourceTable(tablenum(PWSBuildSequenceOrder));
+        #    qbdsSequence.addSortField(fieldNum(PWSBuildSequenceOrder, BuildSequenceId));
+        #
+        #    queryRun = new QueryRun(query);
+        #
+        #    ttsBegin;
+        #    while (queryrun.next())
+        #    {
+        #        buildSchedule           = queryRun.get(tablenum(PWSBuildSchedule));
+        #        buildScheduleOrder      = queryRun.get(tablenum(PWSBuildSequenceOrder));
+        #        salesLine               = queryRun.get(tablenum(SalesLine));
+        #        inventTable             = queryRun.get(tablenum(InventTable));
+        #        inventDimSalesLine      = queryRun.get(tablenum(InventDim));
+        #
+        #        bomSearch = McaBOMSearchCutlist::newSalesLine(salesLine);
+        #        bomSearch.run();
+        #
+        #        mcaBOMExplodeTmp = bomSearch.parmMcaBOMExplodeTmp();
+        #        modelBomId       = salesLine.ItemBOMId ? salesLine.ItemBOMId : salesLine.inventTable().bomId(salesLine.deliveryDate(), salesLine.QtyOrdered, salesLine.InventDim());
+        #
+        #        while select mcaBOMExplodeTmp
+        #        {
+        #            this.doCutlistItems();
+        #        }
+        #    }
+        #
+        #    ttsCommit;
+        #}
+      ENDSOURCE
+      SOURCE #removeCutlistRecords
+        #/// <summary>
+        #///     Remove cutlist records for the kanbanId. So we can recreate the records.
+        #/// </summary>
+        #/// <param name="_kanbanId">
+        #///     The <c>KanbanId</c>
+        #/// </param>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #private void removeCutlistRecords(KanbanId _kanbanId)
+        #{
+        #    McaCutlist cutList;
+        #
+        #    delete_from cutList
+        #        where cutList.KanbanId == _kanbanId
+        #           && cutList.Prefix   == '';
+        #}
+      ENDSOURCE
+      SOURCE #run
+        #/// <summary>
+        #///     Runs the class logic
+        #/// </summary>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #public void run()
+        #{
+        #    #OCCRetryCount
+        #
+        #    McaStopWatch stopWatch = new McaStopWatch();
+        #
+        #    stopWatch.start();
+        #
+        #    startLengthyOperation();
+        #
+        #    this.setInfologPrefix(McaCutlistCreate::description());
+        #
+        #    try
+        #    {
+        #        this.processCutlistRecords();
+        #    }
+        #    catch (Exception::Error)
+        #    {
+        #        throw error("@SYS21628"); //Update has been canceled because of an error.
+        #    }
+        #    catch (Exception::Deadlock)
+        #    {
+        #        retry;
+        #    }
+        #    catch (Exception::UpdateConflict)
+        #    {
+        #        if (appl.ttsLevel() == 0)
+        #        {
+        #            if (xSession::currentRetryCount() >= #RetryNum)
+        #            {
+        #                throw Exception::UpdateConflictNotRecovered;
+        #            }
+        #            else
+        #            {
+        #                retry;
+        #            }
+        #        }
+        #        else
+        #        {
+        #            throw Exception::UpdateConflict;
+        #        }
+        #    }
+        #    endLengthyOperation();
+        #
+        #    info(strFmt("@SYS53179", recCount, "@SYS2929", "@SYS11408"));
+        #    stopWatch.stop();
+        #}
+      ENDSOURCE
+      SOURCE #runMultiTask
+        #/// <summary>
+        #///     Runs the class logic using multi-threading
+        #/// </summary>
+        #/// <remarks>
+        #///     Ray M - 2/14/2019 - Mca_TASK118324_CutlistMultiThread
+        #/// </remarks>
+        #public void runMultiTask()
+        #{
+        #    #OCCRetryCount
+        #
+        #    McaStopWatch stopWatch = new McaStopWatch();
+        #
+        #    stopWatch.start();
+        #
+        #    startLengthyOperation();
+        #
+        #    this.setInfologPrefix(McaCutlistCreate::description());
+        #
+        #    try
+        #    {
+        #        this.processCutlistMultiTask();
+        #    }
+        #    catch (Exception::Error)
+        #    {
+        #        throw error("@SYS21628"); //Update has been canceled because of an error.
+        #    }
+        #    catch (Exception::Deadlock)
+        #    {
+        #        retry;
+        #    }
+        #    catch (Exception::UpdateConflict)
+        #    {
+        #        if (appl.ttsLevel() == 0)
+        #        {
+        #            if (xSession::currentRetryCount() >= #RetryNum)
+        #            {
+        #                throw Exception::UpdateConflictNotRecovered;
+        #            }
+        #            else
+        #            {
+        #                retry;
+        #            }
+        #        }
+        #        else
+        #        {
+        #            throw Exception::UpdateConflict;
+        #        }
+        #    }
+        #    endLengthyOperation();
+        #
+        #    info(strFmt("@SYS53179", recCount, "@SYS2929", "@SYS11408"));
+        #    stopWatch.stop();
+        #}
+      ENDSOURCE
+      SOURCE #setInfologPrefix
+        #/// <summary>
+        #///     Sets the infolog prefix level
+        #/// </summary>
+        #/// <param name="_prefix">
+        #///     string value for the infolog prefix level
+        #/// </param>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #private void setInfologPrefix(str _prefix)
+        #{
+        #    setPrefix(_prefix);
+        #    infoPrefix = getPrefix() + '\t';
+        #}
+      ENDSOURCE
+      SOURCE #shipToWarehouse
+        #/// <summary>
+        #///     Determines the correct ship to warehouse
+        #/// </summary>
+        #/// <returns>
+        #///     a <c>InventLocationId</c> object
+        #/// </returns>
+        #/// <remarks>
+        #///     Ray M. - 08/30/18 - Mca_TASK109463_ShipToCutlist
+        #/// </remarks>
+        #/*  VSTS Task 109463 Notes:
+        #    If Parent BOM site = Module BOM site, then
+        #          Cutlist ship-to = Salesline warehouse
+        #
+        #    If Parent BOM site not the same as the Module BOM site, then
+        #          Cutlist ship-to = Parent BOM site
+        #*/
+        #public InventLocationId shipToWarehouse()
+        #{
+        #    InventLocationId    inventLocationId;
+        #
+        #    if (mcaBOMExplodeTmp.InventSiteId != inventDimBomVersion.InventSiteId)
+        #    {
+        #        inventLocationId = mcaBOMExplodeTmp.InventSiteId;
+        #    }
+        #    else
+        #    {
+        #        inventLocationId = inventDimSalesLine.InventLocationId;
+        #    }
+        #
+        #    return inventLocationId;
+        #}
+      ENDSOURCE
+      SOURCE #updateStats
+        #/// <summary>
+        #///     Update statistics on the BOMVersion table
+        #/// </summary>
+        #/// <remarks>
+        #///     Ray M - 2/14/2019 - Mca_TASK118324_CutlistMultiThread
+        #/// </remarks>
+        #public void updateStats()
+        #{
+        #    info(strFmt("@SYS191501", "@SYS34031", tableId2name(tableNum(BOMVersion))));
+        #
+        #    try
+        #    {
+        #        McaSqlTools::executeUpdate(@"update statistics dbo.BOMVersion WITH FULLSCAN");
+        #    }
+        #    catch(Exception::Error)
+        #    {
+        #        info("@MCA1955");
+        #    }
+        #}
+      ENDSOURCE
+      SOURCE #activeRawMaterial
+        #/// <summary>
+        #///     Finds the active raw material from the bom if the item is a phantom
+        #/// </summary>
+        #/// <param name="_phantom">
+        #///     a <c>McaRawMaterialItemId</c> parameter
+        #/// </param>
+        #/// <param name="_siteId">
+        #///     a <c>InventSiteId</c> parameter
+        #/// </param>
+        #/// <param name="_onlineDate">
+        #///     a <c>TransDate</c> parameter
+        #/// </param>
+        #/// <returns>
+        #///     ItemId or Bom.ItemId if the item is a phantom
+        #/// </returns>
+        #/// <remarks>
+        #///     Ray M. - 1/24/2018 - Mca_CR009_BUG67640
+        #/// </remarks>
+        #public static ItemId activeRawMaterial(
+        #    McaRawMaterialItemId    _phantom,
+        #    InventSiteId            _siteId,
+        #    TransDate               _onlineDate)
+        #{
+        #    BOM                 bom;
+        #    BOMVersion          bomVersion;
+        #    ItemId              itemId = _phantom;
+        #    InventDim           inventDim;
+        #    InventTable         inventTable = InventTable::find(_phantom);
+        #
+        #    if (inventTable.Phantom)
+        #    {
+        #        inventDim.InventSiteId = _siteId;
+        #
+        #        select firstOnly BOMId from bomVersion
+        #            where bomVersion.ItemId == inventTable.ItemId
+        #               && bomVersion.Active   == NoYes::Yes
+        #               && bomVersion.Approved == NoYes::Yes
+        #               && (bomVersion.FromDate  <= _onlineDate)
+        #               && (bomVersion.ToDate    >= _onlineDate || !bomVersion.ToDate)
+        #            join TableId from inventDim
+        #                where inventDim.InventDimId  == bomVersion.InventDimId
+        #                   && inventDim.InventSiteId == _siteId;
+        #
+        #        if (bomVersion)
+        #        {
+        #            select firstOnly ItemId from bom
+        #                where bom.BOMId     == bomVersion.BOMId
+        #                   && bom.FromDate  <= _onlineDate
+        #                   && (bom.ToDate   >= _onlineDate || !bom.ToDate);
+        #        }
+        #
+        #        if (bom)
+        #        {
+        #            itemId = bom.ItemId;
+        #        }
+        #    }
+        #
+        #    return itemId;
+        #}
+      ENDSOURCE
+      SOURCE #description
+        #/// <summary>
+        #///     Description of the class
+        #/// </summary>
+        #/// <returns>
+        #///     a <c>ClassDescription</c> string
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #static ClassDescription description()
+        #{
+        #    return "@MCA640";
+        #}
+      ENDSOURCE
+      SOURCE #findMoveToArea
+        #/// <summary>
+        #///     Finds the BOM line Move To Area
+        #/// </summary>
+        #/// <param name="_primaryBomRefRecId">
+        #///     a <c>BOMRefRecId</c> parameter
+        #/// </param>
+        #/// <param name="_moduleItemId">
+        #///     a <c>ItemId</c> parameter
+        #/// </param>
+        #/// <param name="_parentBomId">
+        #///     a <c>BOMId</c> parameter
+        #/// </param>
+        #/// <param name="_onlineDate">
+        #///     a <c>TransDate</c> parameter
+        #/// </param>
+        #/// <returns>
+        #///     bom.McaMoveToAreaId
+        #/// </returns>
+        #/// <remarks>
+        #///     Ray M. - 05/27/2018 - Mca_CR009_CutlistEnhancements
+        #/// </remarks>
+        #public static McaMoveToAreaId findMoveToArea(
+        #    BOMRefRecId             _primaryBomRefRecId,
+        #    ItemId                  _moduleItemId,
+        #    BOMId                   _parentBomId,
+        #    TransDate               _onlineDate)
+        #{
+        #    BOM                         bom, parentBOM;
+        #    InventDim                   parentInventDim, bomInventDim;
+        #    McaCutlistSecMoveToAreas    moveTo;
+        #
+        #    select firstonly BOMId, InventDimId from parentBOM
+        #        join InventSiteId from parentInventDim
+        #            where parentInventDim.inventDimId == parentBOM.InventDimId
+        #               && parentBOM.BOMId == _parentBomId;
+        #
+        #    moveTo = McaCutlistSecMoveToAreas::find(_primaryBomRefRecId, parentInventDim.InventSiteId);
+        #
+        #    if (!moveTo)
+        #    {
+        #        select firstOnly RecId, InventDimId from bom
+        #            where bom.BOMId     == _parentBomId
+        #               && bom.ItemId    == _moduleItemId
+        #               && bom.FromDate  <= _onlineDate
+        #               && (bom.ToDate   >= _onlineDate || !bom.ToDate)
+        #            join InventSiteId from bomInventDim
+        #                where bomInventDim.inventDimId == bom.InventDimId;
+        #
+        #        moveTo = McaCutlistSecMoveToAreas::find(bom.RecId, bomInventDim.InventSiteId);
+        #    }
+        #
+        #    return moveTo.MoveToAreaId;
+        #}
+      ENDSOURCE
+      SOURCE #newBuildSchedule
+        #/// <summary>
+        #///     Creates a new <c>McaCutlistCreate</c> object.
+        #/// </summary>
+        #/// <param name="_buildScheduleId">
+        #///     a <c>PWSBuildScheduleId</c> object
+        #/// </param>
+        #/// <returns>
+        #///     a newly created <c>McaCutlistCreate</c> object.
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #server static McaCutlistCreate newBuildSchedule(PWSBuildScheduleId _buildScheduleId)
+        #{
+        #    McaCutlistCreateContract contract   = new McaCutlistCreateContract();
+        #    McaCutlistCreate cutlistCreate      = new McaCutlistCreate();
+        #
+        #    cutlistCreate.parmBuildScheduleId(_buildScheduleId);
+        #    contract.setQuery(new Query(querystr(McaCutlistCreateQuery)));
+        #    cutlistCreate.parmContract(contract);
+        #
+        #    return cutlistCreate;
+        #}
+      ENDSOURCE
+      SOURCE #newStandard
+        #/// <summary>
+        #///     Creates a new <c>McaCutlistCreate</c> object.
+        #/// </summary>
+        #/// <param name="_contract">
+        #///     a <c>McaCutlistContract</c> object
+        #/// </param>
+        #/// <returns>
+        #///     a newly created <c>McaCutlistCreate</c> object.
+        #/// </returns>
+        #/// <remarks>
+        #///     mca - Ray Michalski - 06/12/2017 - Mca_CR009_MilroomCutlists
+        #/// </remarks>
+        #server static McaCutlistCreate newStandard(McaCutlistCreateContract _contract)
+        #{
+        #    McaCutlistCreate cutlistCreate = new McaCutlistCreate();
+        #
+        #    cutlistCreate.parmContract(_contract);
+        #
+        #    return cutlistCreate;
+        #}
+      ENDSOURCE
+    ENDMETHODS
+  ENDCLASS
+
+***Element: END
