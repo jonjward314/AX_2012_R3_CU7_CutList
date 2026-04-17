@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SR423365 Cutlist — Production vs Dev Comparison</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --panel: #fff;
+      --line: #d6dfed;
+      --txt: #1f2937;
+      --muted: #5d6778;
+      --prod: #1d5f35;
+      --prod-bg: #eaf6ef;
+      --dev: #1f4f8e;
+      --dev-bg: #eaf2fc;
+      --warn: #8a5a00;
+      --warn-bg: #fff6e8;
+      --danger: #8c1c1c;
+      --danger-bg: #fdecec;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--txt);
+      line-height: 1.55;
+    }
+
+    header {
+      background: linear-gradient(135deg, #143a6b 0%, #1f4f8e 100%);
+      color: #fff;
+      padding: 26px 20px;
+    }
+
+    header h1 { margin: 0 0 6px; font-size: 1.45rem; }
+    header p { margin: 0; opacity: .95; }
+
+    nav {
+      position: sticky;
+      top: 0;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      padding: 0 12px;
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      z-index: 2;
+    }
+    nav a {
+      text-decoration: none;
+      color: var(--dev);
+      padding: 12px 8px;
+      white-space: nowrap;
+      border-bottom: 3px solid transparent;
+      font-size: .92rem;
+    }
+    nav a:hover { border-bottom-color: var(--dev); }
+
+    main {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 20px 14px 40px;
+    }
+
+    .grid2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    h2 { margin: 0 0 10px; color: #173f73; font-size: 1.15rem; }
+    h3 { margin: 10px 0 7px; font-size: 1rem; color: #263447; }
+
+    .pill {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: .75rem;
+      font-weight: 700;
+      margin-left: 6px;
+      color: #fff;
+    }
+    .prod { background: var(--prod); }
+    .dev { background: var(--dev); }
+
+    .box {
+      border-left: 4px solid;
+      border-radius: 0 8px 8px 0;
+      padding: 9px 11px;
+      margin: 8px 0;
+      font-size: .92rem;
+    }
+    .box.prod { border-color: var(--prod); background: var(--prod-bg); color: var(--prod); }
+    .box.dev { border-color: var(--dev); background: var(--dev-bg); color: var(--dev); }
+    .box.warn { border-color: var(--warn); background: var(--warn-bg); color: var(--warn); }
+    .box.danger { border-color: var(--danger); background: var(--danger-bg); color: var(--danger); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .9rem;
+      margin-top: 8px;
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 8px 9px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #1f4f8e; color: #fff; }
+
+    code {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: .85rem;
+      background: #edf2fb;
+      padding: 1px 5px;
+      border-radius: 4px;
+      color: #194072;
+    }
+
+    .mermaid {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px;
+      overflow: auto;
+    }
+
+    footer {
+      text-align: center;
+      color: #6e7a8d;
+      margin-top: 18px;
+      font-size: .85rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>SR423365 Cutlist System — Production vs Current Dev</h1>
+    <p>Comparison website focused on how data is generated, transformed, compacted/grouped, and rendered into the 3 report outputs.</p>
+  </header>
+
+  <nav>
+    <a href="#summary">Executive Summary</a>
+    <a href="#flow">Data Flow (Mermaid)</a>
+    <a href="#compaction">Compaction/Grouping</a>
+    <a href="#reports">3 Reports</a>
+    <a href="#field-lineage">Field Lineage</a>
+    <a href="#diffs">Key Differences</a>
+  </nav>
+
+  <main>
+    <section id="summary" class="card">
+      <h2>1) Executive Summary</h2>
+      <div class="grid2">
+        <div>
+          <div class="box prod"><strong>Production behavior:</strong> `Pieces` + `KitQty` drive report totals. `Per_Series` is not active in the analyzed production SSRS data path.</div>
+          <div class="box prod"><strong>Detail DP transform:</strong> `mcaCutlistTmp.Pieces = real2int(cutlist.Pieces * cutlist.KitQty)` happens before SSRS.</div>
+        </div>
+        <div>
+          <div class="box dev"><strong>Current Dev behavior:</strong> adds `Per_Series` in salesline create path and SSRS formula `Ceiling(Sum(Pieces*KitQty)/Per_Series)` with safe fallback.</div>
+          <div class="box danger"><strong>Current Dev gap:</strong> module create path still does not set `Per_Series`, so denominator fallback (1) can inflate outputs.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="flow" class="card">
+      <h2>2) End-to-End Data Flow (Generation -> Transform -> Reports)</h2>
+      <div class="mermaid">
+flowchart TD
+  A[SalesLine Query + McaBOMSearchCutlist] --> B[doCutlistItems BOM Resolution]
+  B --> C[createCutlistRecord]
+  C --> D[(McaCutlist)]
+  D --> E[McaCutlistReportDP]
+  E --> F[(McaCutlistTmp TempDB)]
+  F --> G1[WorkOrderSummary]
+  F --> G2[WorkOrderCoverSheet]
+  F --> G3[WorkOrderDetail]
+
+  subgraph PROD[Production]
+    C1[Qty=BOMQty\nPieces=McaPieces\nKitQty=Exploded BOM Qty]
+    E1[Detail path pre-expands\nPieces = Pieces*KitQty]
+    S1[SSRS uses legacy expressions\nSum(Pieces), Sum(Pieces)*KitQty]
+  end
+
+  subgraph DEV[Current Dev]
+    C2[Salesline sets Per_Series=BOMQtySerie]
+    C3[Module path: Per_Series NOT set]
+    E2[DP copies Per_Series to temp]
+    S2[SSRS adds Ceiling(Sum(Pieces*KitQty)/safe(Per_Series))]
+  end
+
+  C --> C1
+  E --> E1
+  G3 --> S1
+
+  C --> C2
+  C --> C3
+  E --> E2
+  G3 --> S2
+      </div>
+
+      <div class="box warn"><strong>Compaction point:</strong> Report DP `processCoverReport` and `processSummaryReport` group/compact rows at different grains before SSRS renders totals.</div>
+    </section>
+
+    <section id="compaction" class="card">
+      <h2>3) Where Data Compacts / Groups</h2>
+      <table>
+        <thead>
+          <tr><th>Path</th><th>Compaction strategy</th><th>Effect</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Cover DP</strong></td>
+            <td>Groups by model/module/prefix/site/move-to/warehouse/salesline/due/kit</td>
+            <td>Condenses rows for cover-level overview and page grouping keys.</td>
+          </tr>
+          <tr>
+            <td><strong>Summary DP</strong></td>
+            <td>Groups by model/module/cutgroup/site/warehouse/salesline/due/kit</td>
+            <td>Builds summarized module/cut-group output set.</td>
+          </tr>
+          <tr>
+            <td><strong>Detail DP</strong></td>
+            <td>Minimal grouping; per-row staging with transforms</td>
+            <td>Carries largest transformation surface, including pieces expansion and sort keys.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="reports" class="card">
+      <h2>4) The 3 Reports — Individual Treatment</h2>
+
+      <h3>WorkOrderSummary</h3>
+      <div class="grid2">
+        <div class="box prod">
+          <strong>PROD:</strong> Uses summary DP rowset and legacy quantity logic (no active per-series denominator path).
+        </div>
+        <div class="box dev">
+          <strong>DEV:</strong> Carries `Per_Series` and added display fields, but may still include legacy expression regions.
+        </div>
+      </div>
+
+      <h3>WorkOrderCoverSheet</h3>
+      <div class="grid2">
+        <div class="box prod">
+          <strong>PROD:</strong> Aggregated cover rowset with group keys such as model/prefix/site/move-to/date.
+        </div>
+        <div class="box dev">
+          <strong>DEV:</strong> Same base path with additional Per_Series/unit-count context carried through.
+        </div>
+      </div>
+
+      <h3>WorkOrderDetail</h3>
+      <div class="grid2">
+        <div class="box prod">
+          <strong>PROD:</strong> DP pre-expands pieces (<code>Pieces*KitQty</code>), then SSRS sections use legacy totals.
+        </div>
+        <div class="box danger">
+          <strong>DEV:</strong> Adds <code>Ceiling(Sum(Pieces*KitQty)/safe(Per_Series))</code>. If `Pieces` is already expanded and multiplied again in SSRS, effective numerator can over-scale.
+        </div>
+      </div>
+
+      <div class="mermaid">
+sequenceDiagram
+  participant CR as Create Classes
+  participant CL as McaCutlist
+  participant DP as McaCutlistReportDP
+  participant TMP as McaCutlistTmp
+  participant RPT as SSRS Design
+
+  CR->>CL: Insert Qty, Pieces, KitQty (+Per_Series in DEV salesline)
+  CL->>DP: Query filtered cutlist rows
+  DP->>TMP: Cover/Summary copy raw Pieces
+  DP->>TMP: Detail writes Pieces = real2int(Pieces*KitQty)
+  TMP->>RPT: Render WorkOrderSummary
+  TMP->>RPT: Render WorkOrderCoverSheet
+  TMP->>RPT: Render WorkOrderDetail
+  Note over RPT: DEV may use Ceiling(Sum(Pieces*KitQty)/safe(Per_Series))
+      </div>
+    </section>
+
+    <section id="field-lineage" class="card">
+      <h2>5) Field Lineage Comparison</h2>
+      <table>
+        <thead>
+          <tr><th>Field</th><th>Production</th><th>Current Dev</th><th>Risk</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>Qty</code></td>
+            <td>Set from <code>BOM.BOMQty</code>, copied through DP.</td>
+            <td>Same.</td>
+            <td>Low.</td>
+          </tr>
+          <tr>
+            <td><code>KitQty</code></td>
+            <td>Set from explode/module qty, copied to temp and used in expressions.</td>
+            <td>Same.</td>
+            <td>Medium when mixed with expanded Pieces.</td>
+          </tr>
+          <tr>
+            <td><code>Pieces</code></td>
+            <td>Set from <code>BOM.McaPieces</code>; detail DP expands to <code>Pieces*KitQty</code>.</td>
+            <td>Same transform plus new SSRS numerator using <code>Pieces*KitQty</code>.</td>
+            <td>High: possible double multiplication.</td>
+          </tr>
+          <tr>
+            <td><code>Per_Series</code></td>
+            <td>Not active in analyzed production SSRS path.</td>
+            <td>Salesline path sets it; module path still missing assignment.</td>
+            <td>High: denominator fallback to 1 can inflate totals.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="diffs" class="card">
+      <h2>6) Key Differences Highlighted</h2>
+      <ol>
+        <li><strong>Schema/Expression:</strong> DEV report dataset and expressions include `Per_Series`; PROD does not.</li>
+        <li><strong>Creation asymmetry in DEV:</strong> `Per_Series` is set in salesline create path but not module create path.</li>
+        <li><strong>Mixed expression model in DEV:</strong> both new and legacy quantity formulas can exist by data region.</li>
+        <li><strong>Transformation sensitivity:</strong> detail DP pre-expands `Pieces`, so report-region assumptions must be consistent.</li>
+      </ol>
+
+      <div class="box warn"><strong>Recommended debugging workflow:</strong> trace one discrepant line by origin (salesline/module) -> check `McaCutlist` values -> inspect DP-written `McaCutlistTmp` values per report design -> evaluate exact SSRS textbox expression used.</div>
+    </section>
+
+    <footer>
+      SR423365 comparison site generated for PROD vs DEV cutlist behavior analysis.
+    </footer>
+  </main>
+
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
+  </script>
+</body>
+</html>
