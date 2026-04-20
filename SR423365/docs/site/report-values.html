@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Report Value Impact</title><link rel="stylesheet" href="styles.css"></head>
+<body>
+<header><h1>How Report Values Change (Non-Technical Equations)</h1><nav><a href="index.html">Overview</a><a href="dev-vs-prod.html">Dev vs Prod Deltas</a><a href="report-values.html">Report Value Impact</a><a href="sql-playbook.html">SQL Playbook</a><a href="user-flow.html">Form & User Flow</a></nav></header>
+<main>
+<section>
+  <h2>Summary & Cover equations</h2>
+  <div class="eq"><strong>Production:</strong> Total Units = Sum of KitQty</div>
+  <div class="eq"><strong>Dev:</strong> Total Units = Ceiling(Sum of KitQty)</div>
+  <p>Plain language: if total is 10.2, Production shows 10.2 while Dev shows 11.</p>
+</section>
+
+<section>
+  <h2>Detail equation</h2>
+  <div class="eq"><strong>Production legacy pattern:</strong> Total ≈ Sum(Pieces) × KitQty (or Sum(Pieces) in some regions)</div>
+  <div class="eq"><strong>Dev:</strong> Total = Ceiling( Sum(Pieces × KitQty) ÷ Per_Series )</div>
+  <div class="eq"><strong>Dev fallback:</strong> if Per_Series is missing or 0, divide by 1 and show “Not Set”.</div>
+  <p>Plain language: Dev introduces a per-series divisor, so totals can go down when Per_Series is > 1.</p>
+</section>
+
+<section>
+  <h2>Why stakeholders see differences</h2>
+  <ul>
+    <li>DEV has extra fields (`Per_Series`, `PWSBuildScheduleId`, `UnitCounts`) available to expressions.</li>
+    <li>DEV rounds some totals up with <code>Ceiling</code>.</li>
+    <li>DEV detail math uses per-series normalization, changing quantity behavior.</li>
+    <li>Different report regions may still use different formulas.</li>
+  </ul>
+</section>
+</main>
+<footer>For reproducible SQL versions, use the SQL Playbook page.</footer>
+</body></html>
