@@ -12,3 +12,6 @@
 
 ## Known Risks
 - Potential quantity inflation when expanded `Pieces` is multiplied again in RDL expressions. **[From analysis notes]**
+## Reconciliation Playbook
+- [Prod vs Dev math reconciliation by report (SQL + SSRS)](prod-dev-math-reconciliation-by-report.md)
+

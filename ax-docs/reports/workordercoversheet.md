@@ -12,3 +12,6 @@
 ## Known Gaps
 - Menu item name/path for this design is **Not determinable from provided XPO/MD**.
 - Security role mapping is **Not determinable from provided XPO/MD**.
+## Reconciliation Playbook
+- [Prod vs Dev math reconciliation by report (SQL + SSRS)](prod-dev-math-reconciliation-by-report.md)
+

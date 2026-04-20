@@ -10,3 +10,6 @@
 
 ## Notes Reconciliation
 - Analysis notes indicate DEV changed summary rounding (`Ceiling(Sum(KitQty))`), but production snapshot here only confirms production artifact content. **[From analysis notes] [Confirmed from XPO]**
+## Reconciliation Playbook
+- [Prod vs Dev math reconciliation by report (SQL + SSRS)](prod-dev-math-reconciliation-by-report.md)
+
