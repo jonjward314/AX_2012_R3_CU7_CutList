@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>SQL Playbook</title><link rel="stylesheet" href="styles.css"></head>
+<body>
+<header><h1>SQL Playbook for Stakeholders</h1><nav><a href="index.html">Overview</a><a href="dev-vs-prod.html">Dev vs Prod Deltas</a><a href="report-values.html">Report Value Impact</a><a href="sql-playbook.html">SQL Playbook</a><a href="user-flow.html">Form & User Flow</a></nav></header>
+<main>
+<section>
+  <h2>How to use</h2>
+  <ul>
+    <li>Start with the same filter scope stakeholders used in AX (schedule, prefix, model, etc.).</li>
+    <li>Paste the WHERE filter into <code>/* your filter */</code>.</li>
+    <li>Run Cover, Detail, and Summary SQL to compare shapes.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>A) Cover (grouped/compacted)</h2>
+<pre>WITH base AS (
+  SELECT * FROM McaCutlist WHERE /* your filter */ 1=1
+)
+SELECT
+  b.ModelItemId,
+  b.ModuleItemId,
+  b.Prefix,
+  b.InventSiteId,
+  b.ShipToWarehouse,
+  b.DueDateTime,
+  SUM(b.Qty) AS Qty,
+  SUM(b.Pieces) AS Pieces,
+  MAX(b.PWSBuildScheduleId) AS PWSBuildScheduleId,
+  MAX(b.Per_Series) AS Per_Series
+FROM base b
+GROUP BY
+  b.ModelItemId, b.ModuleItemId, b.Prefix,
+  b.InventSiteId, b.ShipToWarehouse, b.DueDateTime
+ORDER BY b.DueDateTime, b.Prefix, b.ModelItemId;</pre>
+</section>
+
+<section>
+  <h2>B) Detail (row-level + compacted metadata)</h2>
+<pre>WITH base AS (
+  SELECT * FROM McaCutlist WHERE /* your filter */ 1=1
+), allSchedules AS (
+  SELECT STRING_AGG(DISTINCT PWSBuildScheduleId, ' ') AS BuildSchedules
+  FROM base
+  WHERE PWSBuildScheduleId IS NOT NULL AND PWSBuildScheduleId &lt;&gt; ''
+), unitCounts AS (
+  SELECT ModelItemId, Prefix, COUNT(DISTINCT SalesLineRefRecId) AS UnitCount
+  FROM base
+  GROUP BY ModelItemId, Prefix
+)
+SELECT
+  b.*,
+  CAST(ROUND(b.Pieces * b.KitQty,0) AS int) AS DetailPieces,
+  s.BuildSchedules,
+  uc.UnitCount
+FROM base b
+CROSS JOIN allSchedules s
+LEFT JOIN unitCounts uc ON uc.ModelItemId = b.ModelItemId AND uc.Prefix = b.Prefix
+ORDER BY b.DueDateTime, b.Prefix, b.ModelItemId;</pre>
+</section>
+
+<section>
+  <h2>C) Summary (grouped/compacted)</h2>
+<pre>WITH base AS (
+  SELECT * FROM McaCutlist WHERE /* your filter */ 1=1
+)
+SELECT
+  b.ModelItemId,
+  b.ModuleItemId,
+  b.CutGroupId,
+  b.Prefix,
+  b.ShipToWarehouse,
+  b.DueDateTime,
+  SUM(b.Qty) AS Qty,
+  SUM(b.Pieces) AS Pieces,
+  MAX(b.PWSBuildScheduleId) AS PWSBuildScheduleId,
+  MAX(b.Per_Series) AS Per_Series
+FROM base b
+GROUP BY
+  b.ModelItemId, b.ModuleItemId, b.CutGroupId,
+  b.Prefix, b.ShipToWarehouse, b.DueDateTime
+ORDER BY b.DueDateTime, b.Prefix, b.ModelItemId;</pre>
+</section>
+
+<section>
+  <h2>Equation translation for non-technical audiences</h2>
+  <div class="eq">Summary/Cover (DEV): Rounded Total = Ceiling(Sum(KitQty))</div>
+  <div class="eq">Detail (DEV): Final Pieces = Ceiling( Sum(Pieces × KitQty) ÷ Per_Series )</div>
+  <div class="eq">If Per_Series is missing: divide by 1 and mark as “Not Set”.</div>
+</section>
+</main>
+<footer>These queries mirror report shaping intent, not every AX helper-side effect.</footer>
+</body></html>

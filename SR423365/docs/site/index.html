@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SR423365 Cutlist: Dev vs Prod Analysis Site</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header>
+  <h1>SR423365 Cutlist Analysis Portal</h1>
+  <p class="subtitle">A multi-page, stakeholder-friendly view of Dev vs Production behavior, SQL validation, equations, and user flow.</p>
+  <nav>
+    <a href="index.html">Overview</a>
+    <a href="dev-vs-prod.html">Dev vs Prod Deltas</a>
+    <a href="report-values.html">Report Value Impact</a>
+    <a href="sql-playbook.html">SQL Playbook</a>
+    <a href="user-flow.html">Form & User Flow</a>
+  </nav>
+</header>
+<main>
+  <section class="hero">
+    <h2>What this site explains</h2>
+    <ul>
+      <li>Exactly how cutlist behavior changed from Production to Dev.</li>
+      <li>How those changes affect report numbers (Summary, Cover, Detail).</li>
+      <li>SQL queries stakeholders can run directly on <code>McaCutlist</code>.</li>
+      <li>Simple equation-style explanations for non-technical audiences.</li>
+      <li>End-to-end flow: user filtering → create/report actions → report outputs.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Quick map</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>1) Dev vs Prod Deltas</h3>
+        <p>What changed in Create classes, ReportDP, and SSRS report expressions.</p>
+        <a href="dev-vs-prod.html">Open page →</a>
+      </div>
+      <div class="card">
+        <h3>2) Value Impact</h3>
+        <p>Why numbers differ and where rounding / normalization now occurs.</p>
+        <a href="report-values.html">Open page →</a>
+      </div>
+      <div class="card">
+        <h3>3) SQL Playbook</h3>
+        <p>Run reproducible SQL versions of Summary, Cover, and Detail logic.</p>
+        <a href="sql-playbook.html">Open page →</a>
+      </div>
+      <div class="card">
+        <h3>4) User Interaction Flow</h3>
+        <p>How forms and buttons drive creation, file/report generation, and processed status.</p>
+        <a href="user-flow.html">Open page →</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Executive takeaway</h2>
+    <p>
+      DEV introduces <strong>Per Series normalization</strong>, <strong>round-up behavior</strong> in key report totals,
+      and additional <strong>metadata fields</strong> in report datasets. As a result, stakeholder-visible values can be
+      intentionally different from Production.
+    </p>
+  </section>
+</main>
+<footer>
+  Generated from repository analysis artifacts under <code>/analysis</code> and <code>/SR423365/docs</code>.
+</footer>
+</body>
+</html>
