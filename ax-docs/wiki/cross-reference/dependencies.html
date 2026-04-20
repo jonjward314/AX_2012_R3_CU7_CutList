@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dependency Cross-Reference | AX 2012 R3 Cutlist Wiki</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+</head>
+<body>
+<header class="topbar">AX 2012 R3 Cutlist Enterprise Wiki</header>
+<div class="layout">
+  <aside class="sidebar"><div class="nav-group"><h4>Start</h4><ul><li><a href="../index.html">Home</a></li><li><a href="../glossary.html">Glossary</a></li></ul></div><div class="nav-group"><h4>Reports</h4><ul><li><a href="../reports/mcacutlistbasereport.html">Mcacutlistbasereport</a></li><li><a href="../reports/workordercoversheet.html">Workordercoversheet</a></li><li><a href="../reports/workorderdetail.html">Workorderdetail</a></li><li><a href="../reports/workordersummary.html">Workordersummary</a></li></ul></div><div class="nav-group"><h4>Objects / Classes</h4><ul><li><a href="../objects/classes/mcacutlistcoverreportcontroller.html">Mcacutlistcoverreportcontroller</a></li><li><a href="../objects/classes/mcacutlistdetailreportcontroller.html">Mcacutlistdetailreportcontroller</a></li><li><a href="../objects/classes/mcacutlistfilesreports.html">Mcacutlistfilesreports</a></li><li><a href="../objects/classes/mcacutlistreportcontract.html">Mcacutlistreportcontract</a></li><li><a href="../objects/classes/mcacutlistreportdp.html">Mcacutlistreportdp</a></li><li><a href="../objects/classes/mcacutlistreports.html">Mcacutlistreports</a></li><li><a href="../objects/classes/mcacutlistsumreportcontroller.html">Mcacutlistsumreportcontroller</a></li></ul></div><div class="nav-group"><h4>Objects / Queries</h4><ul><li><a href="../objects/queries/mcacutlistcreatequery.html">Mcacutlistcreatequery</a></li><li><a href="../objects/queries/mcacutlistdeletequery.html">Mcacutlistdeletequery</a></li><li><a href="../objects/queries/mcacutlistquery.html">Mcacutlistquery</a></li></ul></div><div class="nav-group"><h4>Objects / Tables</h4><ul><li><a href="../objects/tables/mcacutlist.html">Mcacutlist</a></li><li><a href="../objects/tables/mcacutlistmoduletmp.html">Mcacutlistmoduletmp</a></li><li><a href="../objects/tables/mcacutlisttmp.html">Mcacutlisttmp</a></li></ul></div><div class="nav-group"><h4>Objects / Security</h4><ul><li><a href="../objects/security/mcacutlist-security-artifacts.html">Mcacutlist Security Artifacts</a></li></ul></div><div class="nav-group"><h4>Cross-Reference</h4><ul><li><a href="../cross-reference/data-lineage.html">Data Lineage</a></li><li class="active"><a href="../cross-reference/dependencies.html">Dependencies</a></li><li><a href="../cross-reference/report-matrix.html">Report Matrix</a></li></ul></div></aside>
+  <main class="content">
+    <div class="breadcrumbs"><a href="../index.html">Home</a> / <span>Cross Reference</span> / <span>Dependencies</span></div>
+    <h1 id="dependency-cross-reference">Dependency Cross-Reference</h1>
+<h2 id="report-level-dependency-graph">Report-level dependency graph</h2>
+<ul>
+<li><code>McaCutlistBaseReport</code> &lt;- controllers (<code>Cover/Detail/Sum</code>) &lt;- orchestration (<code>McaCutlistReports</code>, <code>McaCutlistFilesReports</code>)</li>
+<li>Report DP <code>McaCutlistReportDP</code> depends on:</li>
+<li>Contract <code>McaCutlistReportContract</code></li>
+<li>Query <code>McaCutlistQuery</code></li>
+<li>Tables <code>McaCutlist</code>, <code>McaCutlistTmp</code></li>
+<li>Lookup tables/classes (<code>SalesLine</code>, <code>InventTable</code>, <code>InventTableModule</code>, <code>McaCutlistMoveToAreas</code>)</li>
+</ul>
+<h2 id="external-dependency-hotspots">External dependency hotspots</h2>
+<ul>
+<li>Query definitions not exported in standalone form.</li>
+<li>Menu-item/security metadata not fully exported in analyzed package.</li>
+</ul>
+    <p class="back-top"><a href="#top" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">Back to top</a></p>
+    
+  </main>
+  <aside class="right"><div class="toc"><h4>On this page</h4><ul><li class="lvl-2"><a href="#report-level-dependency-graph">Report-level dependency graph</a></li><li class="lvl-2"><a href="#external-dependency-hotspots">External dependency hotspots</a></li></ul></div></aside>
+</div>
+<script src="../assets/site.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>if(window.mermaid){mermaid.initialize({startOnLoad:true,theme:'neutral'});}</script>
+</body>
+</html>

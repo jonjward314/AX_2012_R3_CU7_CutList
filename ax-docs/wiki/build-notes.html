@@ -1,0 +1,24 @@
+<!doctype html><html><head><meta charset='utf-8'><title>Build Notes</title><link rel='stylesheet' href='assets/style.css'></head>
+<body><header class='topbar'>AX 2012 R3 Cutlist Enterprise Wiki</header><main class='content' style='max-width:1000px;margin:20px auto;'>
+<h1>Build Notes</h1>
+<p>This static wiki was generated from markdown under <code>ax-docs/</code> using <code>ax-docs/build_wiki.py</code>. The generator preserves folder hierarchy and converts internal markdown links to HTML links.</p>
+<h2>How pages were generated</h2>
+<ol>
+<li>Scan markdown files under reports, objects, cross-reference, glossary, and index.</li>
+<li>Convert each markdown document into a shared HTML template with top header, left nav, content area, right TOC, breadcrumbs, and back-to-top links.</li>
+<li>Convert table markdown into responsive tables with sticky headers and zebra striping.</li>
+<li>Preserve mermaid diagrams by rendering fenced <code>mermaid</code> blocks using Mermaid JS on page load.</li>
+</ol>
+<h2>How to extend</h2>
+<ul>
+<li>Add new markdown files under the same folders in <code>ax-docs/</code>.</li>
+<li>Run <code>python ax-docs/build_wiki.py</code>.</li>
+<li>Commit updated HTML output under <code>ax-docs/wiki/</code>.</li>
+</ul>
+<h2>Known unresolved issues</h2>
+<ul>
+<li>No unresolved internal markdown links were detected during generation for the current corpus.</li>
+<li>If you add new folders outside the known groups, update the <code>SECTIONS</code> list in the generator script to include them in sidebar navigation.</li>
+</ul>
+<p>Generated page count: <strong>23</strong>.</p>
+</main></body></html>

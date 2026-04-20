@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Class: McaCutlistReportDP | AX 2012 R3 Cutlist Wiki</title>
+  <link rel="stylesheet" href="../../assets/style.css" />
+</head>
+<body>
+<header class="topbar">AX 2012 R3 Cutlist Enterprise Wiki</header>
+<div class="layout">
+  <aside class="sidebar"><div class="nav-group"><h4>Start</h4><ul><li><a href="../../index.html">Home</a></li><li><a href="../../glossary.html">Glossary</a></li></ul></div><div class="nav-group"><h4>Reports</h4><ul><li><a href="../../reports/mcacutlistbasereport.html">Mcacutlistbasereport</a></li><li><a href="../../reports/workordercoversheet.html">Workordercoversheet</a></li><li><a href="../../reports/workorderdetail.html">Workorderdetail</a></li><li><a href="../../reports/workordersummary.html">Workordersummary</a></li></ul></div><div class="nav-group"><h4>Objects / Classes</h4><ul><li><a href="../../objects/classes/mcacutlistcoverreportcontroller.html">Mcacutlistcoverreportcontroller</a></li><li><a href="../../objects/classes/mcacutlistdetailreportcontroller.html">Mcacutlistdetailreportcontroller</a></li><li><a href="../../objects/classes/mcacutlistfilesreports.html">Mcacutlistfilesreports</a></li><li><a href="../../objects/classes/mcacutlistreportcontract.html">Mcacutlistreportcontract</a></li><li class="active"><a href="../../objects/classes/mcacutlistreportdp.html">Mcacutlistreportdp</a></li><li><a href="../../objects/classes/mcacutlistreports.html">Mcacutlistreports</a></li><li><a href="../../objects/classes/mcacutlistsumreportcontroller.html">Mcacutlistsumreportcontroller</a></li></ul></div><div class="nav-group"><h4>Objects / Queries</h4><ul><li><a href="../../objects/queries/mcacutlistcreatequery.html">Mcacutlistcreatequery</a></li><li><a href="../../objects/queries/mcacutlistdeletequery.html">Mcacutlistdeletequery</a></li><li><a href="../../objects/queries/mcacutlistquery.html">Mcacutlistquery</a></li></ul></div><div class="nav-group"><h4>Objects / Tables</h4><ul><li><a href="../../objects/tables/mcacutlist.html">Mcacutlist</a></li><li><a href="../../objects/tables/mcacutlistmoduletmp.html">Mcacutlistmoduletmp</a></li><li><a href="../../objects/tables/mcacutlisttmp.html">Mcacutlisttmp</a></li></ul></div><div class="nav-group"><h4>Objects / Security</h4><ul><li><a href="../../objects/security/mcacutlist-security-artifacts.html">Mcacutlist Security Artifacts</a></li></ul></div><div class="nav-group"><h4>Cross-Reference</h4><ul><li><a href="../../cross-reference/data-lineage.html">Data Lineage</a></li><li><a href="../../cross-reference/dependencies.html">Dependencies</a></li><li><a href="../../cross-reference/report-matrix.html">Report Matrix</a></li></ul></div></aside>
+  <main class="content">
+    <div class="breadcrumbs"><a href="../../index.html">Home</a> / <span>Objects</span> / <span>Classes</span> / <span>Mcacutlistreportdp</span></div>
+    <h1 id="class-mcacutlistreportdp">Class: McaCutlistReportDP</h1>
+<h2 id="type">Type</h2>
+<p><code>SrsReportDataProviderPreProcessTempDB</code> with attributes:</p>
+<ul>
+<li><code>SRSReportQueryAttribute(querystr(McaCutlistQuery))</code></li>
+<li><code>SRSReportParameterAttribute(classstr(McaCutlistReportContract))</code></li>
+</ul>
+<h2 id="key-methods">Key Methods</h2>
+<ul>
+<li><code>getMcaCutlistTmp()</code> dataset provider.</li>
+<li><code>processReport()</code> dispatcher.</li>
+<li><code>processCoverReport()</code> grouped cover data path.</li>
+<li><code>processDetailReport()</code> detailed per-row path.</li>
+<li><code>processSummaryReport()</code> grouped summary path.</li>
+<li><code>getQueryRun()</code>, <code>getModelPrefixes()</code>, <code>filename()</code> helpers.</li>
+</ul>
+<h2 id="key-dependencies">Key Dependencies</h2>
+<p><code>McaCutlist</code>, <code>McaCutlistTmp</code>, <code>SalesLine</code>, <code>InventTable</code>, <code>InventTableModule</code>, <code>McaCutlistMoveToAreas</code>, <code>SysQuery</code>.</p>
+<h2 id="functional-notes">Functional Notes</h2>
+<ul>
+<li>Central report behavior class; any quantity/grouping changes here alter SSRS output directly.</li>
+<li>Production code includes 2024 note adjusting detail UOM source from cutlist unit to <code>InventTableModule</code> unit.</li>
+</ul>
+    <p class="back-top"><a href="#top" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">Back to top</a></p>
+    
+  </main>
+  <aside class="right"><div class="toc"><h4>On this page</h4><ul><li class="lvl-2"><a href="#type">Type</a></li><li class="lvl-2"><a href="#key-methods">Key Methods</a></li><li class="lvl-2"><a href="#key-dependencies">Key Dependencies</a></li><li class="lvl-2"><a href="#functional-notes">Functional Notes</a></li></ul></div></aside>
+</div>
+<script src="../../assets/site.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>if(window.mermaid){mermaid.initialize({startOnLoad:true,theme:'neutral'});}</script>
+</body>
+</html>
