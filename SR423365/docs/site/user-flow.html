@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Cutlist User Flow</title><link rel="stylesheet" href="styles.css"></head>
+<body>
+<header><h1>Cutlist Form, User Interaction, and Logic Flow</h1><nav><a href="index.html">Overview</a><a href="dev-vs-prod.html">Dev vs Prod Deltas</a><a href="report-values.html">Report Value Impact</a><a href="sql-playbook.html">SQL Playbook</a><a href="user-flow.html">Form & User Flow</a></nav></header>
+<main>
+<section>
+  <h2>Step-by-step flow</h2>
+  <ol>
+    <li>User opens <strong>McaCutlistRecords</strong>.</li>
+    <li>Default filter applies: unprocessed records (<code>IsCutlistProcessed = No</code>).</li>
+    <li>User narrows scope (Model, Prefix, Build Schedule, Cut Group, SalesLine, etc.).</li>
+    <li><strong>LoadRecords</strong> maps form filters into create query and runs cutlist creation action.</li>
+    <li><strong>FilesReports</strong> passes current query scope into reports/files form.</li>
+    <li>Reports/files pipeline runs and can mark selected rows as processed.</li>
+  </ol>
+</section>
+
+<section>
+  <h2>Interaction map</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>Form filter layer</h3>
+      <p>User decides scope in grid filters and processed checkbox.</p>
+    </div>
+    <div class="card">
+      <h3>Create layer</h3>
+      <p>Build/BOM context writes rows into <code>McaCutlist</code> with quantity fields, scheduling, and grouping IDs.</p>
+    </div>
+    <div class="card">
+      <h3>ReportDP layer</h3>
+      <p>Transforms selected <code>McaCutlist</code> rows into <code>McaCutlistTmp</code> for each report design.</p>
+    </div>
+    <div class="card">
+      <h3>SSRS layer</h3>
+      <p>Applies expressions (sum, ceiling, per-series normalization) and renders stakeholder-visible values.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Why logic matters to stakeholders</h2>
+  <ul>
+    <li>The same selected record scope can produce different values between PROD and DEV because formulas changed.</li>
+    <li>DEV introduces per-series handling and rounded totals in key report regions.</li>
+    <li>Rows marked processed may disappear from default form view unless processed filter is toggled.</li>
+  </ul>
+</section>
+</main>
+<footer>Use SQL Playbook to validate each stage with evidence-backed data snapshots.</footer>
+</body></html>

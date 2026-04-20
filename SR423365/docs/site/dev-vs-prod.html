@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Dev vs Prod Deltas</title><link rel="stylesheet" href="styles.css"></head>
+<body>
+<header>
+  <h1>Dev vs Production: Key Behavioral Deltas</h1>
+  <nav>
+    <a href="index.html">Overview</a><a href="dev-vs-prod.html">Dev vs Prod Deltas</a><a href="report-values.html">Report Value Impact</a><a href="sql-playbook.html">SQL Playbook</a><a href="user-flow.html">Form & User Flow</a>
+  </nav>
+</header>
+<main>
+  <section>
+    <h2>Create layer changes</h2>
+    <p><span class="badge logic">LOGIC CHANGE</span> DEV writes <code>Per_Series</code> into cutlist rows from BOM quantity series.</p>
+    <div class="eq"><strong>Before:</strong> Cutlist row had Qty/Pieces, but no explicit Per_Series assignment.<br><strong>After:</strong> Cutlist row includes Per_Series = BOMQtySerie.</div>
+    <p>This creates field-level data differences even when record counts are unchanged.</p>
+  </section>
+
+  <section>
+    <h2>ReportDP changes</h2>
+    <ul>
+      <li>Cover/Summary now add explicit aggregate selection fields such as <code>SUM(Pieces)</code>, <code>SUM(Qty)</code>, <code>MAX(PWSBuildScheduleId)</code>.</li>
+      <li>Detail remains row-granular, but DEV injects compacted metadata strings (build schedules and unit counts).</li>
+      <li>DEV includes additional temp output fields: <code>Per_Series</code>, <code>PWSBuildScheduleId</code>, <code>UnitCounts</code>.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>SSRS expression changes</h2>
+    <table>
+      <thead><tr><th>Report</th><th>Production</th><th>Dev</th><th>Value effect</th></tr></thead>
+      <tbody>
+        <tr><td>WorkOrderSummary</td><td><code>Sum(KitQty)</code></td><td><code>Ceiling(Sum(KitQty))</code></td><td>Rounds up fractional totals in DEV.</td></tr>
+        <tr><td>WorkOrderCoverSheet</td><td><code>Sum(KitQty)</code></td><td><code>Ceiling(Sum(KitQty))</code></td><td>Same round-up behavior.</td></tr>
+        <tr><td>WorkOrderDetail</td><td><code>Sum(Pieces)*KitQty</code> / <code>Sum(Pieces)</code></td><td><code>Ceiling(Sum(Pieces*KitQty) / Max(Per_Series))</code> with fallback</td><td>Per-series normalization changes totals.</td></tr>
+      </tbody>
+    </table>
+  </section>
+</main>
+<footer>See SQL equivalents and equations on the SQL Playbook page.</footer>
+</body></html>
