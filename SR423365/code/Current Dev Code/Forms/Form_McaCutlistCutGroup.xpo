@@ -1,0 +1,509 @@
+﻿Exportfile for AOT version 1.0 or later
+Formatversion: 1
+
+***Element: FRM
+
+; Microsoft Dynamics AX Forms unloaded
+; --------------------------------------------------------------------------------
+FRMVERSION 12
+
+FORM #McaCutlistCutGroup
+  PROPERTIES
+    Name                #McaCutlistCutGroup
+    Origin              #{96D4742B-F95F-4D0F-B6F9-DD462D0E5824}
+  ENDPROPERTIES
+  
+  METHODS
+    SOURCE #classDeclaration
+      #/// <summary>
+      #///     Viewing cutlist cut groups
+      #/// </summary>
+      #/// <remarks>
+      #///      mca - Ray Michalski - 07/12/2017 - Mca_CR009_MilroomCutlists
+      #/// </remarks>
+      #public class FormRun extends ObjectRun implements SysPackable
+      #{
+      #    SysFormSplitter_X           formSplitterVertical;
+      #}
+    ENDSOURCE
+    SOURCE #init
+      #public void init()
+      #{
+      #    super();
+      #
+      #    formSplitterVertical = new SysFormSplitter_X(vSplitter, gridContainer, this);
+      #}
+    ENDSOURCE
+  ENDMETHODS
+  OBJECTBANK
+    PROPERTIES
+    ENDPROPERTIES
+    
+    DATASOURCE
+      OBJECTPOOL
+        PROPERTIES
+          Name                #McaCutlistCutGroup
+          Table               #McaCutlistCutGroup
+          InsertIfEmpty       #No
+        ENDPROPERTIES
+        
+        FIELDLIST
+        ENDFIELDLIST
+      ENDOBJECTPOOL
+      METHODS
+        SOURCE #init
+          #public void init()
+          #{
+          #    super();
+          #}
+        ENDSOURCE
+      ENDMETHODS
+    ENDDATASOURCE
+    DATASOURCE
+      OBJECTPOOL
+        PROPERTIES
+          Name                #InventTable
+          Table               #InventTable
+          AllowEdit           #No
+          AllowCreate         #No
+          AllowDelete         #No
+          JoinSource          #McaCutlistCutGroup
+          InsertAtEnd         #No
+          InsertIfEmpty       #No
+        ENDPROPERTIES
+        
+        FIELDLIST
+        ENDFIELDLIST
+      ENDOBJECTPOOL
+      METHODS
+        SOURCE #init
+          #public void init()
+          #{
+          #    super();
+          #}
+        ENDSOURCE
+      ENDMETHODS
+    ENDDATASOURCE
+  ENDOBJECTBANK
+  
+  REFERENCEDATASOURCES
+  ENDREFERENCEDATASOURCES
+  
+  JOINS
+    InventTable McaCutlistCutGroup
+  ENDJOINS
+  
+  PARTREFERENCES
+  ENDPARTREFERENCES
+  
+  DESIGN
+    PROPERTIES
+      Caption             #@MCA661
+      MinimizeBox         #No
+      SetCompany          #No
+      DataSource          #McaCutlistCutGroup
+      Style               #SimpleListDetails
+    ENDPROPERTIES
+    
+    CONTAINER
+      CONTROL ACTIONPANE
+        PROPERTIES
+          Name                #actionPaneLeanScheduleGroup
+          VerticalSpacing     #0
+          ElementPosition     #715827882
+          Style               #Strip
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL ACTIONPANETAB
+        PROPERTIES
+          Name                #tabActions
+          ElementPosition     #1073741823
+          HierarchyParent     #actionPaneLeanScheduleGroup
+          Caption             #@SYS132034
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL BUTTONGROUP
+        PROPERTIES
+          Name                #btnGrpActions
+          ElementPosition     #1073741823
+          HierarchyParent     #tabActions
+          Caption             #@SYS132034
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL GRID
+        PROPERTIES
+          Name                #Grid
+          Width               #Column width
+          Height              #Column height
+          ElementPosition     #1610612733
+          HierarchyParent     #TabPage
+          DataSource          #InventTable
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL GRID
+        PROPERTIES
+          Name                #gridCutGroups
+          AllowEdit           #No
+          Width               #Column width
+          Height              #Column height
+          AlignControl        #Yes
+          ElementPosition     #1431655764
+          HierarchyParent     #GridContainer
+          MultiSelect         #No
+          ShowRowLabels       #No
+          DataSource          #McaCutlistCutGroup
+          GridLinesStyle      #Vertical
+          AlternateRowShading #No
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL GROUP
+        PROPERTIES
+          Name                #Body
+          Width               #Column width
+          Height              #Column height
+          ElementPosition     #1431655764
+          Style               #MarginlessContainer
+          Columns             #3
+          Columnspace         #0
+          ArrangeGuide        
+            ARRAY INDEX Columns 
+              #0
+              #0
+              #0
+            ENDARRAY
+          AlignChild          #No
+          ViewEditMode        #Edit
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL GROUP
+        PROPERTIES
+          Name                #DetailsContainer
+          Visible             #No
+          AllowEdit           #No
+          Width               #Column width
+          ElementPosition     #1717986916
+          HierarchyParent     #Body
+          FrameType           #None
+          Style               #MarginlessContainer
+          TopMargin           #5
+          RightMargin         #5
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL GROUP
+        PROPERTIES
+          Name                #GridContainer
+          AutoDeclaration     #Yes
+          Width               #Column width
+          Height              #Column height
+          ElementPosition     #858993458
+          HierarchyParent     #Body
+          Style               #BorderlessGridContainer
+          RightMargin         #0
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL GROUP
+        PROPERTIES
+          Name                #VSplitter
+          AutoDeclaration     #Yes
+          Visible             #No
+          Width               #4
+          Height              #Column height
+          AlignControl        #Yes
+          ElementPosition     #1288490187
+          HierarchyParent     #Body
+          FrameType           #Raised 3D
+          BackgroundColor     #Window background
+          Style               #SplitterVerticalContainer
+          HideIfEmpty         #No
+          AlignChild          #No
+        ENDPROPERTIES
+        
+        METHODS
+          SOURCE #mouseDown
+            #public int mouseDown(int _x, int _y, int _button, boolean _ctrl, boolean _shift)
+            #{
+            #    super(_x, _y, _button, _ctrl, _shift);
+            #
+            #    return formSplitterVertical.mouseDown(_x, _y, _button, _ctrl, _shift);
+            #}
+          ENDSOURCE
+          SOURCE #mouseMove
+            #public int mouseMove(int _x, int _y, int _button, boolean _ctrl, boolean _shift)
+            #{
+            #    super(_x, _y, _button, _ctrl, _shift);
+            #
+            #    return formSplitterVertical.mouseMove(_x, _y, _button, _ctrl, _shift);
+            #}
+          ENDSOURCE
+          SOURCE #mouseUp
+            #public int mouseUp(int _x, int _y, int _button, boolean _ctrl, boolean _shift)
+            #{
+            #    super(_x, _y, _button, _ctrl, _shift);
+            #
+            #    return formSplitterVertical.mouseUp(_x, _y, _button, _ctrl, _shift);
+            #}
+          ENDSOURCE
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL TAB
+        PROPERTIES
+          Name                #Tab
+          Width               #Column width
+          Height              #Column height
+          ElementPosition     #1717986916
+          HierarchyParent     #DetailsContainer
+          DataSource          #InventTable
+          Style               #FastTabs
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL TABPAGE
+        PROPERTIES
+          Name                #TabPage
+          Width               #Column width
+          Height              #Column height
+          ElementPosition     #1431655764
+          HierarchyParent     #Tab
+          Caption             #@MCA674
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL COMMANDBUTTON
+        PROPERTIES
+          Name                #btnDelete
+          ElementPosition     #1610612734
+          HierarchyParent     #btnGrpActions
+          Text                #@SYS14425
+          ButtonDisplay       #Text & Image left
+          NormalImage         #10121
+          ImageLocation       #EmbeddedResource
+          SaveRecord          #No
+          Primary             #Yes
+          NeedsRecord         #Yes
+          Command             #2832
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL COMMANDBUTTON
+        PROPERTIES
+          Name                #btnNew
+          HelpText            #@SYS137067
+          ElementPosition     #1073741822
+          HierarchyParent     #btnGrpActions
+          ButtonDisplay       #Text & Image left
+          NormalImage         #11045
+          ImageLocation       #EmbeddedResource
+          Primary             #Yes
+          Command             #260
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #DetailsContainer_CutGroupId
+          ElementPosition     #858993458
+          HierarchyParent     #DetailsContainer
+          DataSource          #McaCutlistCutGroup
+          DataField           #CutGroupId
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #DetailsContainer_Name
+          ElementPosition     #1288490187
+          HierarchyParent     #DetailsContainer
+          DataSource          #McaCutlistCutGroup
+          DataField           #Name
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #InventTable_ItemId
+          ElementPosition     #1073741822
+          HierarchyParent     #Grid
+          DataSource          #InventTable
+          DataField           #ItemId
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #ItemName
+          ElementPosition     #1610612733
+          HierarchyParent     #Grid
+          DataSource          #InventTable
+          DataMethod          #itemName
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #McaCutlistCutGroup_CutGroupId
+          ElementPosition     #1073741822
+          HierarchyParent     #gridCutGroups
+          DataSource          #McaCutlistCutGroup
+          DataField           #CutGroupId
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+      CONTROL STRINGEDIT
+        PROPERTIES
+          Name                #McaCutlistCutGroup_Name
+          ElementPosition     #1610612734
+          HierarchyParent     #gridCutGroups
+          DataSource          #McaCutlistCutGroup
+          DataField           #Name
+        ENDPROPERTIES
+        
+        METHODS
+        ENDMETHODS
+      ENDCONTROL 
+      
+    ENDCONTAINER
+    
+  ENDDESIGN
+  
+  PERMISSIONS #Permissions
+    PROPERTIES
+    ENDPROPERTIES
+    
+    PERMISSIONSET #Read
+      PROPERTIES
+      ENDPROPERTIES
+      
+      FORM #Controls
+      ENDFORM
+      
+    TABLES #Tables
+    ENDTABLES
+    
+  SERVERMETHODS #Server Methods
+  ENDSERVERMETHODS
+  
+ASSOCIATEDFORMS #Associated Forms
+ENDASSOCIATEDFORMS
+
+ENDPERMISSIONSET
+
+PERMISSIONSET #Update
+  PROPERTIES
+  ENDPROPERTIES
+  
+  FORM #Controls
+  ENDFORM
+  
+TABLES #Tables
+ENDTABLES
+
+SERVERMETHODS #Server Methods
+ENDSERVERMETHODS
+
+ASSOCIATEDFORMS #Associated Forms
+ENDASSOCIATEDFORMS
+
+ENDPERMISSIONSET
+
+PERMISSIONSET #Create
+  PROPERTIES
+  ENDPROPERTIES
+  
+  FORM #Controls
+  ENDFORM
+  
+TABLES #Tables
+ENDTABLES
+
+SERVERMETHODS #Server Methods
+ENDSERVERMETHODS
+
+ASSOCIATEDFORMS #Associated Forms
+ENDASSOCIATEDFORMS
+
+ENDPERMISSIONSET
+
+PERMISSIONSET #Delete
+  PROPERTIES
+  ENDPROPERTIES
+  
+  FORM #Controls
+  ENDFORM
+  
+TABLES #Tables
+ENDTABLES
+
+SERVERMETHODS #Server Methods
+ENDSERVERMETHODS
+
+ASSOCIATEDFORMS #Associated Forms
+ENDASSOCIATEDFORMS
+
+ENDPERMISSIONSET
+
+ENDPERMISSIONS
+
+ENDFORM
+
+
+***Element: END
