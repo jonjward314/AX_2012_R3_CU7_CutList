@@ -5,3 +5,6 @@
 | McaCutlistBaseReport.WorkOrderCoverSheet | Not determinable from provided XPO/MD | McaCutlistReportDP | McaCutlistQuery -> McaCutlist -> McaCutlistTmp | parmQuery, parmCoverSheet | Not determinable from provided XPO/MD | High |
 | McaCutlistBaseReport.WorkOrderDetail | Not determinable from provided XPO/MD | McaCutlistReportDP | McaCutlistQuery -> McaCutlist -> McaCutlistTmp | parmQuery, parmPrintDetail | Not determinable from provided XPO/MD | High |
 | McaCutlistBaseReport.WorkOrderSummary | Not determinable from provided XPO/MD | McaCutlistReportDP | McaCutlistQuery -> McaCutlist -> McaCutlistTmp | parmQuery, parmPrintSummary | Not determinable from provided XPO/MD | High |
+
+## Additional Validation Resources
+- [Math validation SQL playbook by report](../reports/prod-dev-math-reconciliation-by-report.md)
